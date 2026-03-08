@@ -1,0 +1,127 @@
+package com.epic_engine.swisskit.feature.shopping.presentation
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.epic_engine.swisskit.feature.shopping.domain.model.ShoppingItem
+import com.epic_engine.swisskit.feature.shopping.domain.usecase.AddShoppingItemUseCase
+import com.epic_engine.swisskit.feature.shopping.domain.usecase.DeleteCheckedItemsUseCase
+import com.epic_engine.swisskit.feature.shopping.domain.usecase.DeleteShoppingItemUseCase
+import com.epic_engine.swisskit.feature.shopping.domain.usecase.DuplicateItemException
+import com.epic_engine.swisskit.feature.shopping.domain.usecase.ObserveShoppingItemsUseCase
+import com.epic_engine.swisskit.feature.shopping.domain.usecase.ToggleShoppingItemUseCase
+import com.epic_engine.swisskit.feature.shopping.domain.usecase.UncheckAllItemsUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class ShoppingViewModel @Inject constructor(
+    observeItems: ObserveShoppingItemsUseCase,
+    private val addItem: AddShoppingItemUseCase,
+    private val toggleItem: ToggleShoppingItemUseCase,
+    private val deleteItem: DeleteShoppingItemUseCase,
+    private val uncheckAll: UncheckAllItemsUseCase,
+    private val deleteChecked: DeleteCheckedItemsUseCase
+) : ViewModel() {
+
+    private val _uiState = MutableStateFlow(ShoppingUiState())
+
+    val uiState: StateFlow<ShoppingUiState> = combine(
+        observeItems(),
+        _uiState
+    ) { items, state ->
+        state.copy(
+            pendingItems = items.filter { !it.isChecked },
+            checkedItems = items.filter { it.isChecked }
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = ShoppingUiState()
+    )
+
+    fun onEvent(event: ShoppingEvent) {
+        when (event) {
+            is ShoppingEvent.InputChanged -> _uiState.update { it.copy(inputText = event.text) }
+            is ShoppingEvent.AddItem -> handleAdd(event.name)
+            is ShoppingEvent.ToggleItem -> handleToggle(event.item)
+            is ShoppingEvent.DeleteItem -> handleDelete(event.item)
+            is ShoppingEvent.UncheckAll -> handleUncheckAll()
+            is ShoppingEvent.DeleteChecked -> handleDeleteChecked()
+            is ShoppingEvent.ShareList -> { /* Manejado en la UI con Intent */ }
+            is ShoppingEvent.ClearMessage -> _uiState.update { it.copy(userMessage = null) }
+        }
+    }
+
+    private fun handleAdd(name: String) {
+        if (name.isBlank()) return
+        viewModelScope.launch {
+            _uiState.update { it.copy(inputText = "") }
+            addItem(name)
+                .onSuccess { /* Item observable via Flow */ }
+                .onFailure { error ->
+                    val message = when (error) {
+                        is DuplicateItemException -> "\"${error.itemName}\" ya está en tu lista"
+                        is IllegalArgumentException -> error.message ?: "Nombre inválido"
+                        else -> "Error al agregar el ítem"
+                    }
+                    _uiState.update { it.copy(userMessage = message) }
+                }
+        }
+    }
+
+    private fun handleToggle(item: ShoppingItem) {
+        viewModelScope.launch {
+            toggleItem(item).onFailure {
+                _uiState.update { s -> s.copy(userMessage = "Error al actualizar el ítem") }
+            }
+        }
+    }
+
+    private fun handleDelete(item: ShoppingItem) {
+        viewModelScope.launch {
+            deleteItem(item).onFailure {
+                _uiState.update { s -> s.copy(userMessage = "Error al eliminar el ítem") }
+            }
+        }
+    }
+
+    private fun handleUncheckAll() {
+        viewModelScope.launch {
+            uncheckAll().onFailure {
+                _uiState.update { s -> s.copy(userMessage = "Error al desmarcar los ítems") }
+            }
+        }
+    }
+
+    private fun handleDeleteChecked() {
+        viewModelScope.launch {
+            deleteChecked().onFailure {
+                _uiState.update { s -> s.copy(userMessage = "Error al eliminar ítems marcados") }
+            }
+        }
+    }
+
+    fun buildShareText(): String {
+        val state = uiState.value
+        val lines = mutableListOf<String>()
+        lines.add("🛒 Lista de Compras")
+        lines.add("")
+        if (state.pendingItems.isNotEmpty()) {
+            lines.add("Pendientes:")
+            state.pendingItems.forEach { lines.add("• ${it.name}") }
+        }
+        if (state.checkedItems.isNotEmpty()) {
+            if (state.pendingItems.isNotEmpty()) lines.add("")
+            lines.add("Completados:")
+            state.checkedItems.forEach { lines.add("✓ ${it.name}") }
+        }
+        return lines.joinToString("\n")
+    }
+}

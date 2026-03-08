@@ -1,18 +1,17 @@
 package com.epic_engine.swisskit.core.database
 
 import androidx.room.Database
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import androidx.room.RoomDatabase
+import com.epic_engine.swisskit.feature.shopping.data.local.ShoppingDao
+import com.epic_engine.swisskit.feature.shopping.data.local.ShoppingItemEntity
 
 @Database(
-    entities = [DatabasePlaceholderEntity::class],
+    entities = [
+        ShoppingItemEntity::class
+    ],
     version = 1,
     exportSchema = true
 )
-abstract class SwissKitDatabase : RoomDatabase()
-
-@Entity(tableName = "database_placeholder")
-internal data class DatabasePlaceholderEntity(
-    @PrimaryKey val id: Int = 0
-)
+abstract class SwissKitDatabase : RoomDatabase() {
+    abstract fun shoppingDao(): ShoppingDao
+}

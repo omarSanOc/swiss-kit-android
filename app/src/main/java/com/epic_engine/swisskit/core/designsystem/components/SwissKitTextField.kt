@@ -1,6 +1,8 @@
 package com.epic_engine.swisskit.core.designsystem.components
 
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -25,6 +27,8 @@ fun SwissKitTextField(
     isError: Boolean = false,
     accentColor: Color = MaterialTheme.colorScheme.primary,
     visualTransformation: VisualTransformation = VisualTransformation.None,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     maxLines: Int = 1
 ) {
     OutlinedTextField(
@@ -52,6 +56,8 @@ fun SwissKitTextField(
         maxLines = maxLines,
         shape = RoundedCornerShape(DesignTokens.inputCornerRadius),
         visualTransformation = visualTransformation,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = accentColor,
             unfocusedBorderColor = MaterialTheme.colorScheme.outline,
