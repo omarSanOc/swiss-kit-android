@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:bottom="21dp"
+        android:drawable="@drawable/ic_launcher_symbol"
+        android:gravity="fill"
+        android:left="21dp"
+        android:right="21dp"
+        android:top="21dp" />
+</layer-list>
