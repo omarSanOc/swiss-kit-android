@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.epic_engine.swisskit.feature.converter.presentation.ConverterScreen
 import com.epic_engine.swisskit.feature.shopping.presentation.ShoppingScreen
 
 @Composable
@@ -22,6 +23,7 @@ fun SwissKitNavGraph(
             ShoppingScreen()
         }
         composable(SwissKitDestination.Converter.route) {
+            ConverterScreen()
         }
         composable(SwissKitDestination.Contacts.route) {
         }
