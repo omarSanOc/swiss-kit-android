@@ -2,11 +2,15 @@ package com.epic_engine.swisskit.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.epic_engine.swisskit.feature.converter.presentation.ConverterScreen
 import com.epic_engine.swisskit.feature.finance.presentation.FinanceScreen
+import com.epic_engine.swisskit.feature.notes.presentation.NoteDetailScreen
+import com.epic_engine.swisskit.feature.notes.presentation.NotesScreen
 import com.epic_engine.swisskit.feature.shopping.presentation.ShoppingScreen
 
 @Composable
@@ -32,6 +36,30 @@ fun SwissKitNavGraph(
             FinanceScreen()
         }
         composable(SwissKitDestination.Notes.route) {
+            NotesScreen(
+                onNavigateToCreate = {
+                    navController.navigate(SwissKitDestination.NoteDetail.createRoute(null))
+                },
+                onNavigateToDetail = { noteId ->
+                    navController.navigate(SwissKitDestination.NoteDetail.createRoute(noteId))
+                }
+            )
+        }
+        composable(
+            route = SwissKitDestination.NoteDetail.route,
+            arguments = listOf(
+                navArgument("noteId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) { backStack ->
+            val noteId = backStack.arguments?.getString("noteId")?.takeIf { it != "new" }
+            NoteDetailScreen(
+                noteId = noteId,
+                onNavigateBack = { navController.navigateUp() }
+            )
         }
         composable(SwissKitDestination.QrScanner.route) {
         }

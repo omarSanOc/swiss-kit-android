@@ -8,4 +8,7 @@ sealed class SwissKitDestination(val route: String) {
     data object Finance : SwissKitDestination("finance")
     data object Notes : SwissKitDestination("notes")
     data object QrScanner : SwissKitDestination("qr_scanner")
+    data object NoteDetail : SwissKitDestination("note_detail/{noteId}") {
+        fun createRoute(noteId: String?) = "note_detail/${noteId ?: "new"}"
+    }
 }
