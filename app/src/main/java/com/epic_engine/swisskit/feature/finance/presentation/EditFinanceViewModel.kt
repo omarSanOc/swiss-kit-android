@@ -1,0 +1,79 @@
+package com.epic_engine.swisskit.feature.finance.presentation
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.epic_engine.swisskit.feature.finance.domain.model.Finance
+import com.epic_engine.swisskit.feature.finance.domain.model.FinanceCategoryData
+import com.epic_engine.swisskit.feature.finance.domain.model.FinanceType
+import com.epic_engine.swisskit.feature.finance.domain.usecase.AddFinanceUseCase
+import com.epic_engine.swisskit.feature.finance.domain.usecase.UpdateFinanceUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import java.util.UUID
+import javax.inject.Inject
+
+@HiltViewModel
+class EditFinanceViewModel @Inject constructor(
+    private val addFinance: AddFinanceUseCase,
+    private val updateFinance: UpdateFinanceUseCase
+) : ViewModel() {
+
+    private val _uiState = MutableStateFlow(EditFinanceUiState())
+    val uiState: StateFlow<EditFinanceUiState> = _uiState.asStateFlow()
+
+    fun loadForEdit(item: Finance) {
+        _uiState.value = EditFinanceUiState(
+            id = item.id,
+            title = item.title,
+            amountInput = item.amount.toString(),
+            date = item.date,
+            notes = item.notes ?: "",
+            category = item.category,
+            type = item.type
+        )
+    }
+
+    fun onEvent(event: EditFinanceEvent) {
+        when (event) {
+            is EditFinanceEvent.TitleChanged -> _uiState.update { it.copy(title = event.value, validationError = null) }
+            is EditFinanceEvent.AmountChanged -> _uiState.update { it.copy(amountInput = event.value, validationError = null) }
+            is EditFinanceEvent.DateChanged -> _uiState.update { it.copy(date = event.epochMillis) }
+            is EditFinanceEvent.NotesChanged -> _uiState.update { it.copy(notes = event.value) }
+            is EditFinanceEvent.CategoryChanged -> _uiState.update { it.copy(category = event.value) }
+            is EditFinanceEvent.TypeChanged -> {
+                val defaultCategory = FinanceCategoryData.categoriesFor(event.type).first()
+                _uiState.update { it.copy(type = event.type, category = defaultCategory) }
+            }
+            is EditFinanceEvent.Save -> handleSave()
+            is EditFinanceEvent.ClearError -> _uiState.update { it.copy(validationError = null) }
+        }
+    }
+
+    private fun handleSave() {
+        val state = _uiState.value
+        val amount = state.amountInput.toDoubleOrNull()
+            ?: run { _uiState.update { it.copy(validationError = "Monto inválido") }; return }
+
+        val finance = Finance(
+            id = state.id ?: UUID.randomUUID().toString(),
+            title = state.title.trim(),
+            amount = amount,
+            date = state.date,
+            notes = state.notes.trim().ifBlank { null },
+            category = state.category,
+            type = state.type
+        )
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isSaving = true) }
+            val result = if (state.isEditing) updateFinance(finance) else addFinance(finance)
+            result
+                .onSuccess { _uiState.update { it.copy(isSaving = false, savedSuccessfully = true) } }
+                .onFailure { e -> _uiState.update { it.copy(isSaving = false, validationError = e.message) } }
+        }
+    }
+}
