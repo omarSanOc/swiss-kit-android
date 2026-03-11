@@ -37,3 +37,29 @@ val MIGRATION_2_3 = object : Migration(2, 3) {
         """)
     }
 }
+
+val MIGRATION_3_4 = object : Migration(3, 4) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("""
+            CREATE TABLE IF NOT EXISTS `categories` (
+                `id` TEXT NOT NULL,
+                `title` TEXT NOT NULL,
+                PRIMARY KEY(`id`)
+            )
+        """)
+        database.execSQL("""
+            CREATE TABLE IF NOT EXISTS `contacts` (
+                `id` TEXT NOT NULL,
+                `name` TEXT NOT NULL,
+                `phone` TEXT NOT NULL,
+                `categoryId` TEXT NOT NULL,
+                PRIMARY KEY(`id`),
+                FOREIGN KEY(`categoryId`) REFERENCES `categories`(`id`)
+                    ON DELETE CASCADE
+            )
+        """)
+        database.execSQL(
+            "CREATE INDEX IF NOT EXISTS `index_contacts_categoryId` ON `contacts` (`categoryId`)"
+        )
+    }
+}

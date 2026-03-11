@@ -2,6 +2,10 @@ package com.epic_engine.swisskit.core.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.epic_engine.swisskit.feature.contacts.data.local.CategoryDao
+import com.epic_engine.swisskit.feature.contacts.data.local.CategoryEntity
+import com.epic_engine.swisskit.feature.contacts.data.local.ContactDao
+import com.epic_engine.swisskit.feature.contacts.data.local.ContactEntity
 import com.epic_engine.swisskit.feature.finance.data.local.FinanceDao
 import com.epic_engine.swisskit.feature.finance.data.local.FinanceEntity
 import com.epic_engine.swisskit.feature.notes.data.local.NoteDao
@@ -13,13 +17,17 @@ import com.epic_engine.swisskit.feature.shopping.data.local.ShoppingItemEntity
     entities = [
         ShoppingItemEntity::class,
         FinanceEntity::class,
-        NoteEntity::class
+        NoteEntity::class,
+        CategoryEntity::class,
+        ContactEntity::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = true
 )
 abstract class SwissKitDatabase : RoomDatabase() {
     abstract fun shoppingDao(): ShoppingDao
     abstract fun financeDao(): FinanceDao
     abstract fun noteDao(): NoteDao
+    abstract fun categoryDao(): CategoryDao
+    abstract fun contactDao(): ContactDao
 }

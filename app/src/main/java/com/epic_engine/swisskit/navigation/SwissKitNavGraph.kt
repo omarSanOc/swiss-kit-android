@@ -7,6 +7,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.epic_engine.swisskit.feature.contacts.presentation.CategoriesScreen
+import com.epic_engine.swisskit.feature.contacts.presentation.ContactsScreen
 import com.epic_engine.swisskit.feature.converter.presentation.ConverterScreen
 import com.epic_engine.swisskit.feature.finance.presentation.FinanceScreen
 import com.epic_engine.swisskit.feature.notes.presentation.NoteDetailScreen
@@ -31,6 +33,26 @@ fun SwissKitNavGraph(
             ConverterScreen()
         }
         composable(SwissKitDestination.Contacts.route) {
+            CategoriesScreen(
+                onNavigateToContacts = { categoryId, categoryTitle ->
+                    navController.navigate(
+                        SwissKitDestination.ContactDetail.createRoute(categoryId, categoryTitle)
+                    )
+                }
+            )
+        }
+        composable(
+            route = SwissKitDestination.ContactDetail.route,
+            arguments = listOf(
+                navArgument("categoryId") { type = NavType.StringType },
+                navArgument("categoryTitle") { type = NavType.StringType }
+            )
+        ) { backStack ->
+            val categoryTitle = backStack.arguments?.getString("categoryTitle") ?: ""
+            ContactsScreen(
+                categoryTitle = categoryTitle,
+                onNavigateBack = { navController.navigateUp() }
+            )
         }
         composable(SwissKitDestination.Finance.route) {
             FinanceScreen()
