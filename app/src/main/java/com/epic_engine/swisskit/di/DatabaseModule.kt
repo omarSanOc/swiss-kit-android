@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.epic_engine.swisskit.core.database.MIGRATION_1_2
 import com.epic_engine.swisskit.core.database.MIGRATION_2_3
 import com.epic_engine.swisskit.core.database.MIGRATION_3_4
+import com.epic_engine.swisskit.core.database.MIGRATION_4_5
 import com.epic_engine.swisskit.core.database.SwissKitDatabase
 import com.epic_engine.swisskit.feature.finance.data.local.FinanceDao
 import com.epic_engine.swisskit.feature.shopping.data.local.ShoppingDao
@@ -23,7 +24,7 @@ object DatabaseModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): SwissKitDatabase =
         Room.databaseBuilder(context, SwissKitDatabase::class.java, "swisskit.db")
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
             .build()
 
     @Provides

@@ -13,6 +13,7 @@ import com.epic_engine.swisskit.feature.converter.presentation.ConverterScreen
 import com.epic_engine.swisskit.feature.finance.presentation.FinanceScreen
 import com.epic_engine.swisskit.feature.notes.presentation.NoteDetailScreen
 import com.epic_engine.swisskit.feature.notes.presentation.NotesScreen
+import com.epic_engine.swisskit.feature.qrscanner.presentation.QRScannerScreen
 import com.epic_engine.swisskit.feature.shopping.presentation.ShoppingScreen
 
 @Composable
@@ -84,6 +85,7 @@ fun SwissKitNavGraph(
             )
         }
         composable(SwissKitDestination.QrScanner.route) {
+            QRScannerScreen()
         }
     }
 }

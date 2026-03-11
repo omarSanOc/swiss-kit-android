@@ -31,6 +31,10 @@ val grayBackground = Color(0xFFF3F4F6)
 val yellowShopping = Color(0xFFFFA200)
 val yellowBackground = Color(0xFFFFEAC7)
 
+// QR Scanner
+val orangeQrScanner = Color(0xFFFF7A00)
+val orangeQrBackground = Color(0xFFFFF3E0)
+
 val redAnimation = Color(0xFFFB2A2A)
 val orangeAnimation = Color(0xFFFF7A00)
 val yellowAnimation = Color(0xFFFFD500)

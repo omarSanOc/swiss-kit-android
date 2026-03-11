@@ -63,3 +63,18 @@ val MIGRATION_3_4 = object : Migration(3, 4) {
         )
     }
 }
+
+val MIGRATION_4_5 = object : Migration(4, 5) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("""
+            CREATE TABLE IF NOT EXISTS `qr_scans` (
+                `id` TEXT NOT NULL,
+                `content` TEXT NOT NULL,
+                `type` TEXT NOT NULL,
+                `label` TEXT NOT NULL,
+                `scannedAt` INTEGER NOT NULL,
+                PRIMARY KEY(`id`)
+            )
+        """)
+    }
+}

@@ -82,6 +82,17 @@ dependencies {
     // Lifecycle Compose
     implementation(libs.lifecycle.runtime.compose)
 
+    // CameraX
+    implementation(libs.camera.camera2)
+    implementation(libs.camera.lifecycle)
+    implementation(libs.camera.view)
+
+    // ML Kit Barcode Scanning
+    implementation(libs.mlkit.barcode.scanning)
+
+    // ZXing — generación de códigos QR
+    implementation(libs.zxing.core)
+
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)

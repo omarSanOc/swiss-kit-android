@@ -10,6 +10,8 @@ import com.epic_engine.swisskit.feature.finance.data.local.FinanceDao
 import com.epic_engine.swisskit.feature.finance.data.local.FinanceEntity
 import com.epic_engine.swisskit.feature.notes.data.local.NoteDao
 import com.epic_engine.swisskit.feature.notes.data.local.NoteEntity
+import com.epic_engine.swisskit.feature.qrscanner.data.local.QRScanDao
+import com.epic_engine.swisskit.feature.qrscanner.data.local.QRScanEntity
 import com.epic_engine.swisskit.feature.shopping.data.local.ShoppingDao
 import com.epic_engine.swisskit.feature.shopping.data.local.ShoppingItemEntity
 
@@ -19,9 +21,10 @@ import com.epic_engine.swisskit.feature.shopping.data.local.ShoppingItemEntity
         FinanceEntity::class,
         NoteEntity::class,
         CategoryEntity::class,
-        ContactEntity::class
+        ContactEntity::class,
+        QRScanEntity::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = true
 )
 abstract class SwissKitDatabase : RoomDatabase() {
@@ -30,4 +33,5 @@ abstract class SwissKitDatabase : RoomDatabase() {
     abstract fun noteDao(): NoteDao
     abstract fun categoryDao(): CategoryDao
     abstract fun contactDao(): ContactDao
+    abstract fun qrScanDao(): QRScanDao
 }
