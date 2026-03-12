@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.epic_engine.swisskit.feature.contacts.presentation.CategoriesScreen
+import com.epic_engine.swisskit.feature.home.presentation.HomeScreen
 import com.epic_engine.swisskit.feature.contacts.presentation.ContactsScreen
 import com.epic_engine.swisskit.feature.converter.presentation.ConverterScreen
 import com.epic_engine.swisskit.feature.finance.presentation.FinanceScreen
@@ -26,6 +27,13 @@ fun SwissKitNavGraph(
         startDestination = startDestination.route
     ) {
         composable(SwissKitDestination.Home.route) {
+            HomeScreen(
+                onNavigateTo = { destination ->
+                    navController.navigate(destination.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
         composable(SwissKitDestination.Shopping.route) {
             ShoppingScreen()
