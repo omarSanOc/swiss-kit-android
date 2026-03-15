@@ -19,10 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.epic_engine.swisskit.feature.home.presentation.components.AnimatedBackground
 import com.epic_engine.swisskit.feature.home.presentation.components.HomeToolCard
 import com.epic_engine.swisskit.feature.home.presentation.model.ToolCatalog
 import com.epic_engine.swisskit.navigation.SwissKitDestination
+import com.epic_engine.swisskit.ui.components.AnimatedBackgroundView
 
 @Composable
 fun HomeScreen(
@@ -30,7 +30,7 @@ fun HomeScreen(
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
 
-        AnimatedBackground(modifier = Modifier.fillMaxSize())
+        AnimatedBackgroundView(modifier = Modifier.fillMaxSize())
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
