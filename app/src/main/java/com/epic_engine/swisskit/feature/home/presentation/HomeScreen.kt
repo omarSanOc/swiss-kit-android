@@ -33,7 +33,7 @@ fun HomeScreen(
         AnimatedBackground(modifier = Modifier.fillMaxSize())
 
         LazyVerticalGrid(
-            columns = GridCells.Adaptive(minSize = 160.dp),
+            columns = GridCells.Fixed(2),
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(
                 start = 16.dp,
@@ -79,7 +79,7 @@ private fun HomeHeader() {
             color = Color.White
         )
         Text(
-            text = "Tu suite de herramientas",
+            text = "Tu navaja suiza digital para el día a día.",
             style = MaterialTheme.typography.bodyMedium,
             color = Color.White.copy(alpha = 0.85f)
         )
@@ -95,7 +95,7 @@ private fun HomeFooter() {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "SwissKit · v1.0",
+            text = "Hecho para simplificar tu vida",
             style = MaterialTheme.typography.labelSmall,
             color = Color.White.copy(alpha = 0.6f)
         )

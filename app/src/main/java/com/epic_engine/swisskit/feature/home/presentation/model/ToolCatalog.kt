@@ -1,18 +1,18 @@
 package com.epic_engine.swisskit.feature.home.presentation.model
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBalance
-import androidx.compose.material.icons.filled.Contacts
-import androidx.compose.material.icons.filled.CurrencyExchange
-import androidx.compose.material.icons.filled.QrCodeScanner
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.filled.StickyNote2
+import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.navigation.SwissKitDestination
+import com.epic_engine.swisskit.ui.theme.blueBackground
 import com.epic_engine.swisskit.ui.theme.blueFinance
+import com.epic_engine.swisskit.ui.theme.grayBackground
 import com.epic_engine.swisskit.ui.theme.grayConverter
+import com.epic_engine.swisskit.ui.theme.greenBackground
 import com.epic_engine.swisskit.ui.theme.greenContact
-import com.epic_engine.swisskit.ui.theme.orangeQrScanner
+import com.epic_engine.swisskit.ui.theme.pinkBackground
+import com.epic_engine.swisskit.ui.theme.pinkQrScanner
+import com.epic_engine.swisskit.ui.theme.purpleBackground
 import com.epic_engine.swisskit.ui.theme.purpleNotes
+import com.epic_engine.swisskit.ui.theme.yellowBackground
 import com.epic_engine.swisskit.ui.theme.yellowShopping
 
 /**
@@ -23,52 +23,58 @@ object ToolCatalog {
 
     val all: List<Tool> = listOf(
         Tool(
-            id = "shopping",
-            name = "Lista de Compras",
-            description = "Organiza y gestiona tu lista de compras",
-            icon = Icons.Default.ShoppingCart,
-            color = yellowShopping,
-            destination = SwissKitDestination.Shopping
-        ),
-        Tool(
-            id = "converter",
-            name = "Conversor",
-            description = "Convierte monedas y unidades de medida",
-            icon = Icons.Default.CurrencyExchange,
-            color = grayConverter,
-            destination = SwissKitDestination.Converter
+            id = "finance",
+            name = "Finanzas",
+            description = "Maneja finanzas",
+            icon = R.drawable.icon_wallet,
+            color = blueFinance,
+            backgroundColor = blueBackground,
+            destination = SwissKitDestination.Finance
         ),
         Tool(
             id = "contacts",
             name = "Contactos",
-            description = "Gestiona contactos organizados por categorías",
-            icon = Icons.Default.Contacts,
+            description = "Gestiona contactos",
+            icon = R.drawable.icon_contact,
             color = greenContact,
+            backgroundColor = greenBackground,
             destination = SwissKitDestination.Contacts
-        ),
-        Tool(
-            id = "finance",
-            name = "Finanzas",
-            description = "Controla tus ingresos y gastos personales",
-            icon = Icons.Default.AccountBalance,
-            color = blueFinance,
-            destination = SwissKitDestination.Finance
         ),
         Tool(
             id = "notes",
             name = "Notas",
-            description = "Crea notas con formato Markdown y recordatorios",
-            icon = Icons.Default.StickyNote2,
+            description = "Escribe tus notas",
+            icon = R.drawable.icon_notes,
             color = purpleNotes,
+            backgroundColor = purpleBackground,
             destination = SwissKitDestination.Notes
         ),
         Tool(
             id = "qr_scanner",
-            name = "QR Scanner",
-            description = "Escanea, genera y gestiona códigos QR",
-            icon = Icons.Default.QrCodeScanner,
-            color = orangeQrScanner,
+            name = "Código QR",
+            description = "Escanea / Genera",
+            icon = R.drawable.icon_qr,
+            color = pinkQrScanner,
+            backgroundColor = pinkBackground,
             destination = SwissKitDestination.QrScanner
+        ),
+        Tool(
+            id = "converter",
+            name = "Conversor",
+            description = "Unidades / Divisas",
+            icon = R.drawable.icon_converter,
+            color = grayConverter,
+            backgroundColor = grayBackground,
+            destination = SwissKitDestination.Converter
+        ),
+        Tool(
+            id = "shopping",
+            name = "Compras",
+            description = "Lista de compras",
+            icon = R.drawable.icon_shopping,
+            color = yellowShopping,
+            backgroundColor = yellowBackground,
+            destination = SwissKitDestination.Shopping
         )
     )
 }
