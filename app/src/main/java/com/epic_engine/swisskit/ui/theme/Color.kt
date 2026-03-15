@@ -22,7 +22,7 @@ val greenBackground = Color(0xFFE0F5EE)
 val purpleNotes = Color(0xFF6A5ACD)
 val purpleBackground = Color(0xFFEFEAFF)
 
-val pinkPassword = Color(0xFFE64480)
+val pinkQRScanner = Color(0xFFE64480)
 val pinkBackground = Color(0xFFFCE8EF)
 
 val grayConverter = Color(0xFF6B7280)

@@ -2,11 +2,18 @@ package com.epic_engine.swisskit.feature.home.presentation.model
 
 import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.navigation.SwissKitDestination
+import com.epic_engine.swisskit.ui.theme.blueBackground
 import com.epic_engine.swisskit.ui.theme.blueFinance
+import com.epic_engine.swisskit.ui.theme.grayBackground
 import com.epic_engine.swisskit.ui.theme.grayConverter
+import com.epic_engine.swisskit.ui.theme.greenBackground
 import com.epic_engine.swisskit.ui.theme.greenContact
 import com.epic_engine.swisskit.ui.theme.orangeQrScanner
+import com.epic_engine.swisskit.ui.theme.pinkBackground
+import com.epic_engine.swisskit.ui.theme.pinkQRScanner
+import com.epic_engine.swisskit.ui.theme.purpleBackground
 import com.epic_engine.swisskit.ui.theme.purpleNotes
+import com.epic_engine.swisskit.ui.theme.yellowBackground
 import com.epic_engine.swisskit.ui.theme.yellowShopping
 
 /**
@@ -22,6 +29,7 @@ object ToolCatalog {
             description = "Maneja finanzas",
             icon = R.drawable.icon_wallet,
             color = blueFinance,
+            colorBackground = blueBackground,
             destination = SwissKitDestination.Finance
         ),
         Tool(
@@ -30,6 +38,7 @@ object ToolCatalog {
             description = "Gestiona contactos",
             icon = R.drawable.icon_contact,
             color = greenContact,
+            colorBackground = greenBackground,
             destination = SwissKitDestination.Contacts
         ),
         Tool(
@@ -38,6 +47,7 @@ object ToolCatalog {
             description = "Escribe tus notas",
             icon = R.drawable.icon_notes,
             color = purpleNotes,
+            colorBackground = purpleBackground,
             destination = SwissKitDestination.Notes
         ),
         Tool(
@@ -45,7 +55,8 @@ object ToolCatalog {
             name = "Código QR",
             description = "Escanea / Genera",
             icon = R.drawable.icon_qr,
-            color = orangeQrScanner,
+            color = pinkQRScanner,
+            colorBackground = pinkBackground,
             destination = SwissKitDestination.QrScanner
         ),
         Tool(
@@ -54,6 +65,7 @@ object ToolCatalog {
             description = "Unidades / Divisas",
             icon = R.drawable.icon_converter,
             color = grayConverter,
+            colorBackground = grayBackground,
             destination = SwissKitDestination.Converter
         ),
         Tool(
@@ -62,6 +74,7 @@ object ToolCatalog {
             description = "Lista de compras",
             icon = R.drawable.icon_shopping,
             color = yellowShopping,
+            colorBackground = yellowBackground,
             destination = SwissKitDestination.Shopping
         )
     )

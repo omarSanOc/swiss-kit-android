@@ -39,7 +39,7 @@ fun HomeToolCard(
         shape = RoundedCornerShape(24.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(
-            containerColor = tool.color.copy(alpha = 0.10f)
+            containerColor = tool.colorBackground
         )
     ) {
         Column(

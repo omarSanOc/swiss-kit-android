@@ -14,5 +14,6 @@ data class Tool(
     val description: String,
     @DrawableRes val icon: Int,
     val color: Color,
+    val colorBackground: Color,
     val destination: SwissKitDestination
 )
