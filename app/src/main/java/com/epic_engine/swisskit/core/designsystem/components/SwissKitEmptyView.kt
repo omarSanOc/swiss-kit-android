@@ -39,7 +39,7 @@ fun SwissKitEmptyView(
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+            color = Color.White,
             textAlign = TextAlign.Center
         )
         if (subtitle.isNotBlank()) {
@@ -47,7 +47,7 @@ fun SwissKitEmptyView(
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+                color = Color.White,
                 textAlign = TextAlign.Center
             )
         }

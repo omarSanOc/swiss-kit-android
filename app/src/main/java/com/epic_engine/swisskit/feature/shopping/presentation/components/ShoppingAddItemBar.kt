@@ -1,21 +1,29 @@
 package com.epic_engine.swisskit.feature.shopping.presentation.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
-import com.epic_engine.swisskit.core.designsystem.components.SwissKitButton
-import com.epic_engine.swisskit.core.designsystem.components.SwissKitTextField
 import com.epic_engine.swisskit.ui.theme.yellowShopping
 
 @Composable
@@ -26,30 +34,50 @@ fun ShoppingAddItemBar(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        SwissKitTextField(
+        OutlinedTextField(
             value = value,
             onValueChange = onValueChange,
-            label = "Nuevo ítem",
-            leadingIcon = Icons.Default.ShoppingCart,
-            accentColor = yellowShopping,
-            modifier = Modifier.weight(1f),
+            placeholder = { Text("Agrega tu compra") },
+            modifier = Modifier
+                .weight(1f)
+                .heightIn(min = 48.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.82f)),
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                cursorColor = yellowShopping,
+                focusedBorderColor = androidx.compose.ui.graphics.Color.Transparent,
+                unfocusedBorderColor = androidx.compose.ui.graphics.Color.Transparent,
+                focusedContainerColor = androidx.compose.ui.graphics.Color.Transparent,
+                unfocusedContainerColor = androidx.compose.ui.graphics.Color.Transparent
+            ),
             keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Sentences,
+                capitalization = KeyboardCapitalization.Words,
                 imeAction = ImeAction.Done
             ),
-            keyboardActions = KeyboardActions(
-                onDone = { onAdd() }
-            )
+            keyboardActions = KeyboardActions(onDone = { onAdd() }),
+            singleLine = true
         )
-        Spacer(modifier = Modifier.width(8.dp))
-        SwissKitButton(
-            text = "Agregar",
+
+        Surface(
             onClick = onAdd,
-            containerColor = yellowShopping,
-            enabled = value.isNotBlank()
-        )
+            enabled = value.isNotBlank(),
+            shape = RoundedCornerShape(12.dp),
+            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.82f),
+            modifier = Modifier.size(48.dp)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Agregar",
+                    tint = yellowShopping,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
     }
 }

@@ -10,5 +10,6 @@ interface ShoppingRepository {
     suspend fun deleteItem(item: ShoppingItem): Result<Unit>
     suspend fun uncheckAll(): Result<Unit>
     suspend fun deleteChecked(): Result<Unit>
+    suspend fun editItem(item: ShoppingItem, newName: String): Result<Unit>
     suspend fun isDuplicate(name: String): Boolean
 }

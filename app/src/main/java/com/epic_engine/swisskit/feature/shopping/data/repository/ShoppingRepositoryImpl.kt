@@ -58,6 +58,13 @@ class ShoppingRepositoryImpl @Inject constructor(
         SwissKitLogger.d("Shopping", "Items marcados eliminados")
     }
 
+    override suspend fun editItem(item: ShoppingItem, newName: String): Result<Unit> = runCatching {
+        dao.update(item.copy(name = newName.trim()).toEntity())
+        SwissKitLogger.d("Shopping", "Item editado: ${item.name} -> $newName")
+    }.onFailure {
+        SwissKitLogger.e("Shopping", "Error al editar item: ${it.message}", it)
+    }
+
     override suspend fun isDuplicate(name: String): Boolean =
         dao.countByName(name.trim()) > 0
 }

@@ -36,7 +36,9 @@ fun SwissKitNavGraph(
             )
         }
         composable(SwissKitDestination.Shopping.route) {
-            ShoppingScreen()
+            ShoppingScreen(
+                onBack = { navController.navigateUp() }
+            )
         }
         composable(SwissKitDestination.Converter.route) {
             ConverterScreen()

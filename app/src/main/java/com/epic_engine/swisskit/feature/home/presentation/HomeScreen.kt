@@ -62,7 +62,7 @@ fun HomeScreen(
         HomeFooter(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 40.dp)
+                .padding(bottom = 60.dp)
         )
     }
 }
