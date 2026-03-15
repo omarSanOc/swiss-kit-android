@@ -39,7 +39,7 @@ fun HomeScreen(
                 start = 16.dp,
                 end = 16.dp,
                 top = 72.dp,
-                bottom = 24.dp
+                bottom = 160.dp
             ),
             verticalArrangement = Arrangement.spacedBy(14.dp),
             horizontalArrangement = Arrangement.spacedBy(14.dp)
@@ -57,11 +57,13 @@ fun HomeScreen(
                     onClick = { onNavigateTo(tool.destination) }
                 )
             }
-
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                HomeFooter()
-            }
         }
+
+        HomeFooter(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 40.dp)
+        )
     }
 }
 
@@ -74,29 +76,31 @@ private fun HomeHeader() {
     ) {
         Text(
             text = "SwissKit",
-            style = MaterialTheme.typography.displaySmall,
+            style = MaterialTheme.typography.displayMedium,
             fontWeight = FontWeight.ExtraBold,
             color = Color.White
         )
         Text(
             text = "Tu navaja suiza digital para el día a día.",
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
             color = Color.White.copy(alpha = 0.85f)
         )
     }
 }
 
 @Composable
-private fun HomeFooter() {
+private fun HomeFooter(
+    modifier: Modifier = Modifier
+) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(top = 8.dp, bottom = 8.dp),
+            .padding(horizontal = 16.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = "Hecho para simplificar tu vida",
-            style = MaterialTheme.typography.labelSmall,
+            style = MaterialTheme.typography.labelMedium,
             color = Color.White.copy(alpha = 0.6f)
         )
     }
