@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,15 +17,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.ShoppingCart
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,10 +35,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.window.Dialog
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -261,188 +254,75 @@ fun ShoppingScreen(
 
     // Diálogo de confirmación: eliminar ítem individual
     if (uiState.itemToDelete != null) {
-        Dialog(
-            onDismissRequest = { viewModel.onEvent(ShoppingEvent.DismissDeleteItemDialog) }
-        ) {
-            Card(
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFFFF3E0)
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
+        AlertDialog(
+            onDismissRequest = { viewModel.onEvent(ShoppingEvent.DismissDeleteItemDialog) },
+            title = { Text("¿Eliminar producto?") },
+            text = { Text("Esta acción eliminará ${uiState.itemToDelete!!.name}. No se puede deshacer.") },
+            confirmButton = {
+                TextButton(
+                    onClick = { viewModel.onEvent(ShoppingEvent.ConfirmDeleteItem) },
+                    colors = ButtonDefaults.textButtonColors(contentColor = Color.Red)
                 ) {
-                    Text(
-                        text = "¿Eliminar producto?",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-
-                    Text(
-                        text = "Esta acción eliminará ${uiState.itemToDelete!!.name}. No se puede deshacer.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                    )
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Button(
-                            onClick = { viewModel.onEvent(ShoppingEvent.DismissDeleteItemDialog) },
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(48.dp),
-                            shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFEEEEEE),
-                                contentColor = MaterialTheme.colorScheme.onSurface
-                            ),
-                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
-                        ) {
-                            Text(
-                                text = "Cancelar",
-                                style = MaterialTheme.typography.labelLarge,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-
-                        Button(
-                            onClick = { viewModel.onEvent(ShoppingEvent.ConfirmDeleteItem) },
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(48.dp),
-                            shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFEEEEEE),
-                                contentColor = Color.Red
-                            ),
-                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
-                        ) {
-                            Text(
-                                text = "Eliminar",
-                                style = MaterialTheme.typography.labelLarge,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
+                    Text("Eliminar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.onEvent(ShoppingEvent.DismissDeleteItemDialog) }) {
+                    Text("Cancelar")
                 }
             }
-        }
+        )
     }
 
     // Diálogo de edición de ítem
     if (uiState.editingItem != null) {
-        Dialog(
-            onDismissRequest = { viewModel.onEvent(ShoppingEvent.CancelEdit) }
-        ) {
-            Card(
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFFFF3E0)
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
-                ) {
-                    Text(
-                        text = "Editar producto",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-
-                    TextField(
-                        value = uiState.editText,
-                        onValueChange = { viewModel.onEvent(ShoppingEvent.EditTextChanged(it)) },
-                        singleLine = true,
-                        shape = RoundedCornerShape(12.dp),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color(0xFFEEEEEE),
-                            unfocusedContainerColor = Color(0xFFEEEEEE),
-                            disabledContainerColor = Color(0xFFEEEEEE),
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            cursorColor = yellowShopping
-                        ),
-                        modifier = Modifier.fillMaxWidth(),
-                        textStyle = MaterialTheme.typography.bodyLarge,
-                        keyboardOptions = KeyboardOptions(
-                            capitalization = KeyboardCapitalization.Words,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                if (uiState.editText.isNotBlank()) {
-                                    viewModel.onEvent(ShoppingEvent.ConfirmEdit)
-                                }
+        AlertDialog(
+            onDismissRequest = { viewModel.onEvent(ShoppingEvent.CancelEdit) },
+            title = { Text("Editar producto") },
+            text = {
+                TextField(
+                    value = uiState.editText,
+                    onValueChange = { viewModel.onEvent(ShoppingEvent.EditTextChanged(it)) },
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp),
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        focusedContainerColor = Color(0xFFEEEEEE),
+                        unfocusedContainerColor = Color(0xFFEEEEEE),
+                        disabledContainerColor = Color(0xFFEEEEEE),
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        cursorColor = yellowShopping
+                    ),
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = MaterialTheme.typography.bodyLarge,
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Words,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            if (uiState.editText.isNotBlank()) {
+                                viewModel.onEvent(ShoppingEvent.ConfirmEdit)
                             }
-                        )
+                        }
                     )
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Button(
-                            onClick = { viewModel.onEvent(ShoppingEvent.CancelEdit) },
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(48.dp),
-                            shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFEEEEEE),
-                                contentColor = MaterialTheme.colorScheme.onSurface
-                            ),
-                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
-                        ) {
-                            Text(
-                                text = "Cancelar",
-                                style = MaterialTheme.typography.labelLarge,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-
-                        Button(
-                            onClick = { viewModel.onEvent(ShoppingEvent.ConfirmEdit) },
-                            enabled = uiState.editText.isNotBlank(),
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(48.dp),
-                            shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFEEEEEE),
-                                contentColor = MaterialTheme.colorScheme.onSurface
-                            ),
-                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
-                        ) {
-                            Text(
-                                text = "Guardar",
-                                style = MaterialTheme.typography.labelLarge,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { viewModel.onEvent(ShoppingEvent.ConfirmEdit) },
+                    enabled = uiState.editText.isNotBlank()
+                ) {
+                    Text("Guardar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.onEvent(ShoppingEvent.CancelEdit) }) {
+                    Text("Cancelar")
                 }
             }
-        }
+        )
     }
 }
