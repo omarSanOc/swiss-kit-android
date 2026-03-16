@@ -11,6 +11,7 @@ import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -167,7 +168,8 @@ fun NoteRowCard(
                         CustomAccessibilityAction("Abrir") { onClick(); true },
                         CustomAccessibilityAction("Eliminar") { onLongClick(); true }
                     )
-                }
+                },
+            contentPadding = PaddingValues(20.dp)
         ) {
             Box(modifier = Modifier.fillMaxWidth()) {
                 // Content column (title row + preview)
