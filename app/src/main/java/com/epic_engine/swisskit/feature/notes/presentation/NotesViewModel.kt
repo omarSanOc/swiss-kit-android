@@ -92,4 +92,13 @@ class NotesViewModel @Inject constructor(
 
     fun onOpenNote(noteId: String) =
         viewModelScope.launch { _events.emit(NotesEvent.NavigateToDetail(noteId)) }
+
+    /** Direct single-note delete (used by swipe-to-delete in the list). */
+    fun onDeleteNote(noteId: String) {
+        viewModelScope.launch {
+            runCatching { deleteNotes(listOf(noteId)) }
+                .onSuccess { _events.emit(NotesEvent.SelectionDeleted) }
+                .onFailure { _events.emit(NotesEvent.ShowError(it.message ?: "Error")) }
+        }
+    }
 }

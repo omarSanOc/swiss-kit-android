@@ -1,32 +1,41 @@
 package com.epic_engine.swisskit.feature.notes.presentation
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Alarm
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.AssistChip
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -35,7 +44,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,11 +54,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.epic_engine.swisskit.feature.notes.presentation.components.notesBackgroundBrush
 import com.epic_engine.swisskit.feature.notes.presentation.util.NoteMarkdownRenderer
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -64,133 +83,241 @@ fun NoteDetailScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showOverflowMenu by remember { mutableStateOf(false) }
+    val isDark = isSystemInDarkTheme()
+
+    // Local TextFieldValue keeps cursor position for markdown formatting
+    var contentFieldValue by remember { mutableStateOf(TextFieldValue(uiState.contentDraft)) }
+    LaunchedEffect(uiState.contentDraft) {
+        if (contentFieldValue.text != uiState.contentDraft) {
+            contentFieldValue = contentFieldValue.copy(text = uiState.contentDraft)
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
                 NoteDetailEvent.Saved, NoteDetailEvent.Deleted -> onNavigateBack()
                 is NoteDetailEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
-                is NoteDetailEvent.ReminderSet -> snackbarHostState.showSnackbar("Recordatorio configurado")
+                is NoteDetailEvent.ReminderSet ->
+                    snackbarHostState.showSnackbar("Recordatorio configurado")
             }
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(if (uiState.isEditing) "Editar nota" else "Nota") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
-                    }
-                },
-                actions = {
-                    if (!uiState.isEditing && uiState.note != null) {
-                        IconButton(onClick = viewModel::onTogglePreview) {
+    // ── Markdown formatting helpers ───────────────────────────────────────────
+    fun applyBold() {
+        val sel = contentFieldValue.selection
+        val text = contentFieldValue.text
+        val selected = text.substring(sel.min, sel.max)
+        val newText = text.substring(0, sel.min) + "**" + selected + "**" + text.substring(sel.max)
+        val newCursor = if (sel.collapsed) sel.min + 2 else sel.max + 4
+        contentFieldValue = TextFieldValue(newText, TextRange(newCursor))
+        viewModel.onContentChange(newText)
+    }
+
+    fun applyItalic() {
+        val sel = contentFieldValue.selection
+        val text = contentFieldValue.text
+        val selected = text.substring(sel.min, sel.max)
+        val newText = text.substring(0, sel.min) + "*" + selected + "*" + text.substring(sel.max)
+        val newCursor = if (sel.collapsed) sel.min + 1 else sel.max + 2
+        contentFieldValue = TextFieldValue(newText, TextRange(newCursor))
+        viewModel.onContentChange(newText)
+    }
+
+    fun applyBullet() {
+        val sel = contentFieldValue.selection
+        val text = contentFieldValue.text
+        val lineStart = text.lastIndexOf('\n', sel.min - 1) + 1
+        val newText = text.substring(0, lineStart) + "- " + text.substring(lineStart)
+        val newCursor = sel.min + 2
+        contentFieldValue = TextFieldValue(newText, TextRange(newCursor))
+        viewModel.onContentChange(newText)
+    }
+
+    // ── Layout ────────────────────────────────────────────────────────────────
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(notesBackgroundBrush())
+    ) {
+        Scaffold(
+            containerColor = Color.Transparent,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            topBar = {
+                TopAppBar(
+                    title = {},
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateBack) {
                             Icon(
-                                imageVector = if (uiState.showMarkdownPreview) Icons.Default.Edit
-                                else Icons.Default.Visibility,
-                                contentDescription = if (uiState.showMarkdownPreview) "Ver raw" else "Vista previa"
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Volver",
+                                tint = Color.White
                             )
                         }
-                        IconButton(onClick = viewModel::onShowReminderPicker) {
-                            Icon(Icons.Default.Alarm, contentDescription = "Recordatorio")
+                    },
+                    actions = {
+                        Box {
+                            IconButton(onClick = { showOverflowMenu = true }) {
+                                Icon(
+                                    imageVector = Icons.Default.MoreVert,
+                                    contentDescription = "Más opciones",
+                                    tint = if (isDark) Color.White else Color.Black
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = showOverflowMenu,
+                                onDismissRequest = { showOverflowMenu = false }
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text("Guardar nota") },
+                                    onClick = {
+                                        showOverflowMenu = false
+                                        viewModel.onSave()
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Guardar como recordatorio") },
+                                    onClick = {
+                                        showOverflowMenu = false
+                                        viewModel.onSaveAndShowReminder()
+                                    }
+                                )
+                                if (uiState.note != null) {
+                                    DropdownMenuItem(
+                                        text = { Text("Eliminar", color = Color.Red) },
+                                        onClick = {
+                                            showOverflowMenu = false
+                                            showDeleteDialog = true
+                                        }
+                                    )
+                                }
+                            }
                         }
-                        IconButton(onClick = viewModel::onToggleEdit) {
-                            Icon(Icons.Default.Edit, contentDescription = "Editar")
-                        }
-                        IconButton(onClick = { showDeleteDialog = true }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Eliminar")
-                        }
-                    }
-                    if (uiState.isEditing) {
-                        IconButton(onClick = viewModel::onSave, enabled = !uiState.isSaving) {
-                            Icon(Icons.Default.Save, contentDescription = "Guardar")
-                        }
-                    }
-                }
-            )
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp)
-        ) {
-            if (uiState.isEditing) {
-                OutlinedTextField(
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent
+                    )
+                )
+            },
+            bottomBar = {
+                NoteFormattingToolbar(
+                    isPreviewActive = uiState.showMarkdownPreview,
+                    onBold = ::applyBold,
+                    onItalic = ::applyItalic,
+                    onBullet = ::applyBullet,
+                    onPreview = viewModel::onTogglePreview
+                )
+            }
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 8.dp, bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                // Title field (glassmorphism — thinMaterial 60 % alpha)
+                BasicTextField(
                     value = uiState.titleDraft,
                     onValueChange = viewModel::onTitleChange,
-                    label = { Text("Título") },
-                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = MaterialTheme.typography.headlineSmall.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
+                    cursorBrush = SolidColor(NotesColors.Purple),
                     singleLine = true,
-                    textStyle = MaterialTheme.typography.titleLarge
-                )
-                Spacer(Modifier.height(12.dp))
-                OutlinedTextField(
-                    value = uiState.contentDraft,
-                    onValueChange = viewModel::onContentChange,
-                    label = { Text("Contenido (Markdown)") },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .defaultMinSize(minHeight = 300.dp),
-                    maxLines = Int.MAX_VALUE
+                        .defaultMinSize(minHeight = 48.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.60f))
+                        .padding(horizontal = 12.dp, vertical = 12.dp),
+                    decorationBox = { innerTextField ->
+                        Box(contentAlignment = Alignment.CenterStart) {
+                            if (uiState.titleDraft.isEmpty()) {
+                                Text(
+                                    text = "Titulo de la nota",
+                                    style = MaterialTheme.typography.headlineSmall.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                    )
+                                )
+                            }
+                            innerTextField()
+                        }
+                    }
                 )
-            } else {
-                if (uiState.note?.title?.isNotBlank() == true) {
-                    Text(
-                        text = uiState.note!!.title,
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(Modifier.height(8.dp))
-                }
+
+                // Content field / markdown preview
                 if (uiState.showMarkdownPreview) {
                     Surface(
-                        color = NotesDesignTokens.PreviewBackground,
-                        shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        shape = RoundedCornerShape(12.dp),
+                        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.60f),
+                        tonalElevation = 0.dp
                     ) {
                         Text(
-                            text = NoteMarkdownRenderer.render(uiState.note?.content ?: ""),
-                            modifier = Modifier.padding(12.dp),
-                            style = MaterialTheme.typography.bodyLarge
+                            text = NoteMarkdownRenderer.render(contentFieldValue.text),
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(12.dp)
                         )
                     }
                 } else {
-                    Text(
-                        text = uiState.note?.content ?: "",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-                uiState.reminderAt?.let { at ->
-                    Spacer(Modifier.height(16.dp))
-                    AssistChip(
-                        onClick = viewModel::onClearReminder,
-                        label = { Text("Recordatorio: ${formatDateTime(at)}") },
-                        leadingIcon = {
-                            Icon(Icons.Default.Alarm, null, tint = NotesDesignTokens.Primary)
+                    BasicTextField(
+                        value = contentFieldValue,
+                        onValueChange = { newValue ->
+                            contentFieldValue = newValue
+                            viewModel.onContentChange(newValue.text)
                         },
-                        trailingIcon = { Icon(Icons.Default.Close, null) }
+                        textStyle = MaterialTheme.typography.bodyLarge.copy(
+                            color = MaterialTheme.colorScheme.onSurface
+                        ),
+                        cursorBrush = SolidColor(NotesColors.Purple),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.60f))
+                            .padding(12.dp),
+                        decorationBox = { innerTextField ->
+                            Box(contentAlignment = Alignment.TopStart) {
+                                if (contentFieldValue.text.isEmpty()) {
+                                    Text(
+                                        text = "Escribe tu nota...",
+                                        style = MaterialTheme.typography.bodyLarge.copy(
+                                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                        )
+                                    )
+                                }
+                                innerTextField()
+                            }
+                        }
                     )
                 }
             }
         }
     }
 
+    // ── Delete confirmation dialog ─────────────────────────────────────────────
     if (showDeleteDialog) {
+        val noteName = uiState.note?.title?.ifBlank { "esta nota" } ?: "esta nota"
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Eliminar nota") },
-            text = { Text("¿Estás seguro de que deseas eliminar esta nota?") },
+            title = { Text("Eliminar nota?") },
+            text = { Text("Esta accion eliminara $noteName. No se puede deshacer.") },
             confirmButton = {
                 TextButton(onClick = {
                     showDeleteDialog = false
                     viewModel.onDelete()
-                }) { Text("Eliminar") }
+                }) {
+                    Text("Eliminar", color = Color.Red)
+                }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) { Text("Cancelar") }
@@ -198,62 +325,208 @@ fun NoteDetailScreen(
         )
     }
 
+    // ── Reminder bottom sheet ─────────────────────────────────────────────────
     if (uiState.showReminderPicker) {
-        NoteReminderPickerDialog(
+        ReminderBottomSheet(
+            isDark = isDark,
             onConfirm = viewModel::onSetReminder,
             onDismiss = viewModel::onDismissReminderPicker
         )
     }
 }
 
+// ── Formatting toolbar ────────────────────────────────────────────────────────
+
+@Composable
+private fun NoteFormattingToolbar(
+    isPreviewActive: Boolean,
+    onBold: () -> Unit,
+    onItalic: () -> Unit,
+    onBullet: () -> Unit,
+    onPreview: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier
+            .fillMaxWidth()
+            .navigationBarsPadding(),
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.82f),
+        tonalElevation = 0.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            FormatTextButton(
+                label = "B",
+                fontWeight = FontWeight.Bold,
+                contentDescription = "Bold",
+                onClick = onBold
+            )
+            FormatTextButton(
+                label = "I",
+                fontStyle = FontStyle.Italic,
+                contentDescription = "Italic",
+                onClick = onItalic
+            )
+            FormatTextButton(
+                label = "•",
+                contentDescription = "Bullet list",
+                onClick = onBullet
+            )
+            Spacer(Modifier.weight(1f))
+            IconButton(
+                onClick = onPreview,
+                modifier = Modifier.size(36.dp)
+            ) {
+                Icon(
+                    imageVector = if (isPreviewActive) Icons.Default.Edit else Icons.Default.Visibility,
+                    contentDescription = if (isPreviewActive) "Editar" else "Preview",
+                    tint = NotesColors.Purple
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun FormatTextButton(
+    label: String,
+    contentDescription: String,
+    fontWeight: FontWeight? = null,
+    fontStyle: FontStyle? = null,
+    onClick: () -> Unit
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = Modifier.defaultMinSize(minWidth = 32.dp, minHeight = 32.dp),
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+        shape = RoundedCornerShape(6.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = MaterialTheme.colorScheme.onSurface
+        )
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.titleSmall.copy(
+                fontWeight = fontWeight,
+                fontStyle = fontStyle
+            )
+        )
+    }
+}
+
+// ── Reminder bottom sheet ─────────────────────────────────────────────────────
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun NoteReminderPickerDialog(
+private fun ReminderBottomSheet(
+    isDark: Boolean,
     onConfirm: (Long) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val accentColor = if (isDark) NotesColors.PurpleAccentDark else NotesColors.Purple
+    val sheetBg = if (isDark) NotesColors.ReminderSheetDark else NotesColors.ReminderSheetLight
+
+    // Internal navigation: date → time
     var showTimePicker by remember { mutableStateOf(false) }
     var selectedDateMillis by remember { mutableStateOf<Long?>(null) }
     val datePickerState = rememberDatePickerState()
+    val timePickerState = rememberTimePickerState()
 
     if (!showTimePicker) {
+        // ── Date picker ───────────────────────────────────────────────────────
         DatePickerDialog(
             onDismissRequest = onDismiss,
             confirmButton = {
-                TextButton(onClick = {
-                    selectedDateMillis = datePickerState.selectedDateMillis
-                    if (selectedDateMillis != null) showTimePicker = true
-                }) { Text("Siguiente") }
+                TextButton(
+                    onClick = {
+                        selectedDateMillis = datePickerState.selectedDateMillis
+                        if (selectedDateMillis != null) showTimePicker = true
+                    }
+                ) { Text("Siguiente", color = accentColor) }
             },
             dismissButton = {
-                TextButton(onClick = onDismiss) { Text("Cancelar") }
+                TextButton(onClick = onDismiss) { Text("Cancelar", color = accentColor) }
             }
         ) {
             DatePicker(state = datePickerState)
         }
     } else {
-        val timePickerState = rememberTimePickerState()
-        AlertDialog(
+        // ── Time picker in a ModalBottomSheet ─────────────────────────────────
+        ModalBottomSheet(
             onDismissRequest = onDismiss,
-            title = { Text("Seleccionar hora") },
-            text = { TimePicker(state = timePickerState) },
-            confirmButton = {
-                TextButton(onClick = {
-                    val dateMillis = selectedDateMillis ?: return@TextButton
-                    val cal = Calendar.getInstance().apply {
-                        timeInMillis = dateMillis
-                        set(Calendar.HOUR_OF_DAY, timePickerState.hour)
-                        set(Calendar.MINUTE, timePickerState.minute)
-                        set(Calendar.SECOND, 0)
-                        set(Calendar.MILLISECOND, 0)
+            sheetState = sheetState,
+            containerColor = sheetBg,
+            shape = RoundedCornerShape(topStart = 36.dp, topEnd = 36.dp),
+            tonalElevation = 0.dp
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+                    .padding(bottom = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                // Drag handle
+                Surface(
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .width(68.dp)
+                        .height(6.dp),
+                    shape = RoundedCornerShape(3.dp),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.35f)
+                ) {}
+
+                Text(
+                    text = "Nuevo recordatorio",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+
+                TimePicker(state = timePickerState)
+
+                // Action buttons
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    TextButton(
+                        onClick = onDismiss,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Cancelar", color = accentColor)
                     }
-                    onConfirm(cal.timeInMillis)
-                }) { Text("Confirmar") }
-            },
-            dismissButton = {
-                TextButton(onClick = onDismiss) { Text("Cancelar") }
+                    androidx.compose.material3.Button(
+                        onClick = {
+                            val dateMillis = selectedDateMillis ?: return@Button
+                            val cal = Calendar.getInstance().apply {
+                                timeInMillis = dateMillis
+                                set(Calendar.HOUR_OF_DAY, timePickerState.hour)
+                                set(Calendar.MINUTE, timePickerState.minute)
+                                set(Calendar.SECOND, 0)
+                                set(Calendar.MILLISECOND, 0)
+                            }
+                            onConfirm(cal.timeInMillis)
+                        },
+                        modifier = Modifier.weight(1f),
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                            containerColor = accentColor,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text("Guardar")
+                    }
+                }
             }
-        )
+        }
     }
 }
 

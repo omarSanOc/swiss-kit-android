@@ -50,7 +50,7 @@ class NoteDetailViewModel @Inject constructor(
                         titleDraft = note.title,
                         contentDraft = note.content,
                         reminderAt = note.reminderAt,
-                        isEditing = false
+                        isEditing = true  // always open in edit mode
                     )
                 } else {
                     it.copy(isEditing = true)
@@ -109,6 +109,35 @@ class NoteDetailViewModel @Inject constructor(
                     _events.emit(NoteDetailEvent.ReminderSet(epochMillis))
                 }
                 .onFailure { _events.emit(NoteDetailEvent.ShowError(it.message ?: "Error")) }
+        }
+    }
+
+    /**
+     * Saves the current draft silently (without navigating back), then opens the reminder sheet.
+     * Used from the overflow menu "Guardar como recordatorio".
+     */
+    fun onSaveAndShowReminder() {
+        val state = _uiState.value
+        viewModelScope.launch {
+            _uiState.update { it.copy(isSaving = true) }
+            runCatching {
+                val draft = Note(
+                    id = state.note?.id ?: "",
+                    title = state.titleDraft.trim(),
+                    content = state.contentDraft,
+                    createdAt = state.note?.createdAt ?: 0L,
+                    updatedAt = 0L,
+                    reminderAt = state.reminderAt
+                )
+                saveNote(draft)
+            }.onSuccess { saved ->
+                _uiState.update { s ->
+                    s.copy(isSaving = false, note = saved, showReminderPicker = true)
+                }
+            }.onFailure {
+                _uiState.update { s -> s.copy(isSaving = false) }
+                _events.emit(NoteDetailEvent.ShowError(it.message ?: "Error al guardar"))
+            }
         }
     }
 
