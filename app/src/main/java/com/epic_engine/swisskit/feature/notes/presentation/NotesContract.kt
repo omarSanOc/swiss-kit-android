@@ -8,7 +8,8 @@ data class NotesUiState(
     val searchQuery: String = "",
     val isLoading: Boolean = false,
     val selectedIds: Set<String> = emptySet(),
-    val isSelectionMode: Boolean = false
+    val isSelectionMode: Boolean = false,
+    val noteToDelete: Note? = null
 )
 
 sealed interface NotesEvent {
@@ -16,6 +17,7 @@ sealed interface NotesEvent {
     data class NavigateToDetail(val noteId: String) : NotesEvent
     data class ShowError(val message: String) : NotesEvent
     data object SelectionDeleted : NotesEvent
+    data object NoteDeleted : NotesEvent
 }
 
 // ── Detalle / Editor ────────────────────────────────────────────────

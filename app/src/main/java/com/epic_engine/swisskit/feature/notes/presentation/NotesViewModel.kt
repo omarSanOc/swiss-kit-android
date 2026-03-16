@@ -2,6 +2,7 @@ package com.epic_engine.swisskit.feature.notes.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.epic_engine.swisskit.feature.notes.domain.model.Note
 import com.epic_engine.swisskit.feature.notes.domain.usecase.DeleteNotesUseCase
 import com.epic_engine.swisskit.feature.notes.domain.usecase.ObserveNotesUseCase
 import com.epic_engine.swisskit.feature.notes.domain.usecase.SearchNotesUseCase
@@ -93,12 +94,24 @@ class NotesViewModel @Inject constructor(
     fun onOpenNote(noteId: String) =
         viewModelScope.launch { _events.emit(NotesEvent.NavigateToDetail(noteId)) }
 
-    /** Direct single-note delete (used by swipe-to-delete in the list). */
-    fun onDeleteNote(noteId: String) {
+    /** Muestra el diálogo de confirmación guardando la nota a eliminar. */
+    fun onShowDeleteDialog(note: Note) {
+        _uiState.update { it.copy(noteToDelete = note) }
+    }
+
+    /** Descarta el diálogo sin eliminar nada. */
+    fun onDismissDeleteDialog() {
+        _uiState.update { it.copy(noteToDelete = null) }
+    }
+
+    /** Confirma la eliminación de la nota almacenada en noteToDelete. */
+    fun onConfirmDeleteNote() {
+        val note = _uiState.value.noteToDelete ?: return
+        _uiState.update { it.copy(noteToDelete = null) }
         viewModelScope.launch {
-            runCatching { deleteNotes(listOf(noteId)) }
-                .onSuccess { _events.emit(NotesEvent.SelectionDeleted) }
-                .onFailure { _events.emit(NotesEvent.ShowError(it.message ?: "Error")) }
+            runCatching { deleteNotes(listOf(note.id)) }
+                .onSuccess { _events.emit(NotesEvent.NoteDeleted) }
+                .onFailure { _events.emit(NotesEvent.ShowError(it.message ?: "Error al eliminar")) }
         }
     }
 }

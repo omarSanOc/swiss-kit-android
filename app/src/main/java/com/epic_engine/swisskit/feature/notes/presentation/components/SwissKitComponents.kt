@@ -72,7 +72,7 @@ fun SwissKitCard(
                 spotColor = NotesColors.CardShadow
             ),
         shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.82f),
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
         tonalElevation = 0.dp
     ) {
         Column(

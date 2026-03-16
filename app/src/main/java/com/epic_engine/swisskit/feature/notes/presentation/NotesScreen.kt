@@ -9,13 +9,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,16 +23,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +44,7 @@ import com.epic_engine.swisskit.feature.notes.presentation.components.NotesFAB
 import com.epic_engine.swisskit.feature.notes.presentation.components.NotesEmptyState
 import com.epic_engine.swisskit.feature.notes.presentation.components.SelectionTopBar
 import com.epic_engine.swisskit.feature.notes.presentation.components.SwissKitSearchBar
+import com.epic_engine.swisskit.feature.notes.presentation.components.displayTitle
 import com.epic_engine.swisskit.feature.notes.presentation.components.notesBackgroundBrush
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,13 +58,16 @@ fun NotesScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    var revealedNoteId by rememberSaveable { mutableStateOf<String?>(null) }
+
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
                 is NotesEvent.NavigateToCreate -> onNavigateToCreate()
                 is NotesEvent.NavigateToDetail -> onNavigateToDetail(event.noteId)
                 is NotesEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
-                NotesEvent.SelectionDeleted -> snackbarHostState.showSnackbar("Nota eliminada")
+                NotesEvent.SelectionDeleted -> snackbarHostState.showSnackbar("Notas eliminadas")
+                NotesEvent.NoteDeleted -> snackbarHostState.showSnackbar("Nota eliminada")
             }
         }
     }
@@ -138,7 +141,7 @@ fun NotesScreen(
                 } else {
                     LazyColumn(
                         contentPadding = PaddingValues(
-                            horizontal = 16.dp,
+                            horizontal = 24.dp,
                             vertical = 12.dp
                         ),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -148,54 +151,55 @@ fun NotesScreen(
                             items = uiState.notes,
                             key = { it.id }
                         ) { note ->
-                            val dismissState = rememberSwipeToDismissBoxState(
-                                confirmValueChange = { value ->
-                                    if (value == SwipeToDismissBoxValue.EndToStart) {
-                                        viewModel.onDeleteNote(note.id)
-                                        true
-                                    } else false
-                                }
-                            )
-
-                            SwipeToDismissBox(
-                                state = dismissState,
-                                enableDismissFromStartToEnd = false,
+                            NoteRowCard(
+                                note = note,
+                                isSelected = note.id in uiState.selectedIds,
+                                isSelectionMode = uiState.isSelectionMode,
+                                isRevealed = revealedNoteId == note.id,
+                                onRevealChange = { revealed ->
+                                    revealedNoteId = if (revealed) note.id else null
+                                },
+                                onClick = {
+                                    if (uiState.isSelectionMode) viewModel.onToggleSelection(note.id)
+                                    else viewModel.onOpenNote(note.id)
+                                },
+                                onLongClick = { viewModel.onToggleSelection(note.id) },
+                                onDelete = { viewModel.onShowDeleteDialog(note) },
                                 modifier = Modifier.animateItem(
                                     fadeInSpec = tween(250),
                                     fadeOutSpec = tween(250),
                                     placementSpec = tween(250)
-                                ),
-                                backgroundContent = {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(horizontal = 20.dp),
-                                        contentAlignment = Alignment.CenterEnd
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Delete,
-                                            contentDescription = "Eliminar",
-                                            tint = Color.White,
-                                            modifier = Modifier.size(24.dp)
-                                        )
-                                    }
-                                }
-                            ) {
-                                NoteRowCard(
-                                    note = note,
-                                    isSelected = note.id in uiState.selectedIds,
-                                    isSelectionMode = uiState.isSelectionMode,
-                                    onClick = {
-                                        if (uiState.isSelectionMode) viewModel.onToggleSelection(note.id)
-                                        else viewModel.onOpenNote(note.id)
-                                    },
-                                    onLongClick = { viewModel.onToggleSelection(note.id) }
                                 )
-                            }
+                            )
                         }
                     }
                 }
             }
         }
+    }
+
+    // Diálogo de confirmación: eliminar nota individual
+    if (uiState.noteToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { viewModel.onDismissDeleteDialog() },
+            title = { Text("¿Eliminar nota?") },
+            text = {
+                val title = uiState.noteToDelete!!.displayTitle()
+                Text("Esta acción eliminará \"$title\". No se puede deshacer.")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { viewModel.onConfirmDeleteNote() },
+                    colors = ButtonDefaults.textButtonColors(contentColor = Color.Red)
+                ) {
+                    Text("Eliminar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.onDismissDeleteDialog() }) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }

@@ -40,7 +40,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.epic_engine.swisskit.core.designsystem.components.SwissKitCard
+import com.epic_engine.swisskit.feature.notes.presentation.components.SwissKitCard
 import com.epic_engine.swisskit.feature.shopping.domain.model.ShoppingItem
 import com.epic_engine.swisskit.ui.theme.yellowShopping
 import kotlinx.coroutines.launch
