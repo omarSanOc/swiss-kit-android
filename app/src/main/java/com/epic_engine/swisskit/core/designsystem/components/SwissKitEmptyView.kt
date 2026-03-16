@@ -1,5 +1,6 @@
 package com.epic_engine.swisskit.core.designsystem.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,13 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.R
 
 @Composable
 fun SwissKitEmptyView(
-    icon: ImageVector,
+    @DrawableRes icon: Int = R.drawable.icon_notes,
     title: String,
     subtitle: String = "",
     modifier: Modifier = Modifier,
@@ -30,7 +32,7 @@ fun SwissKitEmptyView(
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            imageVector = icon,
+            painter = painterResource(icon),
             contentDescription = null,
             modifier = Modifier.size(64.dp),
             tint = iconTint

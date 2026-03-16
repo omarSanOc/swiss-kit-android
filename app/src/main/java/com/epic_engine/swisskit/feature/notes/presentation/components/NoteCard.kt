@@ -1,6 +1,7 @@
 package com.epic_engine.swisskit.feature.notes.presentation.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -51,6 +52,7 @@ fun NoteRowCard(
     val displayPreview = note.previewText()
     val displayDate = formatDate(note.updatedAt)
     val a11yLabel = "$displayTitle. $displayPreview. $displayDate"
+    val titleColor = if (isSystemInDarkTheme()) Color.White else Color.Black
 
     SwissKitCard(
         modifier = modifier
@@ -80,6 +82,7 @@ fun NoteRowCard(
                         text = displayTitle,
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
+                        color = titleColor,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f)

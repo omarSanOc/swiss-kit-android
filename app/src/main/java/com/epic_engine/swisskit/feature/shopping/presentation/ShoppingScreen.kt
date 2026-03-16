@@ -13,11 +13,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.outlined.ShoppingCart
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
@@ -51,6 +50,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
 import com.epic_engine.swisskit.feature.shopping.presentation.components.ShoppingActionButtons
 import com.epic_engine.swisskit.feature.shopping.presentation.components.ShoppingAddItemBar
@@ -163,7 +163,7 @@ fun ShoppingScreen(
 
                 if (!uiState.hasAnyItems) {
                     SwissKitEmptyView(
-                        icon = Icons.Outlined.ShoppingCart,
+                        icon = R.drawable.icon_shopping,
                         title = "Tu lista está vacía",
                         subtitle = "Agrega ítems para empezar",
                         modifier = Modifier.fillMaxSize(),

@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.outlined.AccountBalance
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitFAB
@@ -191,7 +191,7 @@ fun FinanceScreen(
             if (!uiState.hasItems) {
                 item {
                     SwissKitEmptyView(
-                        icon = Icons.Outlined.AccountBalance,
+                        icon = R.drawable.icon_wallet,
                         title = "Sin transacciones",
                         subtitle = "Agrega tu primera transacción con el botón +",
                         iconTint = FinanceDesignTokens.accentBlue.copy(0.5f),
