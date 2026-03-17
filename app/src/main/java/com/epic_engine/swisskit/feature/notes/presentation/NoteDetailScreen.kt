@@ -1,5 +1,6 @@
 package com.epic_engine.swisskit.feature.notes.presentation
 
+import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -8,22 +9,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
@@ -65,9 +62,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.epic_engine.swisskit.feature.notes.presentation.components.notesBackgroundBrush
-import com.epic_engine.swisskit.feature.notes.presentation.util.NoteMarkdownRenderer
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -85,6 +82,7 @@ fun NoteDetailScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showOverflowMenu by remember { mutableStateOf(false) }
     val isDark = isSystemInDarkTheme()
+    val context = LocalContext.current
 
     // Local TextFieldValue keeps cursor position for markdown formatting
     var contentFieldValue by remember { mutableStateOf(TextFieldValue(uiState.contentDraft)) }
@@ -185,6 +183,25 @@ fun NoteDetailScreen(
                                         viewModel.onSaveAndShowReminder()
                                     }
                                 )
+                                DropdownMenuItem(
+                                    text = { Text("Compartir nota") },
+                                    onClick = {
+                                        showOverflowMenu = false
+                                        val shareText = buildString {
+                                            if (uiState.titleDraft.isNotBlank()) {
+                                                appendLine(uiState.titleDraft)
+                                                appendLine()
+                                            }
+                                            append(uiState.contentDraft)
+                                        }
+                                        val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                                            type = "text/plain"
+                                            putExtra(Intent.EXTRA_SUBJECT, uiState.titleDraft)
+                                            putExtra(Intent.EXTRA_TEXT, shareText)
+                                        }
+                                        context.startActivity(Intent.createChooser(sendIntent, "Compartir nota"))
+                                    }
+                                )
                                 if (uiState.note != null) {
                                     DropdownMenuItem(
                                         text = { Text("Eliminar", color = Color.Red) },
@@ -204,11 +221,9 @@ fun NoteDetailScreen(
             },
             bottomBar = {
                 NoteFormattingToolbar(
-                    isPreviewActive = uiState.showMarkdownPreview,
                     onBold = ::applyBold,
                     onItalic = ::applyItalic,
-                    onBullet = ::applyBullet,
-                    onPreview = viewModel::onTogglePreview
+                    onBullet = ::applyBullet
                 )
             }
         ) { innerPadding ->
@@ -252,54 +267,37 @@ fun NoteDetailScreen(
                     }
                 )
 
-                // Content field / markdown preview
-                if (uiState.showMarkdownPreview) {
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f),
-                        shape = RoundedCornerShape(12.dp),
-                        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.60f),
-                        tonalElevation = 0.dp
-                    ) {
-                        Text(
-                            text = NoteMarkdownRenderer.render(contentFieldValue.text),
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(12.dp)
-                        )
-                    }
-                } else {
-                    BasicTextField(
-                        value = contentFieldValue,
-                        onValueChange = { newValue ->
-                            contentFieldValue = newValue
-                            viewModel.onContentChange(newValue.text)
-                        },
-                        textStyle = MaterialTheme.typography.bodyLarge.copy(
-                            color = MaterialTheme.colorScheme.onSurface
-                        ),
-                        cursorBrush = SolidColor(NotesColors.Purple),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.60f))
-                            .padding(12.dp),
-                        decorationBox = { innerTextField ->
-                            Box(contentAlignment = Alignment.TopStart) {
-                                if (contentFieldValue.text.isEmpty()) {
-                                    Text(
-                                        text = "Escribe tu nota...",
-                                        style = MaterialTheme.typography.bodyLarge.copy(
-                                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                                        )
+                // Content field
+                BasicTextField(
+                    value = contentFieldValue,
+                    onValueChange = { newValue ->
+                        contentFieldValue = newValue
+                        viewModel.onContentChange(newValue.text)
+                    },
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
+                    cursorBrush = SolidColor(NotesColors.Purple),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.60f))
+                        .padding(12.dp),
+                    decorationBox = { innerTextField ->
+                        Box(contentAlignment = Alignment.TopStart) {
+                            if (contentFieldValue.text.isEmpty()) {
+                                Text(
+                                    text = "Escribe tu nota...",
+                                    style = MaterialTheme.typography.bodyLarge.copy(
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                     )
-                                }
-                                innerTextField()
+                                )
                             }
+                            innerTextField()
                         }
-                    )
-                }
+                    }
+                )
             }
         }
     }
@@ -339,11 +337,9 @@ fun NoteDetailScreen(
 
 @Composable
 private fun NoteFormattingToolbar(
-    isPreviewActive: Boolean,
     onBold: () -> Unit,
     onItalic: () -> Unit,
     onBullet: () -> Unit,
-    onPreview: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -377,17 +373,6 @@ private fun NoteFormattingToolbar(
                 contentDescription = "Bullet list",
                 onClick = onBullet
             )
-            Spacer(Modifier.weight(1f))
-            IconButton(
-                onClick = onPreview,
-                modifier = Modifier.size(36.dp)
-            ) {
-                Icon(
-                    imageVector = if (isPreviewActive) Icons.Default.Edit else Icons.Default.Visibility,
-                    contentDescription = if (isPreviewActive) "Editar" else "Preview",
-                    tint = NotesColors.Purple
-                )
-            }
         }
     }
 }

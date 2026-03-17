@@ -61,7 +61,6 @@ class NoteDetailViewModel @Inject constructor(
 
     fun onTitleChange(value: String) = _uiState.update { it.copy(titleDraft = value) }
     fun onContentChange(value: String) = _uiState.update { it.copy(contentDraft = value) }
-    fun onTogglePreview() = _uiState.update { it.copy(showMarkdownPreview = !it.showMarkdownPreview) }
     fun onToggleEdit() = _uiState.update { it.copy(isEditing = !it.isEditing) }
     fun onShowReminderPicker() = _uiState.update { it.copy(showReminderPicker = true) }
     fun onDismissReminderPicker() = _uiState.update { it.copy(showReminderPicker = false) }

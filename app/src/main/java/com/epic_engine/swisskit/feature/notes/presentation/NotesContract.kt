@@ -27,7 +27,6 @@ data class NoteDetailUiState(
     val titleDraft: String = "",
     val contentDraft: String = "",
     val isSaving: Boolean = false,
-    val showMarkdownPreview: Boolean = false,
     val showReminderPicker: Boolean = false,
     val reminderAt: Long? = null
 )
