@@ -31,16 +31,20 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitFAB
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitSearchBar
-import com.epic_engine.swisskit.feature.contacts.presentation.components.CategoryCard
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitToast
+import com.epic_engine.swisskit.feature.contacts.presentation.components.CategoryRow
 import com.epic_engine.swisskit.feature.contacts.presentation.components.CategorySheet
-import com.epic_engine.swisskit.feature.contacts.presentation.components.ContactsBackground
-import com.epic_engine.swisskit.feature.contacts.presentation.components.ContactsFAB
-import com.epic_engine.swisskit.feature.contacts.presentation.components.ContactsSearchBar
-import com.epic_engine.swisskit.feature.contacts.presentation.components.ContactsToast
 import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDeleteAction
 import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDimens
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsFABGradientBottom
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsFABGradientTop
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsTeal
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsTealDark
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsTealLight
 import com.epic_engine.swisskit.ui.theme.greenContact
 
 @Composable
@@ -61,96 +65,101 @@ fun CategoriesScreen(
         }
     }
 
-    ContactsBackground {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .statusBarsPadding()
-            ) {
-                // Toolbar
-                ContactsToolbar(title = "Contactos")
+    SwissKitBackground(
+        colors = listOf(ContactsTeal, ContactsTealLight),
+        darkColors = listOf(ContactsTeal, ContactsTealDark),
+        content = {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .statusBarsPadding()
+                ) {
+                    // Toolbar
+                    ContactsToolbar(title = "Contactos")
 
-                Spacer(Modifier.height(ContactsDimens.screenTopPadding))
+                    Spacer(Modifier.height(ContactsDimens.screenTopPadding))
 
-                val filtered = if (uiState.searchQuery.isBlank()) uiState.categories
-                else uiState.categories.filter {
-                    it.title.contains(uiState.searchQuery, ignoreCase = true)
-                }
+                    val filtered = if (uiState.searchQuery.isBlank()) uiState.categories
+                    else uiState.categories.filter {
+                        it.title.contains(uiState.searchQuery, ignoreCase = true)
+                    }
 
-                if (uiState.categories.isEmpty()) {
-                    // Empty state — no search bar, just the empty view
-                    SwissKitEmptyView(
-                        icon = R.drawable.icon_folder_plus,
-                        title = "Sin categorías",
-                        subtitle = "Crea tu primera categoría con el botón +",
-                        modifier = Modifier.fillMaxSize(),
-                        iconTint = Color.White
-                    )
-                } else {
-                    // Search bar
-                    SwissKitSearchBar(
-                        tint = greenContact,
-                        query = uiState.searchQuery,
-                        onQueryChange = viewModel::onSearchQueryChange,
-                        description = "Buscar categoría…",
-                        modifier = Modifier.padding(horizontal = ContactsDimens.screenHorizontalPadding)
-                    )
-                    Spacer(Modifier.height(ContactsDimens.rowVerticalInset))
-
-                    if (filtered.isEmpty()) {
+                    if (uiState.categories.isEmpty()) {
+                        // Empty state — no search bar, just the empty view
                         SwissKitEmptyView(
                             icon = R.drawable.icon_folder_plus,
-                            title = "Sin resultados",
-                            subtitle = "Ninguna categoría coincide con tu búsqueda",
+                            title = "Sin categorías",
+                            subtitle = "Crea tu primera categoría con el botón +",
                             modifier = Modifier.fillMaxSize(),
                             iconTint = Color.White
                         )
                     } else {
-                        LazyColumn(
-                            contentPadding = PaddingValues(
-                                horizontal = ContactsDimens.screenHorizontalPadding,
-                                vertical = ContactsDimens.rowVerticalInset
-                            ),
-                            verticalArrangement = Arrangement.spacedBy(ContactsDimens.rowVerticalInset)
-                        ) {
-                            items(filtered, key = { it.id }) { category ->
-                                CategoryCard(
-                                    category = category,
-                                    isRevealed = revealedCategoryId == category.id,
-                                    onRevealChange = { revealed ->
-                                        revealedCategoryId = if (revealed) category.id else null
-                                    },
-                                    onClick = { viewModel.onSelectCategory(category.id, category.title) },
-                                    onRename = { viewModel.onStartRename(category) },
-                                    onDelete = { viewModel.onRequestDeleteCategory(category) },
-                                    modifier = Modifier.animateItem(
-                                        fadeInSpec = tween(250),
-                                        fadeOutSpec = tween(250),
-                                        placementSpec = tween(250)
+                        // Search bar
+                        SwissKitSearchBar(
+                            tint = greenContact,
+                            query = uiState.searchQuery,
+                            onQueryChange = viewModel::onSearchQueryChange,
+                            description = "Buscar categoría…",
+                            modifier = Modifier.padding(horizontal = ContactsDimens.screenHorizontalPadding)
+                        )
+                        Spacer(Modifier.height(ContactsDimens.rowVerticalInset))
+
+                        if (filtered.isEmpty()) {
+                            SwissKitEmptyView(
+                                icon = R.drawable.icon_folder_plus,
+                                title = "Sin resultados",
+                                subtitle = "Ninguna categoría coincide con tu búsqueda",
+                                modifier = Modifier.fillMaxSize(),
+                                iconTint = Color.White
+                            )
+                        } else {
+                            LazyColumn(
+                                contentPadding = PaddingValues(
+                                    horizontal = ContactsDimens.screenHorizontalPadding,
+                                    vertical = ContactsDimens.rowVerticalInset
+                                ),
+                                verticalArrangement = Arrangement.spacedBy(ContactsDimens.rowVerticalInset)
+                            ) {
+                                items(filtered, key = { it.id }) { category ->
+                                    CategoryRow(
+                                        category = category,
+                                        isRevealed = revealedCategoryId == category.id,
+                                        onRevealChange = { revealed ->
+                                            revealedCategoryId = if (revealed) category.id else null
+                                        },
+                                        onClick = { viewModel.onSelectCategory(category.id, category.title) },
+                                        onRename = { viewModel.onStartRename(category) },
+                                        onDelete = { viewModel.onRequestDeleteCategory(category) },
+                                        modifier = Modifier.animateItem(
+                                            fadeInSpec = tween(250),
+                                            fadeOutSpec = tween(250),
+                                            placementSpec = tween(250)
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
                     }
                 }
+
+                // FAB
+                SwissKitFAB(
+                    onClick = viewModel::onShowAddSheet,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(end = ContactsDimens.fabMargin, bottom = 56.dp),
+                    colors = listOf(ContactsFABGradientTop, ContactsFABGradientBottom)
+                )
+
+                // Toast
+                SwissKitToast(
+                    message = uiState.toastMessage,
+                    onDismiss = viewModel::onDismissToast
+                )
             }
-
-            // FAB
-            ContactsFAB(
-                onClick = viewModel::onShowAddSheet,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(end = ContactsDimens.fabMargin, bottom = 56.dp)
-            )
-
-            // Toast
-            ContactsToast(
-                message = uiState.toastMessage,
-                onDismiss = viewModel::onDismissToast
-            )
         }
-    }
+    )
 
     // Add/Rename sheet
     if (uiState.showAddSheet) {

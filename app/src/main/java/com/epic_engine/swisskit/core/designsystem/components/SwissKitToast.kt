@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.feature.contacts.presentation.components
+package com.epic_engine.swisskit.core.designsystem.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -23,13 +23,13 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 
 @Composable
-fun ContactsToast(
+fun SwissKitToast(
     message: String?,
     onDismiss: () -> Unit
 ) {
     LaunchedEffect(message) {
         if (message != null) {
-            delay(2000)
+            delay(1500)
             onDismiss()
         }
     }

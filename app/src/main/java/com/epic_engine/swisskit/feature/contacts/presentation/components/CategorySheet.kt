@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDimens
 import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsFieldPlaceholder
 
@@ -56,7 +57,7 @@ fun CategorySheet(
                 onValueChange = onTitleChange,
                 placeholder = "Nombre de la categoría",
                 placeholderColor = ContactsFieldPlaceholder,
-                leadingIcon = Icons.Default.Folder,
+                leadingIcon = R.drawable.icon_folder,
                 leadingIconDescription = "Carpeta"
             )
             Spacer(Modifier.height(ContactsDimens.formFieldSpacing))

@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDimens
@@ -24,7 +24,7 @@ fun ContactsTextField(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
-    leadingIcon: ImageVector,
+    leadingIcon: Int,
     leadingIconDescription: String,
     modifier: Modifier = Modifier,
     isError: Boolean = false,
@@ -53,7 +53,7 @@ fun ContactsTextField(
         },
         leadingIcon = {
             Icon(
-                imageVector = leadingIcon,
+                painter = painterResource(leadingIcon),
                 contentDescription = leadingIconDescription,
                 tint = ContactsTeal
             )

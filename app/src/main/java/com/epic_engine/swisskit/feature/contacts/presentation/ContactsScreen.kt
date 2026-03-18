@@ -42,17 +42,21 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitFAB
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitSearchBar
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitToast
 import com.epic_engine.swisskit.feature.contacts.presentation.components.ContactActionSheet
 import com.epic_engine.swisskit.feature.contacts.presentation.components.ContactRow
 import com.epic_engine.swisskit.feature.contacts.presentation.components.ContactSheet
-import com.epic_engine.swisskit.feature.contacts.presentation.components.ContactsBackground
-import com.epic_engine.swisskit.feature.contacts.presentation.components.ContactsFAB
-import com.epic_engine.swisskit.feature.contacts.presentation.components.ContactsSearchBar
-import com.epic_engine.swisskit.feature.contacts.presentation.components.ContactsToast
 import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDeleteAction
 import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDimens
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsFABGradientBottom
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsFABGradientTop
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsTeal
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsTealDark
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsTealLight
 import com.epic_engine.swisskit.ui.theme.greenContact
 
 @Composable
@@ -77,94 +81,99 @@ fun ContactsScreen(
         }
     }
 
-    ContactsBackground {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .statusBarsPadding()
-            ) {
-                // Toolbar with back button
-                ContactsDetailToolbar(
-                    title = categoryTitle,
-                    onNavigateBack = onNavigateBack
-                )
-
-                Spacer(Modifier.height(ContactsDimens.screenTopPadding))
-
-                if (uiState.contacts.isEmpty() && uiState.searchQuery.isBlank()) {
-                    // Empty state
-                    SwissKitEmptyView(
-                        icon = R.drawable.icon_contact_plus,
-                        title = "Sin contactos",
-                        subtitle = "Crea tu primer contacto con el botón +",
-                        modifier = Modifier.fillMaxSize(),
-                        iconTint = Color.White
+    SwissKitBackground(
+        content = {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .statusBarsPadding()
+                ) {
+                    // Toolbar with back button
+                    ContactsDetailToolbar(
+                        title = categoryTitle,
+                        onNavigateBack = onNavigateBack
                     )
-                } else {
-                    // Search bar
-                    SwissKitSearchBar(
-                        tint = greenContact,
-                        query = uiState.searchQuery,
-                        onQueryChange = viewModel::onSearchQueryChange,
-                        description = "Buscar contacto…",
-                        modifier = Modifier.padding(horizontal = ContactsDimens.screenHorizontalPadding)
-                    )
-                    Spacer(Modifier.height(ContactsDimens.rowVerticalInset))
 
-                    if (uiState.contacts.isEmpty()) {
+                    Spacer(Modifier.height(ContactsDimens.screenTopPadding))
+
+                    if (uiState.contacts.isEmpty() && uiState.searchQuery.isBlank()) {
+                        // Empty state
                         SwissKitEmptyView(
                             icon = R.drawable.icon_contact_plus,
-                            title = "Sin resultados",
-                            subtitle = "Ningún contacto coincide con tu búsqueda",
+                            title = "Sin contactos",
+                            subtitle = "Crea tu primer contacto con el botón +",
                             modifier = Modifier.fillMaxSize(),
                             iconTint = Color.White
                         )
                     } else {
-                        LazyColumn(
-                            contentPadding = PaddingValues(
-                                horizontal = ContactsDimens.screenHorizontalPadding,
-                                vertical = ContactsDimens.rowVerticalInset
-                            ),
-                            verticalArrangement = Arrangement.spacedBy(ContactsDimens.rowVerticalInset)
-                        ) {
-                            items(uiState.contacts, key = { it.id }) { contact ->
-                                ContactRow(
-                                    contact = contact,
-                                    isRevealed = revealedContactId == contact.id,
-                                    onRevealChange = { revealed ->
-                                        revealedContactId = if (revealed) contact.id else null
-                                    },
-                                    onShowActionSheet = { viewModel.onShowActionSheet(contact) },
-                                    onEdit = { viewModel.onEditContact(contact) },
-                                    onDelete = { viewModel.onRequestDeleteContact(contact) },
-                                    modifier = Modifier.animateItem(
-                                        fadeInSpec = tween(250),
-                                        fadeOutSpec = tween(250),
-                                        placementSpec = tween(250)
+                        // Search bar
+                        SwissKitSearchBar(
+                            tint = greenContact,
+                            query = uiState.searchQuery,
+                            onQueryChange = viewModel::onSearchQueryChange,
+                            description = "Buscar contacto…",
+                            modifier = Modifier.padding(horizontal = ContactsDimens.screenHorizontalPadding)
+                        )
+                        Spacer(Modifier.height(ContactsDimens.rowVerticalInset))
+
+                        if (uiState.contacts.isEmpty()) {
+                            SwissKitEmptyView(
+                                icon = R.drawable.icon_contact_plus,
+                                title = "Sin resultados",
+                                subtitle = "Ningún contacto coincide con tu búsqueda",
+                                modifier = Modifier.fillMaxSize(),
+                                iconTint = Color.White
+                            )
+                        } else {
+                            LazyColumn(
+                                contentPadding = PaddingValues(
+                                    horizontal = ContactsDimens.screenHorizontalPadding,
+                                    vertical = ContactsDimens.rowVerticalInset
+                                ),
+                                verticalArrangement = Arrangement.spacedBy(ContactsDimens.rowVerticalInset)
+                            ) {
+                                items(uiState.contacts, key = { it.id }) { contact ->
+                                    ContactRow(
+                                        contact = contact,
+                                        isRevealed = revealedContactId == contact.id,
+                                        onRevealChange = { revealed ->
+                                            revealedContactId = if (revealed) contact.id else null
+                                        },
+                                        onShowActionSheet = { viewModel.onShowActionSheet(contact) },
+                                        onEdit = { viewModel.onEditContact(contact) },
+                                        onDelete = { viewModel.onRequestDeleteContact(contact) },
+                                        modifier = Modifier.animateItem(
+                                            fadeInSpec = tween(250),
+                                            fadeOutSpec = tween(250),
+                                            placementSpec = tween(250)
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
                     }
                 }
+
+                // FAB
+                SwissKitFAB(
+                    onClick = viewModel::onShowAddSheet,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(end = ContactsDimens.fabMargin, bottom = 56.dp),
+                    colors = listOf(ContactsFABGradientTop, ContactsFABGradientBottom)
+                )
+
+                // Toast
+                SwissKitToast(
+                    message = uiState.toastMessage,
+                    onDismiss = viewModel::onDismissToast
+                )
             }
-
-            // FAB
-            ContactsFAB(
-                onClick = viewModel::onShowAddSheet,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(end = ContactsDimens.fabMargin, bottom = 56.dp)
-            )
-
-            // Toast
-            ContactsToast(
-                message = uiState.toastMessage,
-                onDismiss = viewModel::onDismissToast
-            )
-        }
-    }
+        },
+        colors = listOf(ContactsTeal, ContactsTealLight),
+        darkColors = listOf(ContactsTeal, ContactsTealDark),
+    )
 
     // Add/Edit sheet
     if (uiState.showAddSheet) {

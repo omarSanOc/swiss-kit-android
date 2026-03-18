@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.feature.contacts.domain.model.Contact
 import com.epic_engine.swisskit.feature.contacts.domain.model.ContactAction
 import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDimens
@@ -52,7 +53,7 @@ fun ContactActionSheet(
             )
             Spacer(Modifier.height(18.dp))
             ContactsIconButton(
-                icon = Icons.Default.Phone,
+                icon = R.drawable.icon_phone,
                 iconDescription = "Llamar",
                 label = "Llamar",
                 onClick = { onAction(ContactAction.CALL) },
@@ -60,7 +61,7 @@ fun ContactActionSheet(
             )
             Spacer(Modifier.height(ContactsDimens.formFieldSpacing))
             ContactsIconButton(
-                icon = Icons.AutoMirrored.Filled.Chat,
+                icon = R.drawable.icon_whatsapp,
                 iconDescription = "WhatsApp",
                 label = "WhatsApp",
                 onClick = { onAction(ContactAction.WHATSAPP) },

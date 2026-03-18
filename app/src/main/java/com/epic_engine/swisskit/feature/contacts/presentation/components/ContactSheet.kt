@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDimens
 import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsFieldPlaceholder
 
@@ -61,7 +62,7 @@ fun ContactSheet(
                 onValueChange = onNameChange,
                 placeholder = "Nombre",
                 placeholderColor = ContactsFieldPlaceholder,
-                leadingIcon = Icons.Default.Person,
+                leadingIcon = R.drawable.icon_user,
                 leadingIconDescription = "Persona"
             )
             Spacer(Modifier.height(ContactsDimens.formFieldSpacing))
@@ -70,7 +71,7 @@ fun ContactSheet(
                 onValueChange = onPhoneChange,
                 placeholder = "Teléfono",
                 placeholderColor = ContactsFieldPlaceholder,
-                leadingIcon = Icons.Default.Phone,
+                leadingIcon = R.drawable.icon_phone,
                 leadingIconDescription = "Teléfono",
                 isError = phoneError != null,
                 supportingText = phoneError,

@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDimens
@@ -27,7 +28,7 @@ enum class ContactsIconButtonVariant { Filled, Outlined }
 
 @Composable
 fun ContactsIconButton(
-    icon: ImageVector,
+    icon: Int,
     iconDescription: String,
     label: String,
     onClick: () -> Unit,
@@ -55,7 +56,7 @@ fun ContactsIconButton(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = icon,
+                    painter = painterResource(icon),
                     contentDescription = iconDescription,
                     modifier = Modifier.size(ContactsDimens.iconButtonIconSize)
                 )
@@ -78,7 +79,7 @@ fun ContactsIconButton(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = icon,
+                    painter = painterResource(icon),
                     contentDescription = iconDescription,
                     tint = ContactsTeal,
                     modifier = Modifier.size(ContactsDimens.iconButtonIconSize)
