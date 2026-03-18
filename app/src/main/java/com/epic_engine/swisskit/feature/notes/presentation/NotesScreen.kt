@@ -39,13 +39,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitFAB
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitSearchBar
+import com.epic_engine.swisskit.core.designsystem.components.notesBackgroundBrush
 import com.epic_engine.swisskit.feature.notes.presentation.components.NoteRowCard
-import com.epic_engine.swisskit.feature.notes.presentation.components.NotesFAB
 import com.epic_engine.swisskit.feature.notes.presentation.components.NotesEmptyState
 import com.epic_engine.swisskit.feature.notes.presentation.components.SelectionTopBar
-import com.epic_engine.swisskit.feature.notes.presentation.components.SwissKitSearchBar
 import com.epic_engine.swisskit.feature.notes.presentation.components.displayTitle
-import com.epic_engine.swisskit.feature.notes.presentation.components.notesBackgroundBrush
+import com.epic_engine.swisskit.ui.theme.purpleNotes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -115,9 +116,10 @@ fun NotesScreen(
             },
             floatingActionButton = {
                 if (!uiState.isSelectionMode) {
-                    NotesFAB(
+                    SwissKitFAB(
                         onClick = viewModel::onAddNote,
-                        modifier = Modifier.padding(end = 0.dp, bottom = 0.dp)
+                        modifier = Modifier.padding(end = 0.dp, bottom = 0.dp),
+                        colors = listOf(NotesColors.FABGradientTop, NotesColors.FABGradientBottom)
                     )
                 }
             }
@@ -129,11 +131,13 @@ fun NotesScreen(
             ) {
                 // Search bar — 12 dp top, 24 dp horizontal
                 SwissKitSearchBar(
+                    tint = purpleNotes,
                     query = uiState.searchQuery,
                     onQueryChange = viewModel::onSearchQueryChange,
                     modifier = Modifier
                         .padding(horizontal = 24.dp)
-                        .padding(top = 12.dp)
+                        .padding(top = 12.dp),
+                    description = "Buscar notas"
                 )
 
                 if (uiState.notes.isEmpty() && !uiState.isLoading) {

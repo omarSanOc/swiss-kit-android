@@ -1,5 +1,7 @@
-package com.epic_engine.swisskit.feature.notes.presentation.components
+package com.epic_engine.swisskit.core.designsystem.components
 
+import android.annotation.SuppressLint
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -37,7 +39,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.R
 import com.epic_engine.swisskit.feature.notes.presentation.NotesColors
 
 /** Diagonal linear gradient shared by all Notes screens. */
@@ -86,99 +90,3 @@ fun SwissKitCard(
     }
 }
 
-/**
- * Glassmorphism search bar.
- * External padding: 24 dp horizontal, placed by the caller with 12 dp top padding.
- */
-@Composable
-fun SwissKitSearchBar(
-    query: String,
-    onQueryChange: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(48.dp),
-        shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.82f),
-        tonalElevation = 0.dp
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = "Buscar",
-                tint = NotesColors.Purple,
-                modifier = Modifier.size(18.dp)
-            )
-            Spacer(Modifier.width(8.dp))
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                if (query.isEmpty()) {
-                    Text(
-                        text = "Buscar",
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
-                        )
-                    )
-                }
-                BasicTextField(
-                    value = query,
-                    onValueChange = onQueryChange,
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(
-                        color = MaterialTheme.colorScheme.onSurface
-                    ),
-                    cursorBrush = SolidColor(NotesColors.Purple),
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        }
-    }
-}
-
-/**
- * Gradient floating action button (64×64 dp circle).
- * Vertical gradient: FABGradientTop → FABGradientBottom, 12 dp shadow.
- */
-@Composable
-fun NotesFAB(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-    Box(
-        modifier = modifier
-            .size(64.dp)
-            .shadow(
-                elevation = 12.dp,
-                shape = CircleShape,
-                ambientColor = Color.Black.copy(alpha = 0.25f),
-                spotColor = Color.Black.copy(alpha = 0.25f)
-            )
-            .clip(CircleShape)
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(NotesColors.FABGradientTop, NotesColors.FABGradientBottom)
-                )
-            )
-            .clickable(
-                interactionSource = interactionSource,
-                indication = ripple(bounded = true, color = Color.White),
-                onClick = onClick
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = Icons.Default.Add,
-            contentDescription = "Nueva nota",
-            tint = Color.White,
-            modifier = Modifier.size(28.dp)
-        )
-    }
-}

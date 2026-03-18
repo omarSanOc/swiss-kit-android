@@ -6,10 +6,16 @@ data class CategoriesUiState(
     val categories: List<Category> = emptyList(),
     val isLoading: Boolean = false,
     val searchQuery: String = "",
+    // Add sheet
     val showAddSheet: Boolean = false,
     val addCategoryTitle: String = "",
+    // Rename
     val renamingCategory: Category? = null,
-    val renameTitle: String = ""
+    val renameTitle: String = "",
+    // Delete confirmation
+    val confirmDeleteCategory: Category? = null,
+    // Toast
+    val toastMessage: String? = null
 )
 
 sealed interface CategoriesEvent {

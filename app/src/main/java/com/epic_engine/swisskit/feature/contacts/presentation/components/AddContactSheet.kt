@@ -13,13 +13,16 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsFieldPlaceholder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,7 +57,15 @@ fun AddContactSheet(
                 onValueChange = onNameChange,
                 label = { Text("Nombre") },
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedLabelColor = ContactsFieldPlaceholder,
+                    unfocusedLabelColor = ContactsFieldPlaceholder,
+                    disabledLabelColor = ContactsFieldPlaceholder,
+                    errorLabelColor = ContactsFieldPlaceholder,
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black
+                )
             )
             Spacer(Modifier.height(12.dp))
             OutlinedTextField(
@@ -65,7 +76,16 @@ fun AddContactSheet(
                 isError = phoneError != null,
                 supportingText = phoneError?.let { { Text(it, color = MaterialTheme.colorScheme.error) } },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedLabelColor = ContactsFieldPlaceholder,
+                    unfocusedLabelColor = ContactsFieldPlaceholder,
+                    disabledLabelColor = ContactsFieldPlaceholder,
+                    errorLabelColor = ContactsFieldPlaceholder,
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black,
+                    errorTextColor = Color.Black
+                )
             )
             Spacer(Modifier.height(16.dp))
             Row(

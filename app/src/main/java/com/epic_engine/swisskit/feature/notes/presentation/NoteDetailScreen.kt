@@ -64,7 +64,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.epic_engine.swisskit.feature.notes.presentation.components.notesBackgroundBrush
+import com.epic_engine.swisskit.core.designsystem.components.notesBackgroundBrush
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date

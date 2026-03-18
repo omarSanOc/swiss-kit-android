@@ -54,6 +54,7 @@ class CategoriesViewModel @Inject constructor(
         }
     }
 
+    // Add sheet
     fun onShowAddSheet() = _uiState.update { it.copy(showAddSheet = true, addCategoryTitle = "") }
     fun onDismissAddSheet() = _uiState.update { it.copy(showAddSheet = false) }
     fun onAddCategoryTitleChange(title: String) = _uiState.update { it.copy(addCategoryTitle = title) }
@@ -63,13 +64,14 @@ class CategoriesViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching { addCategory(title) }
                 .onSuccess {
-                    _uiState.update { it.copy(showAddSheet = false) }
+                    _uiState.update { it.copy(showAddSheet = false, toastMessage = "Categoría creada") }
                     _events.emit(CategoriesEvent.CategoryAdded)
                 }
                 .onFailure { _events.emit(CategoriesEvent.ShowError(it.message ?: "Error")) }
         }
     }
 
+    // Rename
     fun onStartRename(category: Category) =
         _uiState.update { it.copy(renamingCategory = category, renameTitle = category.title) }
 
@@ -82,18 +84,32 @@ class CategoriesViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching { renameCategory(cat.id, state.renameTitle) }
                 .onSuccess {
-                    _uiState.update { it.copy(renamingCategory = null) }
+                    _uiState.update { it.copy(renamingCategory = null, toastMessage = "Categoría renombrada") }
                     _events.emit(CategoriesEvent.CategoryRenamed)
                 }
                 .onFailure { _events.emit(CategoriesEvent.ShowError(it.message ?: "Error")) }
         }
     }
 
-    fun onDeleteCategory(categoryId: String) {
+    // Delete (with confirmation)
+    fun onRequestDeleteCategory(category: Category) =
+        _uiState.update { it.copy(confirmDeleteCategory = category) }
+
+    fun onDismissDeleteConfirm() =
+        _uiState.update { it.copy(confirmDeleteCategory = null) }
+
+    fun onConfirmDeleteCategory() {
+        val category = _uiState.value.confirmDeleteCategory ?: return
+        _uiState.update { it.copy(confirmDeleteCategory = null) }
         viewModelScope.launch {
-            runCatching { deleteCategory(categoryId) }
-                .onSuccess { _events.emit(CategoriesEvent.CategoryDeleted) }
+            runCatching { deleteCategory(category.id) }
+                .onSuccess {
+                    _uiState.update { it.copy(toastMessage = "Categoría eliminada") }
+                    _events.emit(CategoriesEvent.CategoryDeleted)
+                }
                 .onFailure { _events.emit(CategoriesEvent.ShowError(it.message ?: "Error")) }
         }
     }
+
+    fun onDismissToast() = _uiState.update { it.copy(toastMessage = null) }
 }

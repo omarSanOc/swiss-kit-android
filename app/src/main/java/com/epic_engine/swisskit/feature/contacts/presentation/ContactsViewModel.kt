@@ -72,16 +72,29 @@ class ContactsViewModel @Inject constructor(
         _uiState.update { it.copy(searchQuery = query) }
     }
 
+    // Action sheet
+    fun onShowActionSheet(contact: Contact) =
+        _uiState.update { it.copy(actionSheetContact = contact) }
+
+    fun onDismissActionSheet() =
+        _uiState.update { it.copy(actionSheetContact = null) }
+
     fun onContactAction(contact: Contact, action: ContactAction) {
         val url = when (action) {
             ContactAction.CALL -> PhoneNumberNormalizer.toCallUrl(contact.phone)
             ContactAction.WHATSAPP -> PhoneNumberNormalizer.toWhatsAppUrl(contact.phone)
         }
+        val toastMsg = when (action) {
+            ContactAction.CALL -> "Iniciando llamada…"
+            ContactAction.WHATSAPP -> "Abriendo WhatsApp…"
+        }
+        _uiState.update { it.copy(actionSheetContact = null, toastMessage = toastMsg) }
         viewModelScope.launch {
             _events.emit(ContactsEvent.LaunchContactAction(action, url))
         }
     }
 
+    // Add/Edit sheet
     fun onShowAddSheet() =
         _uiState.update {
             it.copy(
@@ -122,7 +135,8 @@ class ContactsViewModel @Inject constructor(
                     addContact(state.nameDraft, state.phoneDraft, categoryId)
                 }
             }.onSuccess {
-                _uiState.update { it.copy(showAddSheet = false, editingContact = null) }
+                val msg = if (state.editingContact != null) "Contacto actualizado" else "Contacto guardado"
+                _uiState.update { it.copy(showAddSheet = false, editingContact = null, toastMessage = msg) }
                 _events.emit(ContactsEvent.ContactSaved)
             }.onFailure {
                 _events.emit(ContactsEvent.ShowError(it.message ?: "Error"))
@@ -130,13 +144,24 @@ class ContactsViewModel @Inject constructor(
         }
     }
 
-    fun onDeleteContact(contact: Contact) {
+    // Delete with confirmation
+    fun onRequestDeleteContact(contact: Contact) =
+        _uiState.update { it.copy(confirmDeleteContact = contact) }
+
+    fun onDismissDeleteConfirm() =
+        _uiState.update { it.copy(confirmDeleteContact = null) }
+
+    fun onConfirmDeleteContact() {
+        val contact = _uiState.value.confirmDeleteContact ?: return
+        _uiState.update { it.copy(confirmDeleteContact = null) }
         viewModelScope.launch {
             runCatching { deleteContact(contact) }
+                .onSuccess { _uiState.update { it.copy(toastMessage = "Contacto eliminado") } }
                 .onFailure { _events.emit(ContactsEvent.ShowError(it.message ?: "Error")) }
         }
     }
 
+    // Selection mode (kept for backward compat)
     fun onToggleSelection(contactId: String) {
         _uiState.update { state ->
             val updated = if (contactId in state.selectedIds)
@@ -170,4 +195,6 @@ class ContactsViewModel @Inject constructor(
                 .onFailure { _events.emit(ContactsEvent.ShowError(it.message ?: "Error")) }
         }
     }
+
+    fun onDismissToast() = _uiState.update { it.copy(toastMessage = null) }
 }

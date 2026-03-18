@@ -51,6 +51,7 @@ import com.epic_engine.swisskit.feature.finance.presentation.components.FinanceF
 import com.epic_engine.swisskit.feature.finance.presentation.components.FinanceItemRow
 import com.epic_engine.swisskit.feature.finance.presentation.components.FinanceSummaryHeader
 import com.epic_engine.swisskit.feature.finance.presentation.theme.FinanceDesignTokens
+import com.epic_engine.swisskit.ui.theme.blueFinance
 import java.io.File
 import java.io.FileOutputStream
 
@@ -159,8 +160,7 @@ fun FinanceScreen(
             if (!uiState.isSelectionMode) {
                 SwissKitFAB(
                     onClick = { editingItem = null; showAddSheet = true },
-                    icon = Icons.Default.Add,
-                    containerColor = FinanceDesignTokens.accentBlue
+                    colors = listOf(FinanceDesignTokens.accentBlue, FinanceDesignTokens.accentBlue.copy(0.5f))
                 )
             }
         },
@@ -181,10 +181,11 @@ fun FinanceScreen(
 
             item {
                 SwissKitSearchBar(
+                    tint = blueFinance,
                     query = uiState.searchQuery,
                     onQueryChange = { viewModel.onEvent(FinanceEvent.SearchChanged(it)) },
-                    accentColor = FinanceDesignTokens.accentBlue,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    description = "Buscar transacciones"
                 )
             }
 
