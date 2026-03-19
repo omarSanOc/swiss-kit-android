@@ -70,7 +70,6 @@ fun SwissKitNavGraph(
         }
         composable(SwissKitDestination.Notes.route) {
             NotesScreen(
-                onNavigateBack = { navController.navigateUp() },
                 onNavigateToCreate = {
                     navController.navigate(SwissKitDestination.NoteDetail.createRoute(null))
                 },

@@ -22,16 +22,12 @@ import androidx.compose.ui.unit.dp
 import com.epic_engine.swisskit.feature.home.presentation.components.HomeToolCard
 import com.epic_engine.swisskit.feature.home.presentation.model.ToolCatalog
 import com.epic_engine.swisskit.navigation.SwissKitDestination
-import com.epic_engine.swisskit.ui.components.AnimatedBackgroundView
 
 @Composable
 fun HomeScreen(
     onNavigateTo: (SwissKitDestination) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-
-        AnimatedBackgroundView(modifier = Modifier.fillMaxSize())
-
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier.fillMaxSize(),

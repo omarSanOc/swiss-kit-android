@@ -7,14 +7,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -36,6 +34,7 @@ import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitFAB
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitSearchBar
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitToast
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitToolbar
 import com.epic_engine.swisskit.feature.contacts.presentation.components.CategoryRow
 import com.epic_engine.swisskit.feature.contacts.presentation.components.CategorySheet
 import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDeleteAction
@@ -76,8 +75,8 @@ fun CategoriesScreen(
                         .statusBarsPadding()
                 ) {
                     // Toolbar
-                    ContactsToolbar(title = "Contactos")
-
+                    Spacer(Modifier.height(ContactsDimens.screenTopPadding))
+                    SwissKitToolbar(title = "Categorías")
                     Spacer(Modifier.height(ContactsDimens.screenTopPadding))
 
                     val filtered = if (uiState.searchQuery.isBlank()) uiState.categories
@@ -200,23 +199,6 @@ fun CategoriesScreen(
                     Text("Cancelar")
                 }
             }
-        )
-    }
-}
-
-@Composable
-private fun ContactsToolbar(title: String) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = ContactsDimens.screenHorizontalPadding)
-            .height(56.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            color = Color.White
         )
     }
 }

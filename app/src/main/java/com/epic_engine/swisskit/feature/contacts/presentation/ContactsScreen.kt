@@ -47,6 +47,7 @@ import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitFAB
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitSearchBar
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitToast
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitToolbar
 import com.epic_engine.swisskit.feature.contacts.presentation.components.ContactActionSheet
 import com.epic_engine.swisskit.feature.contacts.presentation.components.ContactRow
 import com.epic_engine.swisskit.feature.contacts.presentation.components.ContactSheet
@@ -89,12 +90,10 @@ fun ContactsScreen(
                         .fillMaxSize()
                         .statusBarsPadding()
                 ) {
-                    // Toolbar with back button
-                    ContactsDetailToolbar(
-                        title = categoryTitle,
-                        onNavigateBack = onNavigateBack
-                    )
 
+                    // Toolbar
+                    Spacer(Modifier.height(ContactsDimens.screenTopPadding))
+                    SwissKitToolbar(title = categoryTitle)
                     Spacer(Modifier.height(ContactsDimens.screenTopPadding))
 
                     if (uiState.contacts.isEmpty() && uiState.searchQuery.isBlank()) {

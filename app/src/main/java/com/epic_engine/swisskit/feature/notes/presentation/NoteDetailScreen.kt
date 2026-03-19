@@ -63,7 +63,9 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.designsystem.components.notesBackgroundBrush
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -146,21 +148,16 @@ fun NoteDetailScreen(
             snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
                 TopAppBar(
-                    title = {},
-                    navigationIcon = {
-                        IconButton(onClick = onNavigateBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Volver",
-                                tint = Color.White
-                            )
-                        }
-                    },
+                    title = { Text(
+                        text = if (noteId == null) {"Crear Nota"} else {"Editar Nota"},
+                        style = MaterialTheme.typography.titleLarge,
+                        color = Color.White
+                        )},
                     actions = {
                         Box {
                             IconButton(onClick = { showOverflowMenu = true }) {
                                 Icon(
-                                    imageVector = Icons.Default.MoreVert,
+                                    painter = painterResource(R.drawable.icon_ellipsis),
                                     contentDescription = "Más opciones",
                                     tint = if (isDark) Color.White else Color.Black
                                 )

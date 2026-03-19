@@ -6,9 +6,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -33,15 +36,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitFAB
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitSearchBar
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitToolbar
 import com.epic_engine.swisskit.core.designsystem.components.notesBackgroundBrush
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDimens
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsFABGradientBottom
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsFABGradientTop
 import com.epic_engine.swisskit.feature.notes.presentation.components.NoteRowCard
 import com.epic_engine.swisskit.feature.notes.presentation.components.NotesEmptyState
 import com.epic_engine.swisskit.feature.notes.presentation.components.SelectionTopBar
@@ -51,7 +60,6 @@ import com.epic_engine.swisskit.ui.theme.purpleNotes
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotesScreen(
-    onNavigateBack: () -> Unit,
     onNavigateToCreate: () -> Unit,
     onNavigateToDetail: (String) -> Unit,
     viewModel: NotesViewModel = hiltViewModel()
@@ -73,7 +81,85 @@ fun NotesScreen(
         }
     }
 
-    Box(
+    SwissKitBackground(
+        colors = listOf(NotesColors.Purple, NotesColors.PurpleLight),
+        darkColors = listOf(NotesColors.Purple, NotesColors.PurpleDark),
+        content = {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .statusBarsPadding()
+                ) {
+                    // Toolbar
+                    Spacer(Modifier.height(ContactsDimens.screenTopPadding))
+                    SwissKitToolbar(title = "Notas")
+                    Spacer(Modifier.height(ContactsDimens.screenTopPadding))
+
+                    // Search bar — 12 dp top, 24 dp horizontal
+                    SwissKitSearchBar(
+                        tint = purpleNotes,
+                        query = uiState.searchQuery,
+                        onQueryChange = viewModel::onSearchQueryChange,
+                        modifier = Modifier
+                            .padding(horizontal = 24.dp)
+                            .padding(top = 12.dp),
+                        description = "Buscar notas"
+                    )
+
+                    if (uiState.notes.isEmpty() && !uiState.isLoading) {
+                        NotesEmptyState(isSearching = uiState.searchQuery.isNotBlank())
+                    } else {
+                        LazyColumn(
+                            contentPadding = PaddingValues(
+                                horizontal = 24.dp,
+                                vertical = 12.dp
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            items(
+                                items = uiState.notes,
+                                key = { it.id }
+                            ) { note ->
+                                NoteRowCard(
+                                    note = note,
+                                    isSelected = note.id in uiState.selectedIds,
+                                    isSelectionMode = uiState.isSelectionMode,
+                                    isRevealed = revealedNoteId == note.id,
+                                    onRevealChange = { revealed ->
+                                        revealedNoteId = if (revealed) note.id else null
+                                    },
+                                    onClick = {
+                                        if (uiState.isSelectionMode) viewModel.onToggleSelection(note.id)
+                                        else viewModel.onOpenNote(note.id)
+                                    },
+                                    onLongClick = { viewModel.onToggleSelection(note.id) },
+                                    onDelete = { viewModel.onShowDeleteDialog(note) },
+                                    modifier = Modifier.animateItem(
+                                        fadeInSpec = tween(250),
+                                        fadeOutSpec = tween(250),
+                                        placementSpec = tween(250)
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // FAB
+                SwissKitFAB(
+                    onClick = viewModel::onAddNote,
+                    modifier =  Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(end = ContactsDimens.fabMargin, bottom = 56.dp),
+                    colors = listOf(NotesColors.FABGradientTop, NotesColors.FABGradientBottom)
+                )
+            }
+        }
+    )
+
+    /*Box(
         modifier = Modifier
             .fillMaxSize()
             .background(notesBackgroundBrush())
@@ -180,7 +266,7 @@ fun NotesScreen(
                 }
             }
         }
-    }
+    }*/
 
     // Diálogo de confirmación: eliminar nota individual
     if (uiState.noteToDelete != null) {
