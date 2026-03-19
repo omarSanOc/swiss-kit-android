@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -67,6 +66,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.designsystem.components.notesBackgroundBrush
+import com.epic_engine.swisskit.feature.notes.presentation.components.NoteFormattingToolbar
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -216,13 +216,6 @@ fun NoteDetailScreen(
                     )
                 )
             },
-            bottomBar = {
-                NoteFormattingToolbar(
-                    onBold = ::applyBold,
-                    onItalic = ::applyItalic,
-                    onBullet = ::applyBullet
-                )
-            }
         ) { innerPadding ->
             Column(
                 modifier = Modifier
@@ -262,6 +255,12 @@ fun NoteDetailScreen(
                             innerTextField()
                         }
                     }
+                )
+
+                NoteFormattingToolbar(
+                    onBold = ::applyBold,
+                    onItalic = ::applyItalic,
+                    onBullet = ::applyBullet
                 )
 
                 // Content field
@@ -330,77 +329,10 @@ fun NoteDetailScreen(
     }
 }
 
-// ── Formatting toolbar ────────────────────────────────────────────────────────
 
-@Composable
-private fun NoteFormattingToolbar(
-    onBold: () -> Unit,
-    onItalic: () -> Unit,
-    onBullet: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .navigationBarsPadding(),
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.82f),
-        tonalElevation = 0.dp
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            FormatTextButton(
-                label = "B",
-                fontWeight = FontWeight.Bold,
-                contentDescription = "Bold",
-                onClick = onBold
-            )
-            FormatTextButton(
-                label = "I",
-                fontStyle = FontStyle.Italic,
-                contentDescription = "Italic",
-                onClick = onItalic
-            )
-            FormatTextButton(
-                label = "•",
-                contentDescription = "Bullet list",
-                onClick = onBullet
-            )
-        }
-    }
-}
 
-@Composable
-private fun FormatTextButton(
-    label: String,
-    contentDescription: String,
-    fontWeight: FontWeight? = null,
-    fontStyle: FontStyle? = null,
-    onClick: () -> Unit
-) {
-    OutlinedButton(
-        onClick = onClick,
-        modifier = Modifier.defaultMinSize(minWidth = 32.dp, minHeight = 32.dp),
-        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
-        shape = RoundedCornerShape(6.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)),
-        colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = MaterialTheme.colorScheme.onSurface
-        )
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.titleSmall.copy(
-                fontWeight = fontWeight,
-                fontStyle = fontStyle
-            )
-        )
-    }
-}
+
+
 
 // ── Reminder bottom sheet ─────────────────────────────────────────────────────
 
