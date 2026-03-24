@@ -9,7 +9,7 @@ data class EditFinanceUiState(
     val amountInput: String = "",
     val date: Long = System.currentTimeMillis(),
     val notes: String = "",
-    val category: String = "",
+    val category: String = "General",
     val type: FinanceType = FinanceType.EXPENSE,
     val isSaving: Boolean = false,
     val validationError: String? = null,

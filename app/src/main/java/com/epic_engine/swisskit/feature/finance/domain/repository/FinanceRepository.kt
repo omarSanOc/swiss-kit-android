@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface FinanceRepository {
     fun observeAll(sortOrder: FinanceSortOrder = FinanceSortOrder.DESCENDING): Flow<List<Finance>>
+    suspend fun getById(id: String): Finance?
     suspend fun add(finance: Finance): Result<Unit>
     suspend fun update(finance: Finance): Result<Unit>
     suspend fun delete(finance: Finance): Result<Unit>

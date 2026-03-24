@@ -19,6 +19,9 @@ class FinanceRepositoryImpl @Inject constructor(
         if (sortOrder == FinanceSortOrder.DESCENDING) dao.observeAll().map { it.map { e -> e.toDomain() } }
         else dao.observeAllAscending().map { it.map { e -> e.toDomain() } }
 
+    override suspend fun getById(id: String): Finance? =
+        dao.getById(id)?.toDomain()
+
     override suspend fun add(finance: Finance): Result<Unit> = runCatching {
         dao.insert(finance.toEntity())
         SwissKitLogger.d("Finance", "Transacción agregada: ${finance.title}")

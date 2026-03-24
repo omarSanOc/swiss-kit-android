@@ -1,11 +1,13 @@
 package com.epic_engine.swisskit.feature.finance.presentation
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.epic_engine.swisskit.feature.finance.domain.model.Finance
 import com.epic_engine.swisskit.feature.finance.domain.model.FinanceCategoryData
 import com.epic_engine.swisskit.feature.finance.domain.model.FinanceType
 import com.epic_engine.swisskit.feature.finance.domain.usecase.AddFinanceUseCase
+import com.epic_engine.swisskit.feature.finance.domain.usecase.GetFinanceByIdUseCase
 import com.epic_engine.swisskit.feature.finance.domain.usecase.UpdateFinanceUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,12 +20,32 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditFinanceViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val getFinanceById: GetFinanceByIdUseCase,
     private val addFinance: AddFinanceUseCase,
     private val updateFinance: UpdateFinanceUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(EditFinanceUiState())
+    private val financeId: String? = savedStateHandle.get<String>("financeId")?.takeIf { it != "new" }
+
+    private val _uiState = MutableStateFlow(EditFinanceUiState(id = financeId))
     val uiState: StateFlow<EditFinanceUiState> = _uiState.asStateFlow()
+
+    init {
+        loadFinance()
+    }
+
+    private fun loadFinance() {
+        viewModelScope.launch {
+            val itemId = financeId ?: return@launch
+            val item = getFinanceById(itemId)
+            if (item != null) {
+                loadForEdit(item)
+            } else {
+                _uiState.update { it.copy(validationError = "Transacción no encontrada") }
+            }
+        }
+    }
 
     fun loadForEdit(item: Finance) {
         _uiState.value = EditFinanceUiState(

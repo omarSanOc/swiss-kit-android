@@ -11,6 +11,7 @@ import com.epic_engine.swisskit.feature.contacts.presentation.CategoriesScreen
 import com.epic_engine.swisskit.feature.home.presentation.HomeScreen
 import com.epic_engine.swisskit.feature.contacts.presentation.ContactsScreen
 import com.epic_engine.swisskit.feature.converter.presentation.ConverterScreen
+import com.epic_engine.swisskit.feature.finance.presentation.EditFinanceScreen
 import com.epic_engine.swisskit.feature.finance.presentation.FinanceScreen
 import com.epic_engine.swisskit.feature.notes.presentation.NoteDetailScreen
 import com.epic_engine.swisskit.feature.notes.presentation.NotesScreen
@@ -66,7 +67,24 @@ fun SwissKitNavGraph(
             )
         }
         composable(SwissKitDestination.Finance.route) {
-            FinanceScreen()
+            FinanceScreen(
+                onNavigateToEditor = { financeId ->
+                    navController.navigate(SwissKitDestination.EditFinance.createRoute(financeId))
+                }
+            )
+        }
+        composable(
+            route = SwissKitDestination.EditFinance.route,
+            arguments = listOf(
+                navArgument("financeId") {
+                    type = NavType.StringType
+                    defaultValue = "new"
+                }
+            )
+        ) {
+            EditFinanceScreen(
+                onNavigateBack = { navController.navigateUp() }
+            )
         }
         composable(SwissKitDestination.Notes.route) {
             NotesScreen(

@@ -5,18 +5,23 @@ import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,6 +32,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -35,37 +41,47 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.epic_engine.swisskit.R
-import com.epic_engine.swisskit.core.designsystem.DesignTokens
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitFAB
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitSearchBar
 import com.epic_engine.swisskit.feature.finance.domain.model.Finance
-import com.epic_engine.swisskit.feature.finance.presentation.components.FinanceFilterSheet
+import com.epic_engine.swisskit.feature.finance.domain.model.FinanceSortOrder
+import com.epic_engine.swisskit.feature.finance.domain.model.FinanceType
+import com.epic_engine.swisskit.feature.finance.presentation.components.FinanceInlineFilterPanel
 import com.epic_engine.swisskit.feature.finance.presentation.components.FinanceItemRow
-import com.epic_engine.swisskit.feature.finance.presentation.components.FinanceSummaryHeader
+import com.epic_engine.swisskit.feature.finance.presentation.components.FinanceToggleButton
 import com.epic_engine.swisskit.feature.finance.presentation.theme.FinanceDesignTokens
-import com.epic_engine.swisskit.ui.theme.blueFinance
 import java.io.File
 import java.io.FileOutputStream
+import java.text.NumberFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FinanceScreen(
+    onNavigateToEditor: (String?) -> Unit,
     viewModel: FinanceViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
     var showMenu by remember { mutableStateOf(false) }
-    var showAddSheet by remember { mutableStateOf(false) }
-    var editingItem by remember { mutableStateOf<Finance?>(null) }
+    var itemToDelete by remember { mutableStateOf<Finance?>(null) }
+    var revealedItemId by remember { mutableStateOf<String?>(null) }
+
+    val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale("es", "MX")) }
 
     val openDocumentLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument()
@@ -77,9 +93,7 @@ fun FinanceScreen(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.pdfBytes.collect { bytes ->
-            sharePdfBytes(context, bytes)
-        }
+        viewModel.pdfBytes.collect { bytes -> sharePdfBytes(context, bytes) }
     }
 
     LaunchedEffect(Unit) {
@@ -104,133 +118,265 @@ fun FinanceScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    if (uiState.isSelectionMode)
-                        Text("${uiState.selectedIds.size} seleccionados")
-                    else
-                        Text("Finanzas")
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = FinanceDesignTokens.accentBlue.copy(alpha = 0.1f)
-                ),
-                navigationIcon = {
-                    if (uiState.isSelectionMode) {
-                        IconButton(onClick = { viewModel.onEvent(FinanceEvent.ClearSelection) }) {
-                            Icon(Icons.Default.Close, "Cancelar selección")
-                        }
-                    }
-                },
-                actions = {
-                    if (uiState.isSelectionMode) {
-                        IconButton(onClick = { viewModel.onEvent(FinanceEvent.DeleteSelected) }) {
-                            Icon(Icons.Default.Delete, "Eliminar seleccionados", tint = FinanceDesignTokens.expenseColor)
-                        }
-                    } else {
-                        IconButton(onClick = { viewModel.onEvent(FinanceEvent.ToggleFilterSheet) }) {
-                            Icon(
-                                Icons.Default.FilterList, "Filtros",
-                                tint = if (uiState.isFiltered) FinanceDesignTokens.accentBlue else MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                        IconButton(onClick = { showMenu = true }) {
-                            Icon(Icons.Default.MoreVert, "Más opciones")
-                        }
-                        DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
-                            DropdownMenuItem(
-                                text = { Text("Exportar PDF") },
-                                onClick = { viewModel.onEvent(FinanceEvent.ExportPdf); showMenu = false }
-                            )
-                            DropdownMenuItem(
-                                text = { Text("Backup JSON") },
-                                onClick = { viewModel.onEvent(FinanceEvent.BackupJson); showMenu = false }
-                            )
-                            DropdownMenuItem(
-                                text = { Text("Restaurar Backup") },
-                                onClick = { openDocumentLauncher.launch(arrayOf("application/json")); showMenu = false }
-                            )
-                        }
-                    }
-                }
-            )
-        },
-        floatingActionButton = {
-            if (!uiState.isSelectionMode) {
-                SwissKitFAB(
-                    onClick = { editingItem = null; showAddSheet = true },
-                    colors = listOf(FinanceDesignTokens.accentBlue, FinanceDesignTokens.accentBlue.copy(0.5f))
+    // Delete confirmation dialog
+    itemToDelete?.let { item ->
+        val typeLabel = if (item.type == FinanceType.EXPENSE) "gasto" else "ingreso"
+        AlertDialog(
+            onDismissRequest = { itemToDelete = null },
+            shape = RoundedCornerShape(20.dp),
+            title = {
+                Text(
+                    text = "¿Eliminar $typeLabel?",
+                    fontWeight = FontWeight.Bold
                 )
+            },
+            text = {
+                Text(
+                    text = "Esta acción eliminará esta transacción. ¿Estás seguro de continuar?",
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.onEvent(FinanceEvent.DeleteItem(item))
+                    itemToDelete = null
+                }) {
+                    Text("Eliminar", color = Color(0xFFFF3833))
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { itemToDelete = null },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text("Cancelar")
+                }
             }
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = DesignTokens.contentPaddingMedium),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(vertical = DesignTokens.contentPaddingMedium)
+        )
+    }
+
+    SwissKitBackground(colors = listOf(
+        FinanceDesignTokens.primaryBlue,
+        FinanceDesignTokens.backgroundLight,
+    ),
+        darkColors =  listOf(
+            FinanceDesignTokens.primaryBlue,
+            FinanceDesignTokens.backgroundDark
+        ),
+    content = {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
         ) {
-            item {
-                FinanceSummaryHeader(
-                    totalIncome = uiState.totalIncome,
-                    totalExpenses = uiState.totalExpenses,
-                    netBalance = uiState.netBalance
-                )
-            }
-
-            item {
-                SwissKitSearchBar(
-                    tint = blueFinance,
-                    query = uiState.searchQuery,
-                    onQueryChange = { viewModel.onEvent(FinanceEvent.SearchChanged(it)) },
-                    modifier = Modifier.fillMaxWidth(),
-                    description = "Buscar transacciones"
-                )
-            }
-
-            if (!uiState.hasItems) {
-                item {
-                    SwissKitEmptyView(
-                        icon = R.drawable.icon_wallet,
-                        title = "Sin transacciones",
-                        subtitle = "Agrega tu primera transacción con el botón +",
-                        iconTint = FinanceDesignTokens.accentBlue.copy(0.5f),
-                        modifier = Modifier.fillMaxWidth().padding(top = 60.dp)
+            Scaffold(
+                containerColor = Color.Transparent,
+                topBar = {
+                    TopAppBar(
+                        title = {
+                            if (uiState.isSelectionMode)
+                                Text(
+                                    "${uiState.selectedIds.size} seleccionados",
+                                    color = Color.White
+                                )
+                            else
+                                Text("Finanzas", color = Color.White, fontWeight = FontWeight.Bold)
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color.Transparent,
+                            scrolledContainerColor = Color.Transparent
+                        ),
+                        navigationIcon = {
+                            if (uiState.isSelectionMode) {
+                                IconButton(onClick = { viewModel.onEvent(FinanceEvent.ClearSelection) }) {
+                                    Icon(Icons.Default.Close, "Cancelar selección", tint = Color.White)
+                                }
+                            }
+                        },
+                        actions = {
+                            if (uiState.isSelectionMode) {
+                                IconButton(onClick = { viewModel.onEvent(FinanceEvent.DeleteSelected) }) {
+                                    Icon(
+                                        Icons.Default.Delete,
+                                        "Eliminar seleccionados",
+                                        tint = Color.White
+                                    )
+                                }
+                            } else {
+                                IconButton(onClick = { showMenu = true }) {
+                                    Icon(Icons.Default.MoreVert, "Más opciones", tint = Color.White)
+                                }
+                                DropdownMenu(
+                                    expanded = showMenu,
+                                    onDismissRequest = { showMenu = false }
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text("Exportar PDF") },
+                                        onClick = {
+                                            viewModel.onEvent(FinanceEvent.ExportPdf)
+                                            showMenu = false
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Backup JSON") },
+                                        onClick = {
+                                            viewModel.onEvent(FinanceEvent.BackupJson)
+                                            showMenu = false
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Restaurar Backup") },
+                                        onClick = {
+                                            openDocumentLauncher.launch(arrayOf("application/json"))
+                                            showMenu = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
                     )
-                }
-            }
+                },
+                floatingActionButton = {
+                    if (!uiState.isSelectionMode) {
+                        SwissKitFAB(
+                            onClick = { onNavigateToEditor(null) },
+                            colors = listOf(
+                                FinanceDesignTokens.gradientStart,
+                                FinanceDesignTokens.primaryBlue
+                            )
+                        )
+                    }
+                },
+                snackbarHost = { SnackbarHost(snackbarHostState) }
+            ) { padding ->
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    verticalArrangement = Arrangement.spacedBy(FinanceDesignTokens.listRowGap),
+                    contentPadding = PaddingValues(
+                        horizontal = FinanceDesignTokens.listRowInset,
+                        vertical = 12.dp
+                    )
+                ) {
+                    // Search bar + Filter + Sort row
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            SwissKitSearchBar(
+                                tint = FinanceDesignTokens.primaryBlue,
+                                query = uiState.searchQuery,
+                                onQueryChange = { viewModel.onEvent(FinanceEvent.SearchChanged(it)) },
+                                modifier = Modifier.weight(1f),
+                                description = "Buscar"
+                            )
 
-            items(items = uiState.filteredItems, key = { it.id }) { item ->
-                FinanceItemRow(
-                    item = item,
-                    isSelected = item.id in uiState.selectedIds,
-                    isSelectionMode = uiState.isSelectionMode,
-                    onClick = {
-                        if (uiState.isSelectionMode) viewModel.onEvent(FinanceEvent.ToggleSelection(item.id))
-                        else { editingItem = item; showAddSheet = true }
-                    },
-                    onLongClick = { viewModel.onEvent(FinanceEvent.ToggleSelection(item.id)) }
-                )
+                            // Filter toggle button
+                            val isFilterActive = uiState.showFilterSheet || uiState.isFiltered
+                            FinanceToggleButton(
+                                isActive = isFilterActive,
+                                onClick = { viewModel.onEvent(FinanceEvent.ToggleFilterSheet) },
+                                icon = painterResource(R.drawable.icon_filter),
+                                contentDescription = "Filtros"
+                            )
+
+                            // Sort toggle button
+                            val isSortActive = uiState.sortOrder == FinanceSortOrder.ASCENDING
+                            FinanceToggleButton(
+                                isActive = isSortActive,
+                                onClick = {
+                                    val newOrder = if (uiState.sortOrder == FinanceSortOrder.DESCENDING)
+                                        FinanceSortOrder.ASCENDING else FinanceSortOrder.DESCENDING
+                                    viewModel.onEvent(FinanceEvent.ToggleSortOrder(newOrder))
+                                },
+                                icon = if (uiState.sortOrder == FinanceSortOrder.DESCENDING)
+                                    painterResource(R.drawable.icon_arrow_down)
+                                else painterResource(R.drawable.icon_arrow_up),
+                                contentDescription = "Ordenar"
+                            )
+                        }
+                    }
+
+                    // Inline filter panel
+                    item {
+                        FinanceInlineFilterPanel(
+                            visible = uiState.showFilterSheet,
+                            typeFilter = uiState.typeFilter,
+                            onSetTypeFilter = { viewModel.onEvent(FinanceEvent.SetTypeFilter(it)) },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+
+                // Total row
+                item {
+                    val filteredNet = uiState.filteredItems.sumOf {
+                        if (it.type == FinanceType.INCOME) it.amount else -it.amount
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Total",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color.White.copy(alpha = FinanceDesignTokens.headerTextAlpha)
+                        )
+                        Text(
+                            text = currencyFormat.format(filteredNet),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                }
+
+                    // Empty state
+                    if (!uiState.hasItems) {
+                        item {
+                            SwissKitEmptyView(
+                                icon = R.drawable.icon_wallet,
+                                title = "Sin transacciones",
+                                subtitle = "Agrega tu primera transacción con el botón +",
+                                iconTint = Color.White,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 60.dp)
+                            )
+                        }
+                    }
+
+                    // Transaction items
+                    items(items = uiState.filteredItems, key = { it.id }) { item ->
+                        FinanceItemRow(
+                            item = item,
+                            isSelected = item.id in uiState.selectedIds,
+                            isSelectionMode = uiState.isSelectionMode,
+                            isRevealed = revealedItemId == item.id,
+                            onRevealChange = { revealed ->
+                                revealedItemId = if (revealed) item.id else null
+                            },
+                            onClick = {
+                                if (uiState.isSelectionMode) viewModel.onEvent(FinanceEvent.ToggleSelection(item.id))
+                                else onNavigateToEditor(item.id)
+                            },
+                            onLongClick = { viewModel.onEvent(FinanceEvent.ToggleSelection(item.id)) },
+                            onDeleteRequest = { itemToDelete = item },
+                            modifier = Modifier.animateItem()
+                        )
+                    }
+                }
             }
         }
-    }
-
-    if (showAddSheet) {
-        EditFinanceSheet(
-            existingItem = editingItem,
-            onDismiss = { showAddSheet = false; editingItem = null },
-            onSaved = { showAddSheet = false; editingItem = null }
-        )
-    }
-
-    if (uiState.showFilterSheet) {
-        FinanceFilterSheet(
-            uiState = uiState,
-            onEvent = viewModel::onEvent,
-            onDismiss = { viewModel.onEvent(FinanceEvent.ToggleFilterSheet) }
-        )
-    }
+    })
 }
 
 private fun sharePdfBytes(context: Context, bytes: ByteArray) {

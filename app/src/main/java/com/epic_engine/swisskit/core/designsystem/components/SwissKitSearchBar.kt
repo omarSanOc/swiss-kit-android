@@ -44,7 +44,6 @@ fun SwissKitSearchBar(
 ) {
     Surface(
         modifier = modifier
-            .fillMaxWidth()
             .height(48.dp),
         shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colorScheme.surface.copy(alpha = 0.82f),
