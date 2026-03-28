@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -319,77 +320,71 @@ fun FinanceScreen(
                 },
                 snackbarHost = { SnackbarHost(snackbarHostState) }
             ) { padding ->
-                LazyColumn(
+                Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(padding),
-                    verticalArrangement = Arrangement.spacedBy(FinanceDesignTokens.listRowGap),
-                    contentPadding = PaddingValues(
-                        horizontal = FinanceDesignTokens.listRowInset,
-                        vertical = 12.dp
-                    )
+                        .padding(padding)
                 ) {
                     // Search bar + Filter + Sort row
-                    item {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            SwissKitSearchBar(
-                                tint = FinanceDesignTokens.primaryBlue,
-                                query = uiState.searchQuery,
-                                onQueryChange = { viewModel.onEvent(FinanceEvent.SearchChanged(it)) },
-                                modifier = Modifier.weight(1f),
-                                description = "Buscar"
-                            )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 18.dp, vertical = 12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        SwissKitSearchBar(
+                            tint = FinanceDesignTokens.primaryBlue,
+                            query = uiState.searchQuery,
+                            onQueryChange = { viewModel.onEvent(FinanceEvent.SearchChanged(it)) },
+                            modifier = Modifier.weight(1f),
+                            description = "Buscar"
+                        )
 
-                            // Filter toggle button
-                            val isFilterActive = uiState.showFilterSheet || uiState.isFiltered
-                            FinanceToggleButton(
-                                isActive = isFilterActive,
-                                onClick = { viewModel.onEvent(FinanceEvent.ToggleFilterSheet) },
-                                icon = painterResource(R.drawable.icon_filter),
-                                contentDescription = "Filtros"
-                            )
+                        // Filter toggle button
+                        val isFilterActive = uiState.showFilterSheet || uiState.isFiltered
+                        FinanceToggleButton(
+                            isActive = isFilterActive,
+                            onClick = { viewModel.onEvent(FinanceEvent.ToggleFilterSheet) },
+                            icon = painterResource(R.drawable.icon_filter),
+                            contentDescription = "Filtros"
+                        )
 
-                            // Sort toggle button
-                            val isSortActive = uiState.sortOrder == FinanceSortOrder.ASCENDING
-                            FinanceToggleButton(
-                                isActive = isSortActive,
-                                onClick = {
-                                    val newOrder = if (uiState.sortOrder == FinanceSortOrder.DESCENDING)
-                                        FinanceSortOrder.ASCENDING else FinanceSortOrder.DESCENDING
-                                    viewModel.onEvent(FinanceEvent.ToggleSortOrder(newOrder))
-                                },
-                                icon = if (uiState.sortOrder == FinanceSortOrder.DESCENDING)
-                                    painterResource(R.drawable.icon_arrow_down)
-                                else painterResource(R.drawable.icon_arrow_up),
-                                contentDescription = "Ordenar"
-                            )
-                        }
-                    }
-
-                    // Inline filter panel
-                    item {
-                        FinanceInlineFilterPanel(
-                            visible = uiState.showFilterSheet,
-                            availableCategories = uiState.availableCategories,
-                            selectedCategories = uiState.selectedCategories,
-                            onToggleCategoryFilter = { viewModel.onEvent(FinanceEvent.ToggleCategoryFilter(it)) },
-                            modifier = Modifier.fillMaxWidth().padding(top = 12.dp)
+                        // Sort toggle button
+                        val isSortActive = uiState.sortOrder == FinanceSortOrder.ASCENDING
+                        FinanceToggleButton(
+                            isActive = isSortActive,
+                            onClick = {
+                                val newOrder = if (uiState.sortOrder == FinanceSortOrder.DESCENDING)
+                                    FinanceSortOrder.ASCENDING else FinanceSortOrder.DESCENDING
+                                viewModel.onEvent(FinanceEvent.ToggleSortOrder(newOrder))
+                            },
+                            icon = if (uiState.sortOrder == FinanceSortOrder.DESCENDING)
+                                painterResource(R.drawable.icon_arrow_down)
+                            else painterResource(R.drawable.icon_arrow_up),
+                            contentDescription = "Ordenar"
                         )
                     }
 
-                // Total row
-                item {
+                    // Inline filter panel
+                    FinanceInlineFilterPanel(
+                        visible = uiState.showFilterSheet,
+                        availableCategories = uiState.availableCategories,
+                        selectedCategories = uiState.selectedCategories,
+                        onToggleCategoryFilter = { viewModel.onEvent(FinanceEvent.ToggleCategoryFilter(it)) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 18.dp)
+                    )
+
+                    // Total row
                     val filteredNet = uiState.filteredItems.sumOf {
                         if (it.type == FinanceType.INCOME) it.amount else -it.amount
                     }
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                            .padding(horizontal = 24.dp, vertical = 12.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -405,41 +400,46 @@ fun FinanceScreen(
                             color = Color.White
                         )
                     }
-                }
 
-                    // Empty state
+                    // Empty state or transaction list
                     if (!uiState.hasItems) {
-                        item {
-                            SwissKitEmptyView(
-                                icon = R.drawable.icon_not_money,
-                                title = "Sin transacciones",
-                                subtitle = "Agrega tu primera transacción con el botón +",
-                                iconTint = Color.White,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 60.dp)
-                            )
-                        }
-                    }
-
-                    // Transaction items
-                    items(items = uiState.filteredItems, key = { it.id }) { item ->
-                        FinanceItemRow(
-                            item = item,
-                            isSelected = item.id in uiState.selectedIds,
-                            isSelectionMode = uiState.isSelectionMode,
-                            isRevealed = revealedItemId == item.id,
-                            onRevealChange = { revealed ->
-                                revealedItemId = if (revealed) item.id else null
-                            },
-                            onClick = {
-                                if (uiState.isSelectionMode) viewModel.onEvent(FinanceEvent.ToggleSelection(item.id))
-                                else onNavigateToEditor(item.id)
-                            },
-                            onLongClick = { viewModel.onEvent(FinanceEvent.ToggleSelection(item.id)) },
-                            onDeleteRequest = { itemToDelete = item },
-                            modifier = Modifier.animateItem()
+                        SwissKitEmptyView(
+                            icon = R.drawable.icon_not_money,
+                            title = "Sin transacciones",
+                            subtitle = "Agrega tu primera transacción con el botón +",
+                            iconTint = Color.White,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 60.dp)
                         )
+                    } else {
+                        LazyColumn(
+                            contentPadding = PaddingValues(
+                                horizontal = FinanceDesignTokens.listRowInset,
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(FinanceDesignTokens.listRowGap),
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            items(items = uiState.filteredItems,
+                                key = { it.id }
+                            ) { finance ->
+                                FinanceItemRow(
+                                    item = finance,
+                                    isSelected = finance.id in uiState.selectedIds,
+                                    isSelectionMode = uiState.isSelectionMode,
+                                    isRevealed = revealedItemId == finance.id,
+                                    onRevealChange = { revealed ->
+                                        revealedItemId = if (revealed) finance.id else null
+                                    },
+                                    onClick = {
+                                        if (uiState.isSelectionMode) viewModel.onEvent(FinanceEvent.ToggleSelection(finance.id))
+                                        else onNavigateToEditor(finance.id)
+                                    },
+                                    onDeleteRequest = { itemToDelete = finance },
+                                    modifier = Modifier.animateItem()
+                                )
+                            }
+                        }
                     }
                 }
             }

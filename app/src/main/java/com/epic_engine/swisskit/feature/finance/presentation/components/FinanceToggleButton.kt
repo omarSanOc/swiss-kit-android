@@ -34,7 +34,7 @@ fun FinanceToggleButton(
             tint = if (isActive) Color.White else FinanceDesignTokens.primaryBlue,
             modifier = Modifier
                 .size(FinanceDesignTokens.filterButtonHeight)
-                .padding(12.dp)
+                .padding(horizontal = 8.dp, vertical = 12.dp)
         )
     }
 }

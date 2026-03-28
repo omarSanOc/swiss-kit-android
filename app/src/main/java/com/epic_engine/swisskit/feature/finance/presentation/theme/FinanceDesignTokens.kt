@@ -30,8 +30,8 @@ object FinanceDesignTokens {
     val chipVPadding = 10.dp
     val chipFlowSpacing = 12.dp
     val rowMetadataSpacing = 8.dp
-    val listRowInset = 24.dp
-    val listRowGap = 4.dp
+    val listRowInset = 20.dp
+    val listRowGap = 12.dp
 
     // ═══════════════ RADIUS ═══════════════
     val fieldRadius = 12.dp
