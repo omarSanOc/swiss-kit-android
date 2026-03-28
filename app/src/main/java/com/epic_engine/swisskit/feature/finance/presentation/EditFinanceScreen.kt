@@ -34,8 +34,6 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -271,7 +269,7 @@ fun EditFinanceScreen(
                                     text = "Categoría",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
-                                    color =  MaterialTheme.colorScheme.onSurface
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                                 IconButton(
                                     onClick = { showNewCategoryInput = !showNewCategoryInput },
@@ -284,6 +282,24 @@ fun EditFinanceScreen(
                                     )
                                 }
                             }
+
+                            if (showNewCategoryInput) {
+                                SwissKitTextField(
+                                    value = newCategoryText,
+                                    onValueChange = { text ->
+                                        newCategoryText = text
+                                        val trimmed = text.trim()
+                                        if (trimmed.isNotBlank()) {
+                                            viewModel.onEvent(EditFinanceEvent.CategoryChanged(trimmed))
+                                        }
+                                    },
+                                    label = "",
+                                    placeholder = "Nueva categoría",
+                                    accentColor = FinanceDesignTokens.primaryBlue,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+
                             FlowRow(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -291,7 +307,10 @@ fun EditFinanceScreen(
                                 uiState.availableCategories.forEach { cat ->
                                     FilterChip(
                                         selected = uiState.category == cat,
-                                        onClick = { viewModel.onEvent(EditFinanceEvent.CategoryChanged(cat)) },
+                                        onClick = {
+                                            viewModel.onEvent(EditFinanceEvent.CategoryChanged(cat))
+                                            newCategoryText = cat
+                                        },
                                         label = { Text(cat) },
                                         shape = RoundedCornerShape(FinanceDesignTokens.chipRadius),
                                         colors = FilterChipDefaults.filterChipColors(
@@ -307,39 +326,6 @@ fun EditFinanceScreen(
                                             selectedBorderWidth = 0.dp
                                         )
                                     )
-                                }
-                            }
-
-                            if (showNewCategoryInput) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    OutlinedTextField(
-                                        value = newCategoryText,
-                                        onValueChange = { newCategoryText = it },
-                                        label = { Text("Nueva categoría") },
-                                        singleLine = true,
-                                        modifier = Modifier.weight(1f),
-                                        shape = RoundedCornerShape(FinanceDesignTokens.fieldRadius),
-                                        colors = OutlinedTextFieldDefaults.colors(
-                                            focusedBorderColor = FinanceDesignTokens.primaryBlue,
-                                            focusedLabelColor = FinanceDesignTokens.primaryBlue
-                                        )
-                                    )
-                                    TextButton(
-                                        onClick = {
-                                            val trimmed = newCategoryText.trim()
-                                            if (trimmed.isNotBlank()) {
-                                                viewModel.onEvent(EditFinanceEvent.CategoryChanged(trimmed))
-                                                newCategoryText = ""
-                                                showNewCategoryInput = false
-                                            }
-                                        }
-                                    ) {
-                                        Text("Agregar", color = FinanceDesignTokens.primaryBlue)
-                                    }
                                 }
                             }
                         }

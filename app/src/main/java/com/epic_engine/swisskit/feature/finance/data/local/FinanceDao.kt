@@ -37,4 +37,7 @@ interface FinanceDao {
 
     @Query("DELETE FROM finance_transactions")
     suspend fun deleteAll()
+
+    @Query("SELECT DISTINCT category FROM finance_transactions ORDER BY category ASC")
+    fun observeDistinctCategories(): Flow<List<String>>
 }

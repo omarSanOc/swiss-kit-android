@@ -51,4 +51,7 @@ class FinanceRepositoryImpl @Inject constructor(
         items.forEach { dao.insert(it.toEntity()) }
         SwissKitLogger.d("Finance", "Restauradas ${items.size} transacciones desde backup")
     }
+
+    override fun observeDistinctCategories(): Flow<List<String>> =
+        dao.observeDistinctCategories()
 }

@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -25,6 +24,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -79,6 +79,7 @@ fun FinanceScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     var showMenu by remember { mutableStateOf(false) }
     var itemToDelete by remember { mutableStateOf<Finance?>(null) }
+    var showDeleteSelectedAlert by remember { mutableStateOf(false) }
     var revealedItemId by remember { mutableStateOf<String?>(null) }
 
     val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale("es", "MX")) }
@@ -159,6 +160,36 @@ fun FinanceScreen(
         )
     }
 
+    if (showDeleteSelectedAlert) {
+        AlertDialog(
+            onDismissRequest = { showDeleteSelectedAlert = false },
+            shape = RoundedCornerShape(20.dp),
+            title = { Text("¿Eliminar transacciones?", fontWeight = FontWeight.Bold) },
+            text = {
+                Text(
+                    "Se eliminarán ${uiState.selectedVisibleCount} transacciones seleccionadas. ¿Estás seguro de continuar?",
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.onEvent(FinanceEvent.DeleteSelected)
+                    showDeleteSelectedAlert = false
+                }) { Text("Eliminar", color = Color(0xFFFF3833)) }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { showDeleteSelectedAlert = false },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) { Text("Cancelar") }
+            }
+        )
+    }
+
     SwissKitBackground(colors = listOf(
         FinanceDesignTokens.primaryBlue,
         FinanceDesignTokens.backgroundLight,
@@ -197,40 +228,76 @@ fun FinanceScreen(
                             }
                         },
                         actions = {
-                            if (uiState.isSelectionMode) {
-                                IconButton(onClick = { viewModel.onEvent(FinanceEvent.DeleteSelected) }) {
-                                    Icon(
-                                        Icons.Default.Delete,
-                                        "Eliminar seleccionados",
-                                        tint = Color.White
-                                    )
-                                }
-                            } else {
-                                IconButton(onClick = { showMenu = true }) {
-                                    Icon(Icons.Default.MoreVert, "Más opciones", tint = Color.White)
-                                }
-                                DropdownMenu(
-                                    expanded = showMenu,
-                                    onDismissRequest = { showMenu = false }
-                                ) {
+                            IconButton(onClick = { showMenu = true }) {
+                                Icon(Icons.Default.MoreVert, "Más opciones", tint = Color.White)
+                            }
+                            DropdownMenu(
+                                expanded = showMenu,
+                                onDismissRequest = { showMenu = false }
+                            ) {
+                                if (uiState.isSelectionMode) {
                                     DropdownMenuItem(
-                                        text = { Text("Exportar PDF") },
+                                        text = { Text("Salir del modo de selección") },
                                         onClick = {
-                                            viewModel.onEvent(FinanceEvent.ExportPdf)
+                                            viewModel.onEvent(FinanceEvent.ClearSelection)
                                             showMenu = false
                                         }
                                     )
                                     DropdownMenuItem(
-                                        text = { Text("Backup JSON") },
+                                        enabled = uiState.filteredItems.isNotEmpty(),
+                                        text = {
+                                            Text(if (uiState.allVisibleSelected) "Deseleccionar todo" else "Seleccionar todo")
+                                        },
+                                        onClick = {
+                                            viewModel.onEvent(
+                                                if (uiState.allVisibleSelected) FinanceEvent.DeselectAll
+                                                else FinanceEvent.SelectAll
+                                            )
+                                            showMenu = false
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        enabled = uiState.canDeleteSelected,
+                                        text = {
+                                            Text(
+                                                "Eliminar ${uiState.selectedVisibleCount} transacciones seleccionadas",
+                                                color = if (uiState.canDeleteSelected) Color(0xFFFF3833)
+                                                        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                                            )
+                                        },
+                                        onClick = {
+                                            showDeleteSelectedAlert = true
+                                            showMenu = false
+                                        }
+                                    )
+                                } else {
+                                    DropdownMenuItem(
+                                        text = { Text("Exportar a archivo") },
                                         onClick = {
                                             viewModel.onEvent(FinanceEvent.BackupJson)
                                             showMenu = false
                                         }
                                     )
                                     DropdownMenuItem(
-                                        text = { Text("Restaurar Backup") },
+                                        text = { Text("Importar desde archivo") },
                                         onClick = {
                                             openDocumentLauncher.launch(arrayOf("application/json"))
+                                            showMenu = false
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Compartir en PDF") },
+                                        onClick = {
+                                            viewModel.onEvent(FinanceEvent.ExportPdf)
+                                            showMenu = false
+                                        }
+                                    )
+                                    HorizontalDivider()
+                                    DropdownMenuItem(
+                                        enabled = uiState.hasItems,
+                                        text = { Text("Entrar en modo de selección") },
+                                        onClick = {
+                                            viewModel.onEvent(FinanceEvent.EnterSelectionMode)
                                             showMenu = false
                                         }
                                     )
@@ -307,9 +374,10 @@ fun FinanceScreen(
                     item {
                         FinanceInlineFilterPanel(
                             visible = uiState.showFilterSheet,
-                            typeFilter = uiState.typeFilter,
-                            onSetTypeFilter = { viewModel.onEvent(FinanceEvent.SetTypeFilter(it)) },
-                            modifier = Modifier.fillMaxWidth()
+                            availableCategories = uiState.availableCategories,
+                            selectedCategories = uiState.selectedCategories,
+                            onToggleCategoryFilter = { viewModel.onEvent(FinanceEvent.ToggleCategoryFilter(it)) },
+                            modifier = Modifier.fillMaxWidth().padding(top = 12.dp)
                         )
                     }
 
@@ -343,7 +411,7 @@ fun FinanceScreen(
                     if (!uiState.hasItems) {
                         item {
                             SwissKitEmptyView(
-                                icon = R.drawable.icon_wallet,
+                                icon = R.drawable.icon_not_money,
                                 title = "Sin transacciones",
                                 subtitle = "Agrega tu primera transacción con el botón +",
                                 iconTint = Color.White,

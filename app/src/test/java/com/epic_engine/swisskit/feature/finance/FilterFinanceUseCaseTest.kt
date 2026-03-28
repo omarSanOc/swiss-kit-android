@@ -26,48 +26,61 @@ class FilterFinanceUseCaseTest {
 
     @Test
     fun `empty filters returns all items`() {
-        val result = useCase(items, "", emptySet(), null)
+        val result = useCase(items, "", emptySet())
+        assertEquals(4, result.size)
+    }
+
+    @Test
+    fun `Todas filter returns all items`() {
+        val result = useCase(items, "", setOf("Todas"))
         assertEquals(4, result.size)
     }
 
     @Test
     fun `text query filters by title`() {
-        val result = useCase(items, "salario", emptySet(), null)
+        val result = useCase(items, "salario", emptySet())
         assertEquals(1, result.size)
         assertEquals("Salario mensual", result.first().title)
     }
 
     @Test
     fun `text query filters by notes`() {
-        val result = useCase(items, "mensual", emptySet(), null)
+        val result = useCase(items, "mensual", emptySet())
         // "Salario mensual" en título y "Pago mensual" en notas
         assertEquals(2, result.size)
     }
 
     @Test
-    fun `type filter INCOME returns only income items`() {
-        val result = useCase(items, "", emptySet(), FinanceType.INCOME)
+    fun `Ingreso filter returns only income items`() {
+        val result = useCase(items, "", setOf("Ingreso"))
         assertTrue(result.all { it.type == FinanceType.INCOME })
         assertEquals(2, result.size)
     }
 
     @Test
+    fun `Gasto filter returns only expense items`() {
+        val result = useCase(items, "", setOf("Gasto"))
+        assertTrue(result.all { it.type == FinanceType.EXPENSE })
+        assertEquals(2, result.size)
+    }
+
+    @Test
     fun `category filter returns matching items`() {
-        val result = useCase(items, "", setOf("Vivienda", "Comida"), null)
+        val result = useCase(items, "", setOf("Vivienda", "Comida"))
         assertEquals(2, result.size)
         assertTrue(result.all { it.category in setOf("Vivienda", "Comida") })
     }
 
     @Test
     fun `combined filters are applied simultaneously`() {
-        val result = useCase(items, "free", setOf("Freelance"), FinanceType.INCOME)
+        val result = useCase(items, "free", setOf("Freelance"))
         assertEquals(1, result.size)
         assertEquals("Freelance diseño", result.first().title)
     }
 
     @Test
     fun `query is case insensitive`() {
-        val result = useCase(items, "RENTA", emptySet(), null)
+        val result = useCase(items, "RENTA", emptySet())
         assertEquals(1, result.size)
     }
 }

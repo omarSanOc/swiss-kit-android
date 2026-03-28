@@ -5,6 +5,7 @@ import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.Orientation
@@ -22,10 +23,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
+import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -123,71 +123,76 @@ fun FinanceItemRow(
             )
         }
 
-        // Front layer: card
-        SwissKitCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset { IntOffset(offsetX.value.roundToInt(), 0) }
-                .draggable(
-                    enabled = !isSelectionMode,
-                    orientation = Orientation.Horizontal,
-                    state = rememberDraggableState { delta ->
-                        scope.launch {
-                            val newValue = (offsetX.value + delta).coerceIn(-actionButtonsWidthPx, 0f)
-                            offsetX.snapTo(newValue)
-                        }
-                    },
-                    onDragStopped = {
-                        scope.launch {
-                            val threshold = -actionButtonsWidthPx * 0.4f
-                            if (offsetX.value < threshold) {
-                                offsetX.animateTo(-actionButtonsWidthPx, tween(250, easing = EaseInOut))
-                                onRevealChange(true)
-                            } else {
-                                offsetX.animateTo(0f, tween(250, easing = EaseInOut))
-                                onRevealChange(false)
-                            }
-                        }
-                    }
-                )
-                .clickable(onClick = onClick),
-            contentPadding = PaddingValues(8.dp)
-        ) {
-            Column(
+        // Front layer: card + selection indicator overlay
+        Box {
+            SwissKitCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(3.dp)
+                    .then(
+                        if (isSelectionMode && isSelected)
+                            Modifier.border(2.dp, FinanceDesignTokens.primaryBlue, RoundedCornerShape(FinanceDesignTokens.transactionCardRadius))
+                        else Modifier
+                    )
+                    .offset { IntOffset(offsetX.value.roundToInt(), 0) }
+                    .draggable(
+                        enabled = !isSelectionMode,
+                        orientation = Orientation.Horizontal,
+                        state = rememberDraggableState { delta ->
+                            scope.launch {
+                                val newValue = (offsetX.value + delta).coerceIn(-actionButtonsWidthPx, 0f)
+                                offsetX.snapTo(newValue)
+                            }
+                        },
+                        onDragStopped = {
+                            scope.launch {
+                                val threshold = -actionButtonsWidthPx * 0.4f
+                                if (offsetX.value < threshold) {
+                                    offsetX.animateTo(-actionButtonsWidthPx, tween(250, easing = EaseInOut))
+                                    onRevealChange(true)
+                                } else {
+                                    offsetX.animateTo(0f, tween(250, easing = EaseInOut))
+                                    onRevealChange(false)
+                                }
+                            }
+                        }
+                    )
+                    .clickable(onClick = onClick),
+                contentPadding = PaddingValues(8.dp)
             ) {
-                Text(
-                    text = item.title,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = dateFormat.format(Date(item.date)),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(0.55f)
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
-                    Surface(
-                        shape = RoundedCornerShape(FinanceDesignTokens.amountBadgeRadius),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
+                    Text(
+                        text = item.title,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = dateFormat.format(Date(item.date)),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(0.55f)
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = item.category,
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onSurface.copy(0.7f),
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                        )
-                    }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Surface(
+                            shape = RoundedCornerShape(FinanceDesignTokens.amountBadgeRadius),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
+                        ) {
+                            Text(
+                                text = item.category,
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurface.copy(0.7f),
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                            )
+                        }
                         Text(
                             text = if (isIncome) currencyFormat.format(item.amount)
                                    else "-${currencyFormat.format(item.amount)}",
@@ -195,14 +200,23 @@ fun FinanceItemRow(
                             fontWeight = FontWeight.Bold,
                             color = amountColor
                         )
-                        if (isSelectionMode) {
-                            Checkbox(
-                                checked = isSelected,
-                                onCheckedChange = { onClick() }
-                            )
-                        }
                     }
                 }
+            }
+
+            if (isSelectionMode) {
+                Icon(
+                    imageVector = if (isSelected) Icons.Filled.CheckCircle
+                                  else Icons.Outlined.RadioButtonUnchecked,
+                    contentDescription = null,
+                    tint = if (isSelected) FinanceDesignTokens.primaryBlue
+                           else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.35f),
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset { IntOffset(offsetX.value.roundToInt(), 0) }
+                        .padding(top = 10.dp, end = 10.dp)
+                        .size(22.dp)
+                )
             }
         }
     }

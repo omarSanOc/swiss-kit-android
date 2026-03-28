@@ -14,4 +14,5 @@ interface FinanceRepository {
     suspend fun getAll(): Result<List<Finance>>
     suspend fun deleteAll(): Result<Unit>
     suspend fun insertAll(items: List<Finance>): Result<Unit>
+    fun observeDistinctCategories(): Flow<List<String>>
 }

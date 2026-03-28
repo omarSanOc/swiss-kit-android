@@ -4,9 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.epic_engine.swisskit.feature.finance.domain.model.Finance
-import com.epic_engine.swisskit.feature.finance.domain.model.FinanceCategoryData
 import com.epic_engine.swisskit.feature.finance.domain.model.FinanceType
 import com.epic_engine.swisskit.feature.finance.domain.usecase.AddFinanceUseCase
+import com.epic_engine.swisskit.feature.finance.domain.usecase.GetDistinctCategoriesUseCase
 import com.epic_engine.swisskit.feature.finance.domain.usecase.GetFinanceByIdUseCase
 import com.epic_engine.swisskit.feature.finance.domain.usecase.UpdateFinanceUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +23,8 @@ class EditFinanceViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getFinanceById: GetFinanceByIdUseCase,
     private val addFinance: AddFinanceUseCase,
-    private val updateFinance: UpdateFinanceUseCase
+    private val updateFinance: UpdateFinanceUseCase,
+    private val getDistinctCategories: GetDistinctCategoriesUseCase
 ) : ViewModel() {
 
     private val financeId: String? = savedStateHandle.get<String>("financeId")?.takeIf { it != "new" }
@@ -33,6 +34,12 @@ class EditFinanceViewModel @Inject constructor(
 
     init {
         loadFinance()
+        viewModelScope.launch {
+            getDistinctCategories().collect { categories ->
+                val withDefault = if ("General" in categories) categories else listOf("General") + categories
+                _uiState.update { it.copy(availableCategories = withDefault) }
+            }
+        }
     }
 
     private fun loadFinance() {
@@ -48,15 +55,17 @@ class EditFinanceViewModel @Inject constructor(
     }
 
     fun loadForEdit(item: Finance) {
-        _uiState.value = EditFinanceUiState(
-            id = item.id,
-            title = item.title,
-            amountInput = item.amount.toString(),
-            date = item.date,
-            notes = item.notes ?: "",
-            category = item.category,
-            type = item.type
-        )
+        _uiState.update { currentState ->
+            currentState.copy(
+                id = item.id,
+                title = item.title,
+                amountInput = item.amount.toString(),
+                date = item.date,
+                notes = item.notes ?: "",
+                category = item.category,
+                type = item.type
+            )
+        }
     }
 
     fun onEvent(event: EditFinanceEvent) {
@@ -67,8 +76,7 @@ class EditFinanceViewModel @Inject constructor(
             is EditFinanceEvent.NotesChanged -> _uiState.update { it.copy(notes = event.value) }
             is EditFinanceEvent.CategoryChanged -> _uiState.update { it.copy(category = event.value) }
             is EditFinanceEvent.TypeChanged -> {
-                val defaultCategory = FinanceCategoryData.categoriesFor(event.type).first()
-                _uiState.update { it.copy(type = event.type, category = defaultCategory) }
+                _uiState.update { it.copy(type = event.type) }
             }
             is EditFinanceEvent.Save -> handleSave()
             is EditFinanceEvent.ClearError -> _uiState.update { it.copy(validationError = null) }
