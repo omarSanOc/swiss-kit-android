@@ -41,6 +41,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
 import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
@@ -84,6 +86,8 @@ fun FinanceScreen(
     var revealedItemId by remember { mutableStateOf<String?>(null) }
 
     val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale("es", "MX")) }
+    val scope = rememberCoroutineScope()
+    var pendingBackupJson by remember { mutableStateOf<String?>(null) }
 
     val openDocumentLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument()
@@ -94,22 +98,28 @@ fun FinanceScreen(
         }
     }
 
+    val createDocumentLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        uri?.let {
+            pendingBackupJson?.let { json ->
+                context.contentResolver.openOutputStream(it)?.use { stream ->
+                    stream.write(json.toByteArray())
+                }
+                pendingBackupJson = null
+                scope.launch { snackbarHostState.showSnackbar("Archivo guardado") }
+            }
+        }
+    }
+
     LaunchedEffect(Unit) {
         viewModel.pdfBytes.collect { bytes -> sharePdfBytes(context, bytes) }
     }
 
     LaunchedEffect(Unit) {
         viewModel.backupJson.collect { json ->
-            val fileName = "swisskit_finance_backup_${System.currentTimeMillis()}.json"
-            val cacheFile = File(context.cacheDir, fileName)
-            cacheFile.writeText(json)
-            val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", cacheFile)
-            val intent = Intent(Intent.ACTION_SEND).apply {
-                type = "application/json"
-                putExtra(Intent.EXTRA_STREAM, uri)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            }
-            context.startActivity(Intent.createChooser(intent, "Guardar backup"))
+            pendingBackupJson = json
+            createDocumentLauncher.launch("swisskit_finance_backup_${System.currentTimeMillis()}.json")
         }
     }
 

@@ -51,12 +51,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
+import com.epic_engine.swisskit.feature.finance.presentation.theme.FinanceDesignTokens
 import com.epic_engine.swisskit.feature.shopping.presentation.components.ShoppingActionButtons
 import com.epic_engine.swisskit.feature.shopping.presentation.components.ShoppingAddItemBar
 import com.epic_engine.swisskit.feature.shopping.presentation.components.ShoppingDuplicateToast
 import com.epic_engine.swisskit.feature.shopping.presentation.components.ShoppingItemRow
 import com.epic_engine.swisskit.ui.theme.yellowBackground
+import com.epic_engine.swisskit.ui.theme.yellowDarkBackground
 import com.epic_engine.swisskit.ui.theme.yellowShopping
 import kotlinx.coroutines.delay
 
@@ -85,147 +88,154 @@ fun ShoppingScreen(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(yellowShopping, yellowBackground)
-                )
-            )
-    ) {
-        Scaffold(
-            containerColor = Color.Transparent,
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = "Lista de compras",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = Color.White
-                        )
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.Transparent,
-                        navigationIconContentColor = Color.White,
-                        actionIconContentColor = Color.White
-                    ),
-                    navigationIcon = {
-                        IconButton(onClick = onBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Volver"
-                            )
-                        }
-                    },
-                    actions = {
-                        IconButton(
-                            onClick = {
-                                val text = viewModel.buildShareText()
-                                val intent = Intent(Intent.ACTION_SEND).apply {
-                                    type = "text/plain"
-                                    putExtra(Intent.EXTRA_TEXT, text)
-                                }
-                                context.startActivity(Intent.createChooser(intent, "Compartir lista"))
-                            },
-                            enabled = uiState.hasAnyItems
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Share,
-                                contentDescription = "Compartir lista"
-                            )
-                        }
-                    }
-                )
-            },
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-        ) { innerPadding ->
-            Column(
+    SwissKitBackground(colors = listOf(
+        yellowShopping,
+        yellowBackground,
+    ),
+        darkColors =  listOf(
+            yellowShopping,
+            yellowDarkBackground
+        ),
+        content = {
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                ShoppingAddItemBar(
-                    value = uiState.inputText,
-                    onValueChange = { viewModel.onEvent(ShoppingEvent.InputChanged(it)) },
-                    onAdd = { viewModel.onEvent(ShoppingEvent.AddItem(uiState.inputText)) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                ShoppingActionButtons(
-                    checkedCount = uiState.checkedItems.size,
-                    onUncheckAll = { viewModel.onEvent(ShoppingEvent.UncheckAll) },
-                    onDeleteChecked = { viewModel.onEvent(ShoppingEvent.ShowDeleteCheckedDialog) }
-                )
-
-                if (!uiState.hasAnyItems) {
-                    SwissKitEmptyView(
-                        icon = R.drawable.icon_shopping,
-                        title = "Tu lista está vacía",
-                        subtitle = "Agrega ítems para empezar",
-                        modifier = Modifier.fillMaxSize(),
-                        iconTint = Color.White.copy(alpha = 0.7f)
-                    )
-                } else {
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        contentPadding = PaddingValues(top = 4.dp, bottom = 24.dp)
+                Scaffold(
+                    containerColor = Color.Transparent,
+                    topBar = {
+                        TopAppBar(
+                            title = {
+                                Text(
+                                    text = "Lista de compras",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = Color.White
+                                )
+                            },
+                            colors = TopAppBarDefaults.topAppBarColors(
+                                containerColor = Color.Transparent,
+                                navigationIconContentColor = Color.White,
+                                actionIconContentColor = Color.White
+                            ),
+                            navigationIcon = {
+                                IconButton(onClick = onBack) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                        contentDescription = "Volver"
+                                    )
+                                }
+                            },
+                            actions = {
+                                IconButton(
+                                    onClick = {
+                                        val text = viewModel.buildShareText()
+                                        val intent = Intent(Intent.ACTION_SEND).apply {
+                                            type = "text/plain"
+                                            putExtra(Intent.EXTRA_TEXT, text)
+                                        }
+                                        context.startActivity(Intent.createChooser(intent, "Compartir lista"))
+                                    },
+                                    enabled = uiState.hasAnyItems
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Share,
+                                        contentDescription = "Compartir lista"
+                                    )
+                                }
+                            }
+                        )
+                    },
+                    snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+                ) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                            .padding(horizontal = 16.dp)
+                            .padding(top = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        items(
-                            items = uiState.pendingItems,
-                            key = { it.id }
-                        ) { item ->
-                            ShoppingItemRow(
-                                item = item,
-                                isRevealed = revealedItemId == item.id,
-                                onRevealChange = { revealed ->
-                                    revealedItemId = if (revealed) item.id else null
-                                },
-                                onToggle = { viewModel.onEvent(ShoppingEvent.ToggleItem(item)) },
-                                onDelete = { viewModel.onEvent(ShoppingEvent.ShowDeleteItemDialog(item)) },
-                                onEdit = { viewModel.onEvent(ShoppingEvent.StartEdit(item)) },
-                                modifier = Modifier.animateItem(
-                                    fadeInSpec = tween(250, easing = EaseInOut),
-                                    fadeOutSpec = tween(250, easing = EaseInOut)
-                                )
-                            )
-                        }
+                        ShoppingAddItemBar(
+                            value = uiState.inputText,
+                            onValueChange = { viewModel.onEvent(ShoppingEvent.InputChanged(it)) },
+                            onAdd = { viewModel.onEvent(ShoppingEvent.AddItem(uiState.inputText)) },
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
-                        items(
-                            items = uiState.checkedItems,
-                            key = { it.id }
-                        ) { item ->
-                            ShoppingItemRow(
-                                item = item,
-                                isRevealed = revealedItemId == item.id,
-                                onRevealChange = { revealed ->
-                                    revealedItemId = if (revealed) item.id else null
-                                },
-                                onToggle = { viewModel.onEvent(ShoppingEvent.ToggleItem(item)) },
-                                onDelete = { viewModel.onEvent(ShoppingEvent.ShowDeleteItemDialog(item)) },
-                                onEdit = { viewModel.onEvent(ShoppingEvent.StartEdit(item)) },
-                                modifier = Modifier.animateItem(
-                                    fadeInSpec = tween(250, easing = EaseInOut),
-                                    fadeOutSpec = tween(250, easing = EaseInOut)
-                                )
+                        ShoppingActionButtons(
+                            checkedCount = uiState.checkedItems.size,
+                            onUncheckAll = { viewModel.onEvent(ShoppingEvent.UncheckAll) },
+                            onDeleteChecked = { viewModel.onEvent(ShoppingEvent.ShowDeleteCheckedDialog) }
+                        )
+
+                        if (!uiState.hasAnyItems) {
+                            SwissKitEmptyView(
+                                icon = R.drawable.icon_shopping,
+                                title = "Tu lista está vacía",
+                                subtitle = "Agrega ítems para empezar",
+                                modifier = Modifier.fillMaxSize(),
+                                iconTint = Color.White.copy(alpha = 0.7f)
                             )
+                        } else {
+                            LazyColumn(
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                contentPadding = PaddingValues(top = 4.dp, bottom = 24.dp)
+                            ) {
+                                items(
+                                    items = uiState.pendingItems,
+                                    key = { it.id }
+                                ) { item ->
+                                    ShoppingItemRow(
+                                        item = item,
+                                        isRevealed = revealedItemId == item.id,
+                                        onRevealChange = { revealed ->
+                                            revealedItemId = if (revealed) item.id else null
+                                        },
+                                        onToggle = { viewModel.onEvent(ShoppingEvent.ToggleItem(item)) },
+                                        onDelete = { viewModel.onEvent(ShoppingEvent.ShowDeleteItemDialog(item)) },
+                                        onEdit = { viewModel.onEvent(ShoppingEvent.StartEdit(item)) },
+                                        modifier = Modifier.animateItem(
+                                            fadeInSpec = tween(250, easing = EaseInOut),
+                                            fadeOutSpec = tween(250, easing = EaseInOut)
+                                        )
+                                    )
+                                }
+
+                                items(
+                                    items = uiState.checkedItems,
+                                    key = { it.id }
+                                ) { item ->
+                                    ShoppingItemRow(
+                                        item = item,
+                                        isRevealed = revealedItemId == item.id,
+                                        onRevealChange = { revealed ->
+                                            revealedItemId = if (revealed) item.id else null
+                                        },
+                                        onToggle = { viewModel.onEvent(ShoppingEvent.ToggleItem(item)) },
+                                        onDelete = { viewModel.onEvent(ShoppingEvent.ShowDeleteItemDialog(item)) },
+                                        onEdit = { viewModel.onEvent(ShoppingEvent.StartEdit(item)) },
+                                        modifier = Modifier.animateItem(
+                                            fadeInSpec = tween(250, easing = EaseInOut),
+                                            fadeOutSpec = tween(250, easing = EaseInOut)
+                                        )
+                                    )
+                                }
+                            }
                         }
                     }
                 }
-            }
-        }
 
-        // Toast de duplicados — posicionado en la parte inferior derecha
-        ShoppingDuplicateToast(
-            message = uiState.duplicateMessage,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp)
-        )
-    }
+                // Toast de duplicados — posicionado en la parte inferior derecha
+                ShoppingDuplicateToast(
+                    message = uiState.duplicateMessage,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(16.dp)
+                )
+            }
+        })
+
+
 
     // Diálogo de confirmación: borrar marcados
     if (uiState.showDeleteCheckedDialog) {

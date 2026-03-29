@@ -31,6 +31,8 @@ val grayBackground = Color(0xFFF3F4F6)
 val yellowShopping = Color(0xFFFFA200)
 val yellowBackground = Color(0xFFFFEAC7)
 
+val yellowDarkBackground = Color(0xFF414141)
+
 val redAnimation = Color(0xFFFB2A2A)
 val orangeAnimation = Color(0xFFFF7A00)
 val yellowAnimation = Color(0xFFFFD500)
