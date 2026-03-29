@@ -330,125 +330,132 @@ fun FinanceScreen(
                 },
                 snackbarHost = { SnackbarHost(snackbarHostState) }
             ) { padding ->
-                Column(
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(padding)
+                        .padding(padding),
+                    contentPadding = PaddingValues(bottom = 88.dp),
                 ) {
                     // Search bar + Filter + Sort row
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 18.dp, vertical = 12.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        SwissKitSearchBar(
-                            tint = FinanceDesignTokens.primaryBlue,
-                            query = uiState.searchQuery,
-                            onQueryChange = { viewModel.onEvent(FinanceEvent.SearchChanged(it)) },
-                            modifier = Modifier.weight(1f),
-                            description = "Buscar"
-                        )
+                    item(key = "header_search") {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 18.dp, vertical = 12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            SwissKitSearchBar(
+                                tint = FinanceDesignTokens.primaryBlue,
+                                query = uiState.searchQuery,
+                                onQueryChange = { viewModel.onEvent(FinanceEvent.SearchChanged(it)) },
+                                modifier = Modifier.weight(1f),
+                                description = "Buscar"
+                            )
 
-                        // Filter toggle button
-                        val isFilterActive = uiState.showFilterSheet || uiState.isFiltered
-                        FinanceToggleButton(
-                            isActive = isFilterActive,
-                            onClick = { viewModel.onEvent(FinanceEvent.ToggleFilterSheet) },
-                            icon = painterResource(R.drawable.icon_filter),
-                            contentDescription = "Filtros"
-                        )
+                            // Filter toggle button
+                            val isFilterActive = uiState.showFilterSheet || uiState.isFiltered
+                            FinanceToggleButton(
+                                isActive = isFilterActive,
+                                onClick = { viewModel.onEvent(FinanceEvent.ToggleFilterSheet) },
+                                icon = painterResource(R.drawable.icon_filter),
+                                contentDescription = "Filtros"
+                            )
 
-                        // Sort toggle button
-                        val isSortActive = uiState.sortOrder == FinanceSortOrder.ASCENDING
-                        FinanceToggleButton(
-                            isActive = isSortActive,
-                            onClick = {
-                                val newOrder = if (uiState.sortOrder == FinanceSortOrder.DESCENDING)
-                                    FinanceSortOrder.ASCENDING else FinanceSortOrder.DESCENDING
-                                viewModel.onEvent(FinanceEvent.ToggleSortOrder(newOrder))
-                            },
-                            icon = if (uiState.sortOrder == FinanceSortOrder.DESCENDING)
-                                painterResource(R.drawable.icon_arrow_down)
-                            else painterResource(R.drawable.icon_arrow_up),
-                            contentDescription = "Ordenar"
-                        )
+                            // Sort toggle button
+                            val isSortActive = uiState.sortOrder == FinanceSortOrder.ASCENDING
+                            FinanceToggleButton(
+                                isActive = isSortActive,
+                                onClick = {
+                                    val newOrder = if (uiState.sortOrder == FinanceSortOrder.DESCENDING)
+                                        FinanceSortOrder.ASCENDING else FinanceSortOrder.DESCENDING
+                                    viewModel.onEvent(FinanceEvent.ToggleSortOrder(newOrder))
+                                },
+                                icon = if (uiState.sortOrder == FinanceSortOrder.DESCENDING)
+                                    painterResource(R.drawable.icon_arrow_down)
+                                else painterResource(R.drawable.icon_arrow_up),
+                                contentDescription = "Ordenar"
+                            )
+                        }
                     }
 
                     // Inline filter panel
-                    FinanceInlineFilterPanel(
-                        visible = uiState.showFilterSheet,
-                        availableCategories = uiState.availableCategories,
-                        selectedCategories = uiState.selectedCategories,
-                        onToggleCategoryFilter = { viewModel.onEvent(FinanceEvent.ToggleCategoryFilter(it)) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 18.dp)
-                    )
+                    item(key = "header_filter") {
+                        FinanceInlineFilterPanel(
+                            visible = uiState.showFilterSheet,
+                            availableCategories = uiState.availableCategories,
+                            selectedCategories = uiState.selectedCategories,
+                            onToggleCategoryFilter = { viewModel.onEvent(FinanceEvent.ToggleCategoryFilter(it)) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 18.dp)
+                        )
+                    }
 
                     // Total row
-                    val filteredNet = uiState.filteredItems.sumOf {
-                        if (it.type == FinanceType.INCOME) it.amount else -it.amount
-                    }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp, vertical = 12.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Total",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = Color.White.copy(alpha = FinanceDesignTokens.headerTextAlpha)
-                        )
-                        Text(
-                            text = currencyFormat.format(filteredNet),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
+                    item(key = "header_total") {
+                        val filteredNet = uiState.filteredItems.sumOf {
+                            if (it.type == FinanceType.INCOME) it.amount else -it.amount
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 24.dp, vertical = 12.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Total",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = Color.White.copy(alpha = FinanceDesignTokens.headerTextAlpha)
+                            )
+                            Text(
+                                text = currencyFormat.format(filteredNet),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
                     }
 
                     // Empty state or transaction list
                     if (!uiState.hasItems) {
-                        SwissKitEmptyView(
-                            icon = R.drawable.icon_not_money,
-                            title = "Sin transacciones",
-                            subtitle = "Agrega tu primera transacción con el botón +",
-                            iconTint = Color.White,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 60.dp)
-                        )
+                        item(key = "empty_state") {
+                            SwissKitEmptyView(
+                                icon = R.drawable.icon_not_money,
+                                title = "Sin transacciones",
+                                subtitle = "Agrega tu primera transacción con el botón +",
+                                iconTint = Color.White,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 60.dp)
+                            )
+                        }
                     } else {
-                        LazyColumn(
-                            contentPadding = PaddingValues(
-                                horizontal = FinanceDesignTokens.listRowInset,
-                            ),
-                            verticalArrangement = Arrangement.spacedBy(FinanceDesignTokens.listRowGap),
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            items(items = uiState.filteredItems,
-                                key = { it.id }
-                            ) { finance ->
-                                FinanceItemRow(
-                                    item = finance,
-                                    isSelected = finance.id in uiState.selectedIds,
-                                    isSelectionMode = uiState.isSelectionMode,
-                                    isRevealed = revealedItemId == finance.id,
-                                    onRevealChange = { revealed ->
-                                        revealedItemId = if (revealed) finance.id else null
-                                    },
-                                    onClick = {
-                                        if (uiState.isSelectionMode) viewModel.onEvent(FinanceEvent.ToggleSelection(finance.id))
-                                        else onNavigateToEditor(finance.id)
-                                    },
-                                    onDeleteRequest = { itemToDelete = finance },
-                                    modifier = Modifier.animateItem()
-                                )
-                            }
+                        items(
+                            items = uiState.filteredItems,
+                            key = { it.id }
+                        ) { finance ->
+                            FinanceItemRow(
+                                item = finance,
+                                isSelected = finance.id in uiState.selectedIds,
+                                isSelectionMode = uiState.isSelectionMode,
+                                isRevealed = revealedItemId == finance.id,
+                                onRevealChange = { revealed ->
+                                    revealedItemId = if (revealed) finance.id else null
+                                },
+                                onClick = {
+                                    if (uiState.isSelectionMode) viewModel.onEvent(FinanceEvent.ToggleSelection(finance.id))
+                                    else onNavigateToEditor(finance.id)
+                                },
+                                onDeleteRequest = { itemToDelete = finance },
+                                modifier = Modifier
+                                    .animateItem()
+                                    .padding(
+                                        horizontal = FinanceDesignTokens.listRowInset,
+                                        vertical = FinanceDesignTokens.listRowGap
+                                    )
+                            )
                         }
                     }
                 }
