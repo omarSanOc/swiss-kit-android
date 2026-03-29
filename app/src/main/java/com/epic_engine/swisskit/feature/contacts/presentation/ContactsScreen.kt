@@ -5,35 +5,28 @@ import android.net.Uri
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -47,7 +40,6 @@ import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitFAB
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitSearchBar
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitToast
-import com.epic_engine.swisskit.core.designsystem.components.SwissKitToolbar
 import com.epic_engine.swisskit.feature.contacts.presentation.components.ContactActionSheet
 import com.epic_engine.swisskit.feature.contacts.presentation.components.ContactRow
 import com.epic_engine.swisskit.feature.contacts.presentation.components.ContactSheet
@@ -60,6 +52,7 @@ import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsTeal
 import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsTealLight
 import com.epic_engine.swisskit.ui.theme.greenContact
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactsScreen(
     categoryTitle: String,
@@ -85,53 +78,74 @@ fun ContactsScreen(
     SwissKitBackground(
         content = {
             Box(modifier = Modifier.fillMaxSize()) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .statusBarsPadding()
-                ) {
-
-                    // Toolbar
-                    Spacer(Modifier.height(ContactsDimens.screenTopPadding))
-                    SwissKitToolbar(title = categoryTitle)
-                    Spacer(Modifier.height(ContactsDimens.screenTopPadding))
-
-                    if (uiState.contacts.isEmpty() && uiState.searchQuery.isBlank()) {
-                        // Empty state
-                        SwissKitEmptyView(
-                            icon = R.drawable.icon_contact_plus,
-                            title = "Sin contactos",
-                            subtitle = "Crea tu primer contacto con el botón +",
-                            modifier = Modifier.fillMaxSize(),
-                            iconTint = Color.White
-                        )
-                    } else {
-                        // Search bar
-                        SwissKitSearchBar(
-                            tint = greenContact,
-                            query = uiState.searchQuery,
-                            onQueryChange = viewModel::onSearchQueryChange,
-                            description = "Buscar contacto…",
-                            modifier = Modifier.padding(horizontal = ContactsDimens.screenHorizontalPadding)
-                        )
-                        Spacer(Modifier.height(ContactsDimens.rowVerticalInset))
-
-                        if (uiState.contacts.isEmpty()) {
-                            SwissKitEmptyView(
-                                icon = R.drawable.icon_contact_plus,
-                                title = "Sin resultados",
-                                subtitle = "Ningún contacto coincide con tu búsqueda",
-                                modifier = Modifier.fillMaxSize(),
-                                iconTint = Color.White
+                Scaffold(
+                    containerColor = Color.Transparent,
+                    topBar = {
+                        TopAppBar(
+                            title = {
+                                Text(categoryTitle, color = Color.White, fontWeight = FontWeight.Bold)
+                            },
+                            navigationIcon = {
+                                IconButton(onClick = onNavigateBack) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                        contentDescription = "Volver",
+                                        tint = Color.White
+                                    )
+                                }
+                            },
+                            colors = TopAppBarDefaults.topAppBarColors(
+                                containerColor = Color.Transparent,
+                                scrolledContainerColor = Color.Transparent
                             )
+                        )
+                    },
+                    floatingActionButton = {
+                        SwissKitFAB(
+                            onClick = viewModel::onShowAddSheet,
+                            colors = listOf(ContactsFABGradientTop, ContactsFABGradientBottom)
+                        )
+                    }
+                ) { padding ->
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(padding),
+                        contentPadding = PaddingValues(bottom = 88.dp),
+                        verticalArrangement = Arrangement.spacedBy(ContactsDimens.rowVerticalInset)
+                    ) {
+                        if (uiState.contacts.isEmpty() && uiState.searchQuery.isBlank()) {
+                            item(key = "empty") {
+                                SwissKitEmptyView(
+                                    icon = R.drawable.icon_contact_plus,
+                                    title = "Sin contactos",
+                                    subtitle = "Crea tu primer contacto con el botón +",
+                                    modifier = Modifier.fillParentMaxSize(),
+                                    iconTint = Color.White
+                                )
+                            }
                         } else {
-                            LazyColumn(
-                                contentPadding = PaddingValues(
-                                    horizontal = ContactsDimens.screenHorizontalPadding,
-                                    vertical = ContactsDimens.rowVerticalInset
-                                ),
-                                verticalArrangement = Arrangement.spacedBy(ContactsDimens.rowVerticalInset)
-                            ) {
+                            item(key = "search_bar") {
+                                SwissKitSearchBar(
+                                    tint = greenContact,
+                                    query = uiState.searchQuery,
+                                    onQueryChange = viewModel::onSearchQueryChange,
+                                    description = "Buscar contacto…",
+                                    modifier = Modifier.padding(horizontal = ContactsDimens.screenHorizontalPadding)
+                                )
+                            }
+
+                            if (uiState.contacts.isEmpty()) {
+                                item(key = "empty_filtered") {
+                                    SwissKitEmptyView(
+                                        icon = R.drawable.icon_contact_plus,
+                                        title = "Sin resultados",
+                                        subtitle = "Ningún contacto coincide con tu búsqueda",
+                                        modifier = Modifier.fillParentMaxSize(),
+                                        iconTint = Color.White
+                                    )
+                                }
+                            } else {
                                 items(uiState.contacts, key = { it.id }) { contact ->
                                     ContactRow(
                                         contact = contact,
@@ -142,26 +156,19 @@ fun ContactsScreen(
                                         onShowActionSheet = { viewModel.onShowActionSheet(contact) },
                                         onEdit = { viewModel.onEditContact(contact) },
                                         onDelete = { viewModel.onRequestDeleteContact(contact) },
-                                        modifier = Modifier.animateItem(
-                                            fadeInSpec = tween(250),
-                                            fadeOutSpec = tween(250),
-                                            placementSpec = tween(250)
-                                        )
+                                        modifier = Modifier
+                                            .padding(horizontal = ContactsDimens.screenHorizontalPadding)
+                                            .animateItem(
+                                                fadeInSpec = tween(250),
+                                                fadeOutSpec = tween(250),
+                                                placementSpec = tween(250)
+                                            )
                                     )
                                 }
                             }
                         }
                     }
                 }
-
-                // FAB
-                SwissKitFAB(
-                    onClick = viewModel::onShowAddSheet,
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(end = ContactsDimens.fabMargin, bottom = 56.dp),
-                    colors = listOf(ContactsFABGradientTop, ContactsFABGradientBottom)
-                )
 
                 // Toast
                 SwissKitToast(
@@ -216,41 +223,5 @@ fun ContactsScreen(
                 }
             }
         )
-    }
-}
-
-@Composable
-private fun ContactsDetailToolbar(
-    title: String,
-    onNavigateBack: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .padding(horizontal = ContactsDimens.screenHorizontalPadding),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Surface(
-            shape = CircleShape,
-            color = Color.White.copy(alpha = 0.2f)
-        ) {
-            IconButton(onClick = onNavigateBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Volver",
-                    tint = Color.White
-                )
-            }
-        }
-        Spacer(Modifier.weight(1f))
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            color = Color.White
-        )
-        Spacer(Modifier.weight(1f))
-        // Spacer to balance back button
-        Spacer(Modifier.size(48.dp))
     }
 }

@@ -3,10 +3,8 @@ package com.epic_engine.swisskit.feature.shopping.presentation
 import android.content.Intent
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -44,7 +42,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -53,7 +50,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
-import com.epic_engine.swisskit.feature.finance.presentation.theme.FinanceDesignTokens
 import com.epic_engine.swisskit.feature.shopping.presentation.components.ShoppingActionButtons
 import com.epic_engine.swisskit.feature.shopping.presentation.components.ShoppingAddItemBar
 import com.epic_engine.swisskit.feature.shopping.presentation.components.ShoppingDuplicateToast
@@ -88,19 +84,11 @@ fun ShoppingScreen(
         }
     }
 
-    SwissKitBackground(colors = listOf(
-        yellowShopping,
-        yellowBackground,
-    ),
-        darkColors =  listOf(
-            yellowShopping,
-            yellowDarkBackground
-        ),
+    SwissKitBackground(
+        colors = listOf(yellowShopping, yellowBackground),
+        darkColors = listOf(yellowShopping, yellowDarkBackground),
         content = {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
+            Box(modifier = Modifier.fillMaxSize()) {
                 Scaffold(
                     containerColor = Color.Transparent,
                     topBar = {
@@ -147,79 +135,73 @@ fun ShoppingScreen(
                     },
                     snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
                 ) { innerPadding ->
-                    Column(
+                    LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(innerPadding)
-                            .padding(horizontal = 16.dp)
-                            .padding(top = 8.dp),
+                            .padding(innerPadding),
+                        contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 24.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        ShoppingAddItemBar(
-                            value = uiState.inputText,
-                            onValueChange = { viewModel.onEvent(ShoppingEvent.InputChanged(it)) },
-                            onAdd = { viewModel.onEvent(ShoppingEvent.AddItem(uiState.inputText)) },
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                        item(key = "add_bar") {
+                            ShoppingAddItemBar(
+                                value = uiState.inputText,
+                                onValueChange = { viewModel.onEvent(ShoppingEvent.InputChanged(it)) },
+                                onAdd = { viewModel.onEvent(ShoppingEvent.AddItem(uiState.inputText)) },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
 
-                        ShoppingActionButtons(
-                            checkedCount = uiState.checkedItems.size,
-                            onUncheckAll = { viewModel.onEvent(ShoppingEvent.UncheckAll) },
-                            onDeleteChecked = { viewModel.onEvent(ShoppingEvent.ShowDeleteCheckedDialog) }
-                        )
+                        item(key = "action_buttons") {
+                            ShoppingActionButtons(
+                                checkedCount = uiState.checkedItems.size,
+                                onUncheckAll = { viewModel.onEvent(ShoppingEvent.UncheckAll) },
+                                onDeleteChecked = { viewModel.onEvent(ShoppingEvent.ShowDeleteCheckedDialog) }
+                            )
+                        }
 
                         if (!uiState.hasAnyItems) {
-                            SwissKitEmptyView(
-                                icon = R.drawable.icon_shopping,
-                                title = "Tu lista está vacía",
-                                subtitle = "Agrega ítems para empezar",
-                                modifier = Modifier.fillMaxSize(),
-                                iconTint = Color.White.copy(alpha = 0.7f)
-                            )
+                            item(key = "empty") {
+                                SwissKitEmptyView(
+                                    icon = R.drawable.icon_shopping,
+                                    title = "Tu lista está vacía",
+                                    subtitle = "Agrega ítems para empezar",
+                                    modifier = Modifier.fillParentMaxSize(),
+                                    iconTint = Color.White.copy(alpha = 0.7f)
+                                )
+                            }
                         } else {
-                            LazyColumn(
-                                verticalArrangement = Arrangement.spacedBy(8.dp),
-                                contentPadding = PaddingValues(top = 4.dp, bottom = 24.dp)
-                            ) {
-                                items(
-                                    items = uiState.pendingItems,
-                                    key = { it.id }
-                                ) { item ->
-                                    ShoppingItemRow(
-                                        item = item,
-                                        isRevealed = revealedItemId == item.id,
-                                        onRevealChange = { revealed ->
-                                            revealedItemId = if (revealed) item.id else null
-                                        },
-                                        onToggle = { viewModel.onEvent(ShoppingEvent.ToggleItem(item)) },
-                                        onDelete = { viewModel.onEvent(ShoppingEvent.ShowDeleteItemDialog(item)) },
-                                        onEdit = { viewModel.onEvent(ShoppingEvent.StartEdit(item)) },
-                                        modifier = Modifier.animateItem(
-                                            fadeInSpec = tween(250, easing = EaseInOut),
-                                            fadeOutSpec = tween(250, easing = EaseInOut)
-                                        )
+                            items(uiState.pendingItems, key = { it.id }) { item ->
+                                ShoppingItemRow(
+                                    item = item,
+                                    isRevealed = revealedItemId == item.id,
+                                    onRevealChange = { revealed ->
+                                        revealedItemId = if (revealed) item.id else null
+                                    },
+                                    onToggle = { viewModel.onEvent(ShoppingEvent.ToggleItem(item)) },
+                                    onDelete = { viewModel.onEvent(ShoppingEvent.ShowDeleteItemDialog(item)) },
+                                    onEdit = { viewModel.onEvent(ShoppingEvent.StartEdit(item)) },
+                                    modifier = Modifier.animateItem(
+                                        fadeInSpec = tween(250, easing = EaseInOut),
+                                        fadeOutSpec = tween(250, easing = EaseInOut)
                                     )
-                                }
+                                )
+                            }
 
-                                items(
-                                    items = uiState.checkedItems,
-                                    key = { it.id }
-                                ) { item ->
-                                    ShoppingItemRow(
-                                        item = item,
-                                        isRevealed = revealedItemId == item.id,
-                                        onRevealChange = { revealed ->
-                                            revealedItemId = if (revealed) item.id else null
-                                        },
-                                        onToggle = { viewModel.onEvent(ShoppingEvent.ToggleItem(item)) },
-                                        onDelete = { viewModel.onEvent(ShoppingEvent.ShowDeleteItemDialog(item)) },
-                                        onEdit = { viewModel.onEvent(ShoppingEvent.StartEdit(item)) },
-                                        modifier = Modifier.animateItem(
-                                            fadeInSpec = tween(250, easing = EaseInOut),
-                                            fadeOutSpec = tween(250, easing = EaseInOut)
-                                        )
+                            items(uiState.checkedItems, key = { it.id }) { item ->
+                                ShoppingItemRow(
+                                    item = item,
+                                    isRevealed = revealedItemId == item.id,
+                                    onRevealChange = { revealed ->
+                                        revealedItemId = if (revealed) item.id else null
+                                    },
+                                    onToggle = { viewModel.onEvent(ShoppingEvent.ToggleItem(item)) },
+                                    onDelete = { viewModel.onEvent(ShoppingEvent.ShowDeleteItemDialog(item)) },
+                                    onEdit = { viewModel.onEvent(ShoppingEvent.StartEdit(item)) },
+                                    modifier = Modifier.animateItem(
+                                        fadeInSpec = tween(250, easing = EaseInOut),
+                                        fadeOutSpec = tween(250, easing = EaseInOut)
                                     )
-                                }
+                                )
                             }
                         }
                     }
@@ -233,9 +215,8 @@ fun ShoppingScreen(
                         .padding(16.dp)
                 )
             }
-        })
-
-
+        }
+    )
 
     // Diálogo de confirmación: borrar marcados
     if (uiState.showDeleteCheckedDialog) {
