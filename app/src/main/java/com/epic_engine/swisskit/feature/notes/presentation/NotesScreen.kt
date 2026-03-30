@@ -63,8 +63,8 @@ fun NotesScreen(
     }
 
     SwissKitBackground(
-        colors = listOf(NotesColors.Purple, NotesColors.PurpleLight),
-        darkColors = listOf(NotesColors.Purple, NotesColors.PurpleDark),
+        colors = listOf(NotesDesignTokens.Primary, NotesDesignTokens.Background),
+        darkColors = listOf(NotesDesignTokens.PurpleAccentDark, NotesDesignTokens.DarkBackground),
         content = {
             Scaffold(
                 containerColor = Color.Transparent,
@@ -91,7 +91,7 @@ fun NotesScreen(
                         .padding(padding),
                     contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = 88.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
+            ) {
                     item(key = "search_bar") {
                         SwissKitSearchBar(
                             tint = purpleNotes,

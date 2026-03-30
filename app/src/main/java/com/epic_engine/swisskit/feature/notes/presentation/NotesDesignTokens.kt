@@ -16,6 +16,7 @@ object NotesColors {
     // Legacy aliases — kept for backward compatibility
     val Primary = Purple
     val Background = PurpleLight
+    val DarkBackground = PurpleDark
     val CardBackground = Color(0xFFF8F6FF)
     val PreviewBackground = Color(0xFFF3F0FF)
 }
