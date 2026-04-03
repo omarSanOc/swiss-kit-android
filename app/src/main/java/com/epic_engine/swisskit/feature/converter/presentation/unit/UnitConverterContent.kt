@@ -1,5 +1,11 @@
 package com.epic_engine.swisskit.feature.converter.presentation.unit
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,30 +14,37 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.SwapVert
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.epic_engine.swisskit.core.designsystem.DesignTokens
-import com.epic_engine.swisskit.core.designsystem.components.SwissKitCard
-import com.epic_engine.swisskit.core.designsystem.components.SwissKitTextField
+import androidx.compose.ui.unit.sp
+import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.feature.converter.domain.model.UnitCategory
+import com.epic_engine.swisskit.feature.converter.presentation.components.ConverterOutlinedField
+import com.epic_engine.swisskit.feature.converter.presentation.components.ConverterReadOnlyField
+import com.epic_engine.swisskit.feature.converter.presentation.components.ConverterSectionCard
+import com.epic_engine.swisskit.feature.converter.presentation.components.ConverterSelectorField
 import com.epic_engine.swisskit.feature.converter.presentation.components.UnitPickerDropdown
-import com.epic_engine.swisskit.ui.theme.grayConverter
+import com.epic_engine.swisskit.feature.converter.presentation.theme.ConverterDesignTokens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,93 +57,129 @@ fun UnitConverterContent(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(DesignTokens.contentPaddingMedium),
-        verticalArrangement = Arrangement.spacedBy(DesignTokens.contentPaddingMedium)
+            .padding(horizontal = ConverterDesignTokens.screenHorizontalPadding)
+            .padding(bottom = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(ConverterDesignTokens.sectionSpacing)
     ) {
-        // Selector de categoría: Longitud / Peso / Volumen
-        SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-            UnitCategory.all.forEachIndexed { index, category ->
-                SegmentedButton(
-                    selected = uiState.selectedCategory == category,
-                    onClick = { onEvent(UnitConverterEvent.CategorySelected(category)) },
-                    shape = SegmentedButtonDefaults.itemShape(
-                        index = index,
-                        count = UnitCategory.all.size
-                    ),
-                    colors = SegmentedButtonDefaults.colors(
-                        activeContainerColor = grayConverter,
-                        activeContentColor = MaterialTheme.colorScheme.onPrimary
+        // Card: Categoría
+        ConverterSectionCard(title = "Categoría") {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                CategoryDropdown(
+                    selected = uiState.selectedCategory,
+                    onSelected = { onEvent(UnitConverterEvent.CategorySelected(it)) },
+                    modifier = Modifier.weight(1f)
+                )
+                AnimatedContent(
+                    targetState = uiState.selectedCategory,
+                    transitionSpec = {
+                        (scaleIn(initialScale = 0.8f) + fadeIn()) togetherWith
+                            (scaleOut(targetScale = 0.8f) + fadeOut())
+                    },
+                    label = "category_icon"
+                ) { category ->
+                    Icon(
+                        painter = painterResource(id = categoryIconRes(category)),
+                        contentDescription = category.displayName,
+                        tint = ConverterDesignTokens.accentBlue,
+                        modifier = Modifier.size(32.dp)
                     )
-                ) {
-                    Text(text = category.displayName)
                 }
             }
         }
 
-        // Monto
-        SwissKitTextField(
-            value = uiState.amountInput,
-            onValueChange = { onEvent(UnitConverterEvent.AmountChanged(it)) },
-            label = "Valor",
-            accentColor = grayConverter,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-            modifier = Modifier.fillMaxWidth()
-        )
+        // Card: Unidades
+        ConverterSectionCard(title = "Unidades") {
+            UnitPickerDropdown(
+                label = "De",
+                selected = uiState.fromUnit,
+                units = uiState.availableUnits,
+                onSelected = { onEvent(UnitConverterEvent.FromUnitSelected(it)) },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(ConverterDesignTokens.fieldSpacing))
+            UnitPickerDropdown(
+                label = "A",
+                selected = uiState.toUnit,
+                units = uiState.availableUnits,
+                onSelected = { onEvent(UnitConverterEvent.ToUnitSelected(it)) },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
-        // Unidad origen
-        UnitPickerDropdown(
-            label = "De",
-            selected = uiState.fromUnit,
-            units = uiState.availableUnits,
-            onSelected = { onEvent(UnitConverterEvent.FromUnitSelected(it)) },
-            accentColor = grayConverter,
-            modifier = Modifier.fillMaxWidth()
-        )
+        // Card: Cantidad
+        ConverterSectionCard(title = "Cantidad") {
+            ConverterOutlinedField(
+                value = uiState.amountInput,
+                onValueChange = { onEvent(UnitConverterEvent.AmountChanged(it)) },
+                placeholder = "0",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
-        // Botón swap
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+        // Card: Resultado
+        ConverterSectionCard(title = "Resultado") {
+            ConverterReadOnlyField(
+                value = uiState.convertedResult,
+                placeholder = "—",
+                modifier = Modifier.fillMaxWidth(),
+                trailingContent = if (uiState.convertedResult.isNotBlank()) {
+                    {
+                        Text(
+                            text = uiState.toUnit.symbol,
+                            fontSize = 14.sp,
+                            color = Color.Gray,
+                            modifier = Modifier.padding(end = 4.dp)
+                        )
+                    }
+                } else null
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CategoryDropdown(
+    selected: UnitCategory,
+    onSelected: (UnitCategory) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+        modifier = modifier
+    ) {
+        ConverterSelectorField(
+            value = selected.displayName,
+            placeholder = "",
+            expanded = expanded,
+            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable)
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
         ) {
-            IconButton(onClick = { onEvent(UnitConverterEvent.SwapUnits) }) {
-                Icon(
-                    imageVector = Icons.Default.SwapVert,
-                    contentDescription = "Intercambiar unidades",
-                    tint = grayConverter
+            UnitCategory.all.forEach { category ->
+                DropdownMenuItem(
+                    text = { Text(category.displayName) },
+                    onClick = {
+                        onSelected(category)
+                        expanded = false
+                    }
                 )
             }
         }
-
-        // Unidad destino
-        UnitPickerDropdown(
-            label = "A",
-            selected = uiState.toUnit,
-            units = uiState.availableUnits,
-            onSelected = { onEvent(UnitConverterEvent.ToUnitSelected(it)) },
-            accentColor = grayConverter,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(DesignTokens.contentPaddingSmall))
-
-        // Resultado
-        if (uiState.convertedResult.isNotBlank()) {
-            SwissKitCard(modifier = Modifier.fillMaxWidth()) {
-                Column(modifier = Modifier.padding(DesignTokens.contentPaddingMedium)) {
-                    Text(
-                        text = "Resultado",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = uiState.convertedResult,
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
-        }
     }
+}
+
+private fun categoryIconRes(category: UnitCategory): Int = when (category) {
+    UnitCategory.Length -> R.drawable.icon_ruler
+    UnitCategory.Weight -> R.drawable.icon_weight
+    UnitCategory.Volume -> R.drawable.icon_volume
 }

@@ -4,14 +4,13 @@ package com.epic_engine.swisskit.feature.converter.domain.model
  * Equivalente a las categorías de Foundation Measurement API del módulo iOS.
  * Conversión mediante factores al sistema SI.
  */
-sealed class UnitCategory(val displayName: String) {
-
-    data object Length : UnitCategory("Longitud")
-    data object Weight : UnitCategory("Peso")
-    data object Volume : UnitCategory("Volumen")
+enum class UnitCategory(val displayName: String) {
+    Length("Longitud"),
+    Weight("Peso"),
+    Volume("Volumen");
 
     companion object {
-        val all: List<UnitCategory> = listOf(Length, Weight, Volume)
+        val all: List<UnitCategory> = entries
     }
 }
 

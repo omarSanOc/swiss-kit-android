@@ -13,6 +13,7 @@ import com.epic_engine.swisskit.feature.contacts.domain.usecase.SearchContactsUs
 import com.epic_engine.swisskit.feature.contacts.domain.usecase.UpdateContactUseCase
 import com.epic_engine.swisskit.feature.contacts.domain.util.PhoneNumberNormalizer
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,7 +54,7 @@ class ContactsViewModel @Inject constructor(
         observeContacts()
     }
 
-    @OptIn(FlowPreview::class)
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     private fun observeContacts() {
         _searchQuery
             .debounce(300)

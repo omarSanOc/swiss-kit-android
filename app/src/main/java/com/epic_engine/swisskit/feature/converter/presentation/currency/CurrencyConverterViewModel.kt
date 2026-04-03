@@ -70,6 +70,8 @@ class CurrencyConverterViewModel @Inject constructor(
             }
             is CurrencyConverterEvent.Refresh -> loadRates(forceRefresh = true)
             is CurrencyConverterEvent.ClearError -> _uiState.update { it.copy(errorMessage = null) }
+            is CurrencyConverterEvent.ShowCopiedToast -> _uiState.update { it.copy(showCopiedToast = true) }
+            is CurrencyConverterEvent.DismissCopiedToast -> _uiState.update { it.copy(showCopiedToast = false) }
         }
     }
 

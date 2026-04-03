@@ -11,7 +11,8 @@ data class CurrencyConverterUiState(
     val convertedResult: String = "",
     val isLoading: Boolean = false,
     val isOffline: Boolean = false,      // true cuando se usa cache stale
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val showCopiedToast: Boolean = false
 ) {
     val isResultAvailable: Boolean get() = convertedResult.isNotBlank() && rates != null
     val canConvert: Boolean get() = fromCurrency != null && toCurrency != null && rates != null
@@ -24,4 +25,6 @@ sealed class CurrencyConverterEvent {
     data object SwapCurrencies : CurrencyConverterEvent()
     data object Refresh : CurrencyConverterEvent()
     data object ClearError : CurrencyConverterEvent()
+    data object ShowCopiedToast : CurrencyConverterEvent()
+    data object DismissCopiedToast : CurrencyConverterEvent()
 }
