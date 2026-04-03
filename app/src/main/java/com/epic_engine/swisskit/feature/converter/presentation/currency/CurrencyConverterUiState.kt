@@ -10,6 +10,7 @@ data class CurrencyConverterUiState(
     val amountInput: String = "",
     val convertedResult: String = "",
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val isOffline: Boolean = false,      // true cuando se usa cache stale
     val errorMessage: String? = null,
     val showCopiedToast: Boolean = false

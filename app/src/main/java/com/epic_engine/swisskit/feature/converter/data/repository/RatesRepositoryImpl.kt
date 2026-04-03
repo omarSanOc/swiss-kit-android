@@ -20,12 +20,14 @@ class RatesRepositoryImpl @Inject constructor(
      * 3. Si la API falla → fallback a cache stale (sin importar TTL)
      * 4. Si no hay cache → retorna error
      */
-    override suspend fun getLatest(): Result<Rates> {
-        // 1. Cache fresco
-        val cached = localDataSource.getCachedRates()
-        if (cached != null) {
-            SwissKitLogger.d("Converter", "Sirviendo rates desde cache fresco")
-            return Result.success(cached.toDomain(isFromCache = true))
+    override suspend fun getLatest(forceRefresh: Boolean): Result<Rates> {
+        // 1. Cache fresco (omitido si forceRefresh = true)
+        if (!forceRefresh) {
+            val cached = localDataSource.getCachedRates()
+            if (cached != null) {
+                SwissKitLogger.d("Converter", "Sirviendo rates desde cache fresco")
+                return Result.success(cached.toDomain(isFromCache = true))
+            }
         }
 
         // 2. Llamada a la API

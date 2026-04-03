@@ -7,5 +7,6 @@ import javax.inject.Inject
 class GetLatestRatesUseCase @Inject constructor(
     private val repository: RatesRepository
 ) {
-    suspend operator fun invoke(): Result<Rates> = repository.getLatest()
+    suspend operator fun invoke(forceRefresh: Boolean = false): Result<Rates> =
+        repository.getLatest(forceRefresh)
 }

@@ -96,13 +96,19 @@ class CurrencyConverterViewModel @Inject constructor(
 
     private fun loadRates(forceRefresh: Boolean = false) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-            getLatestRates()
+            val hasData = _uiState.value.rates != null
+            if (hasData) {
+                _uiState.update { it.copy(isRefreshing = true, errorMessage = null) }
+            } else {
+                _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            }
+            getLatestRates(forceRefresh)
                 .onSuccess { rates ->
                     _uiState.update { state ->
                         state.copy(
                             rates = rates,
                             isLoading = false,
+                            isRefreshing = false,
                             isOffline = rates.isFromCache
                         )
                     }
@@ -110,7 +116,13 @@ class CurrencyConverterViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     SwissKitLogger.e("Converter", "Error cargando rates", error)
-                    _uiState.update { it.copy(isLoading = false, errorMessage = "Sin conexión y sin caché disponible") }
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            isRefreshing = false,
+                            errorMessage = "Sin conexión y sin caché disponible"
+                        )
+                    }
                 }
         }
     }

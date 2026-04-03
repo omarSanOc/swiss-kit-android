@@ -1,7 +1,10 @@
 package com.epic_engine.swisskit.feature.converter.presentation.currency
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,15 +18,19 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.SwapVert
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitToast
@@ -34,15 +41,31 @@ import com.epic_engine.swisskit.feature.converter.presentation.components.Conver
 import com.epic_engine.swisskit.feature.converter.presentation.components.CurrencyPickerDropdown
 import com.epic_engine.swisskit.feature.converter.presentation.theme.ConverterDesignTokens
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CurrencyConverterContent(
     uiState: CurrencyConverterUiState,
     onEvent: (CurrencyConverterEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val clipboardManager = LocalClipboardManager.current
+    val context = LocalContext.current
+    val pullToRefreshState = rememberPullToRefreshState()
 
-    Box(modifier = modifier.fillMaxSize()) {
+    PullToRefreshBox(
+        isRefreshing = uiState.isRefreshing,
+        onRefresh = { onEvent(CurrencyConverterEvent.Refresh) },
+        state = pullToRefreshState,
+        modifier = modifier.fillMaxSize(),
+        indicator = {
+            PullToRefreshDefaults.Indicator(
+                modifier = Modifier.align(Alignment.TopCenter),
+                state = pullToRefreshState,
+                isRefreshing = uiState.isRefreshing,
+                color = ConverterDesignTokens.accentBlue
+            )
+        }
+
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -97,7 +120,7 @@ fun CurrencyConverterContent(
                     )
                 }
 
-                // Loading
+                // Loading (solo carga inicial sin datos previos)
                 if (uiState.isLoading) {
                     Spacer(modifier = Modifier.height(8.dp))
                     LinearProgressIndicator(
@@ -148,8 +171,13 @@ fun CurrencyConverterContent(
                         {
                             IconButton(
                                 onClick = {
-                                    clipboardManager.setText(AnnotatedString(uiState.convertedResult))
-                                    onEvent(CurrencyConverterEvent.ShowCopiedToast)
+                                    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                    clipboard.setPrimaryClip(
+                                        ClipData.newPlainText("resultado_conversion", uiState.convertedResult)
+                                    )
+                                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+                                        onEvent(CurrencyConverterEvent.ShowCopiedToast)
+                                    }
                                 }
                             ) {
                                 Icon(
@@ -164,7 +192,7 @@ fun CurrencyConverterContent(
             }
         }
 
-        // Toast de confirmación
+        // Toast de confirmación (solo en Android 12L o menor)
         SwissKitToast(
             message = if (uiState.showCopiedToast) "Copiado al portapapeles" else null,
             onDismiss = { onEvent(CurrencyConverterEvent.DismissCopiedToast) }
