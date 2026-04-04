@@ -1,161 +1,202 @@
 package com.epic_engine.swisskit.feature.qrscanner.presentation.components
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AllInclusive
-import androidx.compose.material.icons.filled.CropFree
-import androidx.compose.material.icons.filled.QrCodeScanner
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import com.epic_engine.swisskit.feature.qrscanner.domain.model.QRScanSaveResult
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitSearchBar
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitToast
+import com.epic_engine.swisskit.feature.qrscanner.domain.model.QRScan
 import com.epic_engine.swisskit.feature.qrscanner.domain.model.ScanMode
-import com.epic_engine.swisskit.feature.qrscanner.presentation.QRCameraUiState
-import com.epic_engine.swisskit.feature.qrscanner.presentation.QRScannerDesignTokens
+import com.epic_engine.swisskit.feature.qrscanner.presentation.theme.QRScannerDesignTokens
+import com.epic_engine.swisskit.feature.qrscanner.presentation.util.QRCameraUiState
 
 @Composable
 fun ScannerTab(
-    uiState: QRCameraUiState,
+    cameraUiState: QRCameraUiState,
+    filteredScans: List<QRScan>,
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit,
     onBarcodeDetected: (String) -> Unit,
-    onToggleMode: () -> Unit,
     onResumeScanning: () -> Unit,
+    onClearFeedback: () -> Unit,
+    onCopyScan: (QRScan) -> Unit,
+    onEditLabel: (QRScan) -> Unit,
+    onOpenContent: (QRScan) -> Unit,
+    onRequestDeleteScan: (QRScan) -> Unit,
+    showDeleteScanConfirm: QRScan?,
+    showDeleteAllConfirm: Boolean,
+    onConfirmDeleteScan: () -> Unit,
+    onRequestDeleteAll: () -> Unit,
+    onConfirmDeleteAll: () -> Unit,
+    onDismissDialog: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.fillMaxSize()) {
-        CameraPreview(
-            isScanning = uiState.isScanning,
-            onBarcodeDetected = onBarcodeDetected,
-            modifier = Modifier.fillMaxSize()
-        )
-
-        ScannerOverlay(modifier = Modifier.fillMaxSize())
-
-        uiState.lastScanResult?.let { result ->
-            val message = when (result) {
-                is QRScanSaveResult.Created -> "✓ Guardado: ${result.scan.label}"
-                is QRScanSaveResult.MergedDuplicate -> "↻ Actualizado: ${result.scan.label}"
-                QRScanSaveResult.Failed -> "✗ Error al guardar"
-            }
-            Surface(
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Camera card
+            Box(
                 modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 16.dp)
-                    .padding(horizontal = 24.dp),
-                shape = RoundedCornerShape(8.dp),
-                color = if (result is QRScanSaveResult.Failed)
-                    MaterialTheme.colorScheme.errorContainer
-                else MaterialTheme.colorScheme.primaryContainer
+                    .fillMaxWidth()
+                    .padding(horizontal = QRScannerDesignTokens.screenHorizontalPadding)
+                    .height(QRScannerDesignTokens.cameraCardHeight)
+                    .clip(RoundedCornerShape(20.dp))
             ) {
-                Text(
-                    text = message,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                    style = MaterialTheme.typography.bodySmall
+                CameraPreview(
+                    isScanning = cameraUiState.isScanning,
+                    onBarcodeDetected = onBarcodeDetected,
+                    modifier = Modifier.fillMaxSize()
                 )
+                CameraCornerMarkers(modifier = Modifier.fillMaxSize())
             }
+
+            // Search bar
+            SwissKitSearchBar(
+                tint = QRScannerDesignTokens.Primary,
+                query = searchQuery,
+                onQueryChange = onSearchQueryChange,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = QRScannerDesignTokens.screenHorizontalPadding,
+                        vertical = 12.dp
+                    ),
+                description = "Buscar escaneos"
+            )
+
+            // History list
+            HistorialTab(
+                scans = filteredScans,
+                showDeleteScanConfirm = showDeleteScanConfirm,
+                showDeleteAllConfirm = showDeleteAllConfirm,
+                onCopyScan = onCopyScan,
+                onEditLabel = onEditLabel,
+                onOpenContent = onOpenContent,
+                onRequestDeleteScan = onRequestDeleteScan,
+                onConfirmDeleteScan = onConfirmDeleteScan,
+                onRequestDeleteAll = onRequestDeleteAll,
+                onConfirmDeleteAll = onConfirmDeleteAll,
+                onDismissDialog = onDismissDialog,
+                modifier = Modifier.weight(1f)
+            )
         }
 
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            if (!uiState.isScanning && uiState.scanMode == ScanMode.SINGLE) {
-                Button(
-                    onClick = onResumeScanning,
-                    colors = ButtonDefaults.buttonColors(containerColor = QRScannerDesignTokens.Primary)
-                ) {
-                    Icon(Icons.Default.QrCodeScanner, contentDescription = null)
-                    Spacer(Modifier.width(8.dp))
-                    Text("Escanear de nuevo")
-                }
-            }
+        // Continuous mode feedback toast
+        SwissKitToast(
+            message = cameraUiState.feedbackMessage,
+            onDismiss = onClearFeedback
+        )
 
-            FilterChip(
-                selected = uiState.scanMode == ScanMode.CONTINUOUS,
-                onClick = onToggleMode,
-                label = {
-                    Text(if (uiState.scanMode == ScanMode.SINGLE) "Modo: Una vez" else "Modo: Continuo")
-                },
-                leadingIcon = {
-                    Icon(
-                        if (uiState.scanMode == ScanMode.SINGLE) Icons.Default.CropFree
-                        else Icons.Default.AllInclusive,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
+        // Resume FAB (single mode, after pausing)
+        if (!cameraUiState.isScanning && cameraUiState.scanMode == ScanMode.SINGLE) {
+            QRResumeFAB(
+                onClick = onResumeScanning,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 24.dp, bottom = 32.dp)
             )
         }
     }
 }
 
 @Composable
-private fun ScannerOverlay(modifier: Modifier = Modifier) {
-    val overlayColor = QRScannerDesignTokens.ScannerOverlay
-    val frameColor = QRScannerDesignTokens.ScannerFrame
-
+private fun CameraCornerMarkers(modifier: Modifier = Modifier) {
+    val color = QRScannerDesignTokens.CornerMarker
     Canvas(modifier = modifier) {
-        val canvasWidth = size.width
-        val canvasHeight = size.height
-        val frameSize = 280.dp.toPx()
-        val frameLeft = (canvasWidth - frameSize) / 2f
-        val frameTop = (canvasHeight - frameSize) / 2f
-
-        // Overlay semitransparente
-        drawRect(color = overlayColor)
-
-        // Recorte transparente central
-        drawRoundRect(
-            color = Color.Transparent,
-            topLeft = Offset(frameLeft, frameTop),
-            size = Size(frameSize, frameSize),
-            cornerRadius = CornerRadius(12.dp.toPx()),
-            blendMode = BlendMode.Clear
-        )
-
-        // Marco decorativo
         val strokeWidth = 4.dp.toPx()
-        val cornerLength = 36.dp.toPx()
-        val cr = 12.dp.toPx()
+        val cornerLen = 28.dp.toPx()
+        val padding = 16.dp.toPx()
 
-        drawRoundRect(
-            color = frameColor,
-            topLeft = Offset(frameLeft, frameTop),
-            size = Size(frameSize, frameSize),
-            cornerRadius = CornerRadius(cr),
-            style = Stroke(width = strokeWidth)
-        )
+        val left = padding
+        val top = padding
+        val right = size.width - padding
+        val bottom = size.height - padding
 
-        // Esquinas en naranja más gruesas
         val corners = listOf(
-            Offset(frameLeft, frameTop),
-            Offset(frameLeft + frameSize - cornerLength, frameTop),
-            Offset(frameLeft, frameTop + frameSize - cornerLength),
-            Offset(frameLeft + frameSize - cornerLength, frameTop + frameSize - cornerLength)
+            Triple(left, top, 1f to 1f),
+            Triple(right, top, -1f to 1f),
+            Triple(left, bottom, 1f to -1f),
+            Triple(right, bottom, -1f to -1f)
         )
-        corners.forEach { corner ->
-            drawRect(
-                color = frameColor,
-                topLeft = corner,
-                size = Size(cornerLength, strokeWidth * 2)
-            )
-            drawRect(
-                color = frameColor,
-                topLeft = corner,
-                size = Size(strokeWidth * 2, cornerLength)
-            )
+        corners.forEach { (cx, cy, dir) ->
+            val (dx, dy) = dir
+            drawLine(color, Offset(cx, cy), Offset(cx + dx * cornerLen, cy), strokeWidth)
+            drawLine(color, Offset(cx, cy), Offset(cx, cy + dy * cornerLen), strokeWidth)
         }
+    }
+}
+
+@Composable
+private fun QRResumeFAB(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val fabSize = 56.dp
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.95f else 1f,
+        animationSpec = spring(dampingRatio = 0.8f, stiffness = Spring.StiffnessHigh),
+        label = "fab_scale"
+    )
+
+    val pink = QRScannerDesignTokens.Primary
+    Box(
+        modifier = modifier
+            .size(fabSize)
+            .shadow(elevation = 6.dp, shape = CircleShape)
+            .clip(CircleShape)
+            .drawBehind {
+                drawRect(
+                    brush = Brush.linearGradient(
+                        colors = listOf(pink, pink.copy(alpha = 0.8f)),
+                        start = Offset.Zero,
+                        end = Offset(0f, size.height)
+                    )
+                )
+            }
+            .graphicsLayer { scaleX = scale; scaleY = scale }
+            .clickable(
+                interactionSource = interactionSource,
+                indication = ripple(bounded = true, color = Color.White.copy(alpha = 0.3f)),
+                onClick = onClick
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = Icons.Default.CameraAlt,
+            contentDescription = "Reanudar escaneo",
+            tint = Color.White,
+            modifier = Modifier.size(24.dp)
+        )
     }
 }

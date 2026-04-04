@@ -13,20 +13,6 @@ object ConverterDesignTokens {
     val gradientEnd = Color(0xFFF3F4F6)
     val gradientDarkEnd = Color(0xFF49494A)
 
-    // ═══════════════ TAB PICKER — LIGHT ═══════════════
-    val tabTrackLight        = Color(0xFF000000).copy(alpha = 0.07f)
-    val tabPillLight         = Color.White
-    val tabBorderLight       = Color(0xFF000000).copy(alpha = 0.10f)
-    val tabTextActiveLight   = Color(0xFF111827)
-    val tabTextInactiveLight = Color(0xFF2A2929)
-
-    // ═══════════════ TAB PICKER — DARK ═══════════════
-    val tabTrackDark         = Color(0xFF000000).copy(alpha = 0.30f)
-    val tabPillDark          = Color(0xFF52525B)
-    val tabBorderDark        = Color.White.copy(alpha = 0.13f)
-    val tabTextActiveDark    = Color.White
-    val tabTextInactiveDark  = Color.White.copy(alpha = 0.60f)
-
     // ═══════════════ SPACING ═══════════════
     val sectionSpacing = 24.dp
     val cardInternalPadding = 20.dp
@@ -37,13 +23,9 @@ object ConverterDesignTokens {
     // ═══════════════ RADIUS ═══════════════
     val cardCornerRadius = 20.dp
     val fieldCornerRadius = 18.dp
-    val tabPickerCornerRadius = 18.dp
-    val tabPickerInnerRadius = 16.dp
 
     // ═══════════════ SIZES ═══════════════
     val pickerMinHeight = 48.dp
-    val tabPickerHeight = 44.dp
-    val tabPickerPadding = 6.dp
 
     // ═══════════════ STROKE ═══════════════
     val fieldBorderWidth = 0.5.dp

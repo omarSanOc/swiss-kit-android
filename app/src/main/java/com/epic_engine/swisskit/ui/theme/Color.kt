@@ -24,6 +24,7 @@ val purpleBackground = Color(0xFFEFEAFF)
 
 val pinkQrScanner = Color(0xFFE64480)
 val pinkBackground = Color(0xFFFCE8EF)
+val pinkDarkBackground = Color(0xFF4A4345)
 
 val grayConverter = Color(0xFF6B7280)
 val grayBackground = Color(0xFFF3F4F6)

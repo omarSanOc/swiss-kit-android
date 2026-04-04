@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.feature.converter.presentation.components
+package com.epic_engine.swisskit.core.designsystem.components
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -28,46 +28,65 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.epic_engine.swisskit.feature.converter.presentation.theme.ConverterDesignTokens
 
-private val tabs = listOf("Unidades", "Divisas")
+private val tabTrackLight        = Color(0xFF000000).copy(alpha = 0.07f)
+private val tabPillLight         = Color.White
+private val tabBorderLight       = Color(0xFF000000).copy(alpha = 0.10f)
+private val tabTextActiveLight   = Color(0xFF111827)
+private val tabTextInactiveLight = Color(0xFF2A2929)
+
+private val tabTrackDark         = Color(0xFF000000).copy(alpha = 0.30f)
+private val tabPillDark          = Color(0xFF52525B)
+private val tabBorderDark        = Color.White.copy(alpha = 0.13f)
+private val tabTextActiveDark    = Color.White
+private val tabTextInactiveDark  = Color.White.copy(alpha = 0.60f)
+
+private val tabPickerHeight       = 44.dp
+private val tabPickerPadding      = 6.dp
+private val tabPickerOuterRadius  = 18.dp
+private val tabPickerInnerRadius  = 16.dp
 
 @Composable
-fun ConverterTabPicker(
+fun SwissKitTabPicker(
+    options: List<String>,
     selectedIndex: Int,
     onTabSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isDark = isSystemInDarkTheme()
-    val trackColor  = if (isDark) ConverterDesignTokens.tabTrackDark  else ConverterDesignTokens.tabTrackLight
-    val pillColor   = if (isDark) ConverterDesignTokens.tabPillDark   else ConverterDesignTokens.tabPillLight
-    val borderColor = if (isDark) ConverterDesignTokens.tabBorderDark else ConverterDesignTokens.tabBorderLight
-    val textActive  = if (isDark) ConverterDesignTokens.tabTextActiveDark  else ConverterDesignTokens.tabTextActiveLight
-    val textInactive   = if (isDark) ConverterDesignTokens.tabTextInactiveDark else ConverterDesignTokens.tabTextInactiveLight
+    if (options.isEmpty()) return
 
-    val trackShape = RoundedCornerShape(ConverterDesignTokens.tabPickerCornerRadius)
-    val pillShape  = RoundedCornerShape(ConverterDesignTokens.tabPickerInnerRadius)
+    val safeIndex = selectedIndex.coerceIn(0, options.lastIndex)
+    val isDark = isSystemInDarkTheme()
+
+    val trackColor   = if (isDark) tabTrackDark        else tabTrackLight
+    val pillColor    = if (isDark) tabPillDark          else tabPillLight
+    val borderColor  = if (isDark) tabBorderDark        else tabBorderLight
+    val textActive   = if (isDark) tabTextActiveDark    else tabTextActiveLight
+    val textInactive = if (isDark) tabTextInactiveDark  else tabTextInactiveLight
+
+    val trackShape = RoundedCornerShape(tabPickerOuterRadius)
+    val pillShape  = RoundedCornerShape(tabPickerInnerRadius)
 
     BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
-            .height(ConverterDesignTokens.tabPickerHeight)
+            .height(tabPickerHeight)
             .clip(trackShape)
             .background(trackColor, trackShape)
             .border(BorderStroke(0.5.dp, borderColor), trackShape)
-            .padding(ConverterDesignTokens.tabPickerPadding)
+            .padding(tabPickerPadding)
     ) {
-        val pillWidth = maxWidth / 2
+        val pillWidth = maxWidth / options.size
 
         val pillOffsetX by animateDpAsState(
-            targetValue = if (selectedIndex == 0) 0.dp else pillWidth,
+            targetValue = pillWidth * safeIndex,
             animationSpec = tween(durationMillis = 250),
             label = "pillOffset"
         )
 
-        // Pill deslizante (debajo de los labels)
         Box(
             modifier = Modifier
                 .offset(x = pillOffsetX)
@@ -77,9 +96,8 @@ fun ConverterTabPicker(
                 .background(pillColor, pillShape)
         )
 
-        // Zonas de tap + labels (encima de la pill)
         Row(modifier = Modifier.fillMaxSize()) {
-            tabs.forEachIndexed { index, label ->
+            options.forEachIndexed { index, label ->
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -93,8 +111,8 @@ fun ConverterTabPicker(
                     Text(
                         text = label,
                         style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = if (selectedIndex == index) FontWeight.SemiBold else FontWeight.Normal,
-                        color = if (selectedIndex == index) textActive else textInactive
+                        fontWeight = if (safeIndex == index) FontWeight.SemiBold else FontWeight.Normal,
+                        color = if (safeIndex == index) textActive else textInactive
                     )
                 }
             }

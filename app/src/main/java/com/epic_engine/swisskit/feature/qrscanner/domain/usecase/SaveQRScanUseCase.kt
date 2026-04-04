@@ -5,5 +5,5 @@ import com.epic_engine.swisskit.feature.qrscanner.domain.repository.QRScanReposi
 import javax.inject.Inject
 
 class SaveQRScanUseCase @Inject constructor(private val repo: QRScanRepository) {
-    suspend operator fun invoke(content: String): QRScanSaveResult = repo.save(content)
+    suspend operator fun invoke(content: String, label: String = ""): QRScanSaveResult = repo.save(content, label)
 }

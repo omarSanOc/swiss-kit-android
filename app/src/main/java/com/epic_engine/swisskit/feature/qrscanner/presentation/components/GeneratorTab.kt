@@ -1,26 +1,30 @@
 package com.epic_engine.swisskit.feature.qrscanner.presentation.components
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.icons.filled.SaveAlt
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.Image
-import com.epic_engine.swisskit.feature.qrscanner.presentation.QRScannerDesignTokens
-import com.epic_engine.swisskit.feature.qrscanner.presentation.QRScannerUiState
+import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitButton
+import com.epic_engine.swisskit.feature.qrscanner.presentation.theme.QRScannerDesignTokens
+import com.epic_engine.swisskit.feature.qrscanner.presentation.util.QRScannerUiState
 
 @Composable
 fun GeneratorTab(
@@ -31,44 +35,40 @@ fun GeneratorTab(
     onSaveToGallery: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val handleGenerate = {
+        if (uiState.generatorInput.isNotBlank()) {
+            focusManager.clearFocus(force = true)
+            keyboardController?.hide()
+            onGenerate()
+        }
+    }
+
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .fillMaxWidth()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        OutlinedTextField(
+        QRGeneratorInput(
             value = uiState.generatorInput,
             onValueChange = onInputChange,
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text("Texto o URL para generar QR") },
-            placeholder = { Text("https://ejemplo.com") },
-            leadingIcon = { Icon(Icons.Default.QrCode, contentDescription = null) },
-            trailingIcon = {
-                if (uiState.generatorInput.isNotBlank()) {
-                    IconButton(onClick = { onInputChange("") }) {
-                        Icon(Icons.Default.Clear, contentDescription = null)
-                    }
-                }
-            },
-            maxLines = 4,
-            keyboardActions = KeyboardActions(onGo = { onGenerate() }),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go)
+            onGo = handleGenerate
         )
 
-        Button(
-            onClick = onGenerate,
-            enabled = uiState.generatorInput.isNotBlank() && !uiState.isGenerating,
+        SwissKitButton(
+            text = "Generar QR",
+            onClick = handleGenerate,
             modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = QRScannerDesignTokens.Primary)
-        ) {
-            if (uiState.isGenerating) {
-                CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
-                Spacer(Modifier.width(8.dp))
-            }
-            Text("Generar QR")
+            enabled = uiState.generatorInput.isNotBlank() && !uiState.isGenerating,
+            containerColor = QRScannerDesignTokens.Primary
+        )
+
+        if (uiState.isGenerating) {
+            CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
+            Spacer(Modifier.width(8.dp))
         }
 
         uiState.generatedBitmap?.let { bitmap ->
@@ -85,27 +85,23 @@ fun GeneratorTab(
                 )
             }
 
-            Row(
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                OutlinedButton(
-                    onClick = onSaveToGallery,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Icon(Icons.Default.SaveAlt, contentDescription = null)
-                    Spacer(Modifier.width(4.dp))
-                    Text("Guardar")
-                }
-                Button(
+                SwissKitButton(
+                    text = "Compartir QR",
                     onClick = onShare,
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(containerColor = QRScannerDesignTokens.Primary)
-                ) {
-                    Icon(Icons.Default.Share, contentDescription = null)
-                    Spacer(Modifier.width(4.dp))
-                    Text("Compartir")
-                }
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    containerColor = QRScannerDesignTokens.Primary
+                )
+
+                SwissKitButton(
+                    text = "Guardar imagen",
+                    onClick = onSaveToGallery,
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
+                    containerColor = QRScannerDesignTokens.Primary
+                )
             }
         }
     }

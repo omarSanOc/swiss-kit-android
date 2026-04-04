@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
-import com.epic_engine.swisskit.feature.converter.presentation.components.ConverterTabPicker
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitTabPicker
 import com.epic_engine.swisskit.feature.converter.presentation.currency.CurrencyConverterContent
 import com.epic_engine.swisskit.feature.converter.presentation.currency.CurrencyConverterViewModel
 import com.epic_engine.swisskit.feature.converter.presentation.theme.ConverterDesignTokens
@@ -67,7 +67,8 @@ fun ConverterScreen(
                 }
 
                 // Tab picker
-                ConverterTabPicker(
+                SwissKitTabPicker(
+                    options = listOf("Unidades", "Divisas"),
                     selectedIndex = selectedTab,
                     onTabSelected = { selectedTab = it },
                     modifier = Modifier

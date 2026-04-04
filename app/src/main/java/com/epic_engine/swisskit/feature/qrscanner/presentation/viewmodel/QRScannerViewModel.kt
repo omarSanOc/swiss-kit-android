@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.feature.qrscanner.presentation
+package com.epic_engine.swisskit.feature.qrscanner.presentation.viewmodel
 
 import android.content.ContentValues
 import android.content.Context
@@ -12,6 +12,9 @@ import com.epic_engine.swisskit.feature.qrscanner.domain.usecase.DeleteAllQRScan
 import com.epic_engine.swisskit.feature.qrscanner.domain.usecase.DeleteQRScanUseCase
 import com.epic_engine.swisskit.feature.qrscanner.domain.usecase.GenerateQRBitmapUseCase
 import com.epic_engine.swisskit.feature.qrscanner.domain.usecase.ObserveQRScansUseCase
+import com.epic_engine.swisskit.feature.qrscanner.domain.usecase.UpdateQRScanLabelUseCase
+import com.epic_engine.swisskit.feature.qrscanner.presentation.util.QRScannerEvent
+import com.epic_engine.swisskit.feature.qrscanner.presentation.util.QRScannerUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -24,7 +27,8 @@ class QRScannerViewModel @Inject constructor(
     private val observeScans: ObserveQRScansUseCase,
     private val deleteScan: DeleteQRScanUseCase,
     private val deleteAllScans: DeleteAllQRScansUseCase,
-    private val generateQRBitmap: GenerateQRBitmapUseCase
+    private val generateQRBitmap: GenerateQRBitmapUseCase,
+    private val updateLabel: UpdateQRScanLabelUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(QRScannerUiState())
@@ -35,8 +39,24 @@ class QRScannerViewModel @Inject constructor(
 
     init {
         observeScans()
-            .onEach { scans -> _uiState.update { it.copy(scans = scans) } }
+            .onEach { scans ->
+                _uiState.update { state ->
+                    state.copy(
+                        scans = scans,
+                        filteredScans = filterScans(scans, state.searchQuery)
+                    )
+                }
+            }
             .launchIn(viewModelScope)
+    }
+
+    fun onSearchQueryChange(query: String) {
+        _uiState.update { state ->
+            state.copy(
+                searchQuery = query,
+                filteredScans = filterScans(state.scans, query)
+            )
+        }
     }
 
     fun onGeneratorInputChange(input: String) {
@@ -71,18 +91,63 @@ class QRScannerViewModel @Inject constructor(
         }
     }
 
-    fun onDeleteScan(scan: QRScan) {
+    fun onEditLabel(scan: QRScan) {
+        _uiState.update { it.copy(editingLabelScan = scan, editLabelDraft = scan.label) }
+    }
+
+    fun onEditLabelDraftChange(draft: String) {
+        _uiState.update { it.copy(editLabelDraft = draft) }
+    }
+
+    fun onConfirmEditLabel() {
+        val scan = _uiState.value.editingLabelScan ?: return
+        val draft = _uiState.value.editLabelDraft
         viewModelScope.launch {
-            runCatching { deleteScan(scan) }
-                .onFailure { _events.emit(QRScannerEvent.ShowError(it.message ?: "Error")) }
+            runCatching { updateLabel(scan.id, draft) }
+                .onFailure { _events.emit(QRScannerEvent.ShowError("Error al actualizar etiqueta")) }
+            _uiState.update { it.copy(editingLabelScan = null, editLabelDraft = "") }
         }
     }
 
-    fun onDeleteAllScans() {
+    fun onDismissEditLabel() {
+        _uiState.update { it.copy(editingLabelScan = null, editLabelDraft = "") }
+    }
+
+    fun onRequestDeleteScan(scan: QRScan) {
+        _uiState.update { it.copy(showDeleteScanConfirm = scan) }
+    }
+
+    fun onConfirmDeleteScan() {
+        val scan = _uiState.value.showDeleteScanConfirm ?: return
+        viewModelScope.launch {
+            runCatching { deleteScan(scan) }
+                .onFailure { _events.emit(QRScannerEvent.ShowError(it.message ?: "Error")) }
+            _uiState.update { it.copy(showDeleteScanConfirm = null) }
+        }
+    }
+
+    fun onRequestDeleteAll() {
+        _uiState.update { it.copy(showDeleteAllConfirm = true) }
+    }
+
+    fun onConfirmDeleteAll() {
         viewModelScope.launch {
             runCatching { deleteAllScans() }
                 .onSuccess { _events.emit(QRScannerEvent.AllScansDeleted) }
                 .onFailure { _events.emit(QRScannerEvent.ShowError(it.message ?: "Error")) }
+            _uiState.update { it.copy(showDeleteAllConfirm = false) }
+        }
+    }
+
+    fun onDismissDialog() {
+        _uiState.update { it.copy(showDeleteAllConfirm = false, showDeleteScanConfirm = null) }
+    }
+
+    private fun filterScans(scans: List<QRScan>, query: String): List<QRScan> {
+        if (query.isBlank()) return scans
+        return scans.filter {
+            it.content.contains(query, ignoreCase = true) ||
+                it.label.contains(query, ignoreCase = true)
         }
     }
 

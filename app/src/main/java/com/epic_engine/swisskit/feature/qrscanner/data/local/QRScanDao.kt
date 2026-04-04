@@ -19,4 +19,7 @@ interface QRScanDao {
 
     @Query("DELETE FROM qr_scans")
     suspend fun deleteAll()
+
+    @Query("UPDATE qr_scans SET label = :label WHERE id = :id")
+    suspend fun updateLabel(id: String, label: String)
 }

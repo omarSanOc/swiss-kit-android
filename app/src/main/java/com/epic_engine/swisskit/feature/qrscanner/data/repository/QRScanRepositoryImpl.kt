@@ -20,16 +20,17 @@ class QRScanRepositoryImpl @Inject constructor(
     override fun observeAll(): Flow<List<QRScan>> =
         dao.observeAll().map { list -> list.map { it.toDomain() } }
 
-    override suspend fun save(content: String): QRScanSaveResult = runCatching {
+    override suspend fun save(content: String, label: String): QRScanSaveResult = runCatching {
         val normalized = QRContentDetector.normalize(content)
         val type = QRContentDetector.detect(content)
-        val label = QRContentDetector.generateLabel(content, type)
+        val resolvedLabel = label.ifBlank { QRContentDetector.generateLabel(content, type) }
 
         val existing = dao.findDuplicate(normalized, type.name)
         val now = System.currentTimeMillis()
 
         if (existing != null) {
-            val updated = existing.copy(scannedAt = now)
+            val mergedLabel = if (label.isNotBlank()) label else existing.label
+            val updated = existing.copy(scannedAt = now, label = mergedLabel)
             dao.insert(updated)
             QRScanSaveResult.MergedDuplicate(updated.toDomain())
         } else {
@@ -37,13 +38,15 @@ class QRScanRepositoryImpl @Inject constructor(
                 id = UUID.randomUUID().toString(),
                 content = content.trim(),
                 type = type.name,
-                label = label,
+                label = resolvedLabel,
                 scannedAt = now
             )
             dao.insert(entity)
             QRScanSaveResult.Created(entity.toDomain())
         }
     }.getOrElse { QRScanSaveResult.Failed }
+
+    override suspend fun updateLabel(id: String, label: String) = dao.updateLabel(id, label)
 
     override suspend fun delete(scan: QRScan) = dao.delete(scan.toEntity())
 
