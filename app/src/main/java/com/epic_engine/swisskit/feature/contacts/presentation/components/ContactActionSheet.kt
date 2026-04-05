@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.feature.contacts.domain.model.Contact
 import com.epic_engine.swisskit.feature.contacts.domain.model.ContactAction
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDimens
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDesignTokens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,18 +40,18 @@ fun ContactActionSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = ContactsDimens.screenHorizontalPadding)
+                .padding(horizontal = ContactsDesignTokens.spacingXXXMediumPadding)
                 .navigationBarsPadding()
-                .padding(bottom = ContactsDimens.formSectionSpacing),
+                .padding(bottom = ContactsDesignTokens.spacingMediumPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(Modifier.height(36.dp))
+            Spacer(Modifier.height(ContactsDesignTokens.spacingLargePadding))
             Text(
                 text = contact.name,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold
             )
-            Spacer(Modifier.height(18.dp))
+            Spacer(Modifier.height(ContactsDesignTokens.spacingXMediumPadding))
             ContactsIconButton(
                 icon = R.drawable.icon_phone,
                 iconDescription = "Llamar",
@@ -59,7 +59,7 @@ fun ContactActionSheet(
                 onClick = { onAction(ContactAction.CALL) },
                 variant = ContactsIconButtonVariant.Filled
             )
-            Spacer(Modifier.height(ContactsDimens.formFieldSpacing))
+            Spacer(Modifier.height(ContactsDesignTokens.spacingSmallPadding))
             ContactsIconButton(
                 icon = R.drawable.icon_whatsapp,
                 iconDescription = "WhatsApp",

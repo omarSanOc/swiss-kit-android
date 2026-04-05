@@ -44,22 +44,22 @@ fun SwissKitSearchBar(
 ) {
     Surface(
         modifier = modifier
-            .height(48.dp),
-        shape = RoundedCornerShape(12.dp),
+            .height(DesignTokens.searchMinHeight),
+        shape = RoundedCornerShape(DesignTokens.searchCornerRadius),
         color = MaterialTheme.colorScheme.surface.copy(alpha = 0.82f),
         tonalElevation = 0.dp
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = DesignTokens.searchHorizontalPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 painter = painterResource(icon),
                 contentDescription = description,
                 tint = tint,
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(DesignTokens.searchIconSize)
             )
-            Spacer(Modifier.width(8.dp))
+            Spacer(Modifier.width(DesignTokens.searchSpacer))
             Box(
                 modifier = Modifier.weight(1f),
                 contentAlignment = Alignment.CenterStart

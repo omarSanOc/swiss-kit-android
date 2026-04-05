@@ -18,4 +18,18 @@ object DesignTokens {
     val contentPaddingSmall = 8.dp
     val contentPaddingMedium = 16.dp
     val contentPaddingLarge = 24.dp
+
+    // FAB
+    val fabDiameter = 64.dp
+    val fabIconSize = 28.dp
+    val fabElevation = 12.dp
+
+    // Search
+
+    val searchMinHeight = 48.dp
+    val searchIconSize = 18.dp
+    val searchHorizontalPadding = 16.dp
+    val searchCornerRadius = 12.dp
+
+    val searchSpacer = 8.dp
 }

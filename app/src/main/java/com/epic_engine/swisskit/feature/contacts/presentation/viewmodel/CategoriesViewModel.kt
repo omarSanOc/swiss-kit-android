@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.feature.contacts.presentation
+package com.epic_engine.swisskit.feature.contacts.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,6 +7,8 @@ import com.epic_engine.swisskit.feature.contacts.domain.usecase.AddCategoryUseCa
 import com.epic_engine.swisskit.feature.contacts.domain.usecase.DeleteCategoryUseCase
 import com.epic_engine.swisskit.feature.contacts.domain.usecase.GetCategoriesUseCase
 import com.epic_engine.swisskit.feature.contacts.domain.usecase.RenameCategoryUseCase
+import com.epic_engine.swisskit.feature.contacts.presentation.util.CategoriesEvent
+import com.epic_engine.swisskit.feature.contacts.presentation.util.CategoriesUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

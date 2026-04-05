@@ -24,8 +24,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -53,10 +51,7 @@ import androidx.compose.ui.unit.dp
 import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitCard
 import com.epic_engine.swisskit.feature.contacts.domain.model.Contact
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDimens
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDeleteAction
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsPhoneLink
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsTeal
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDesignTokens
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -70,9 +65,8 @@ fun ContactRow(
     onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val actionButtonsWidth = 56.dp
     val density = LocalDensity.current
-    val actionButtonsWidthPx = with(density) { actionButtonsWidth.toPx() }
+    val actionButtonsWidthPx = with(density) { ContactsDesignTokens.actionButtonsWidth.toPx() }
     val offsetX = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
     var showMenu by remember { mutableStateOf(false) }
@@ -93,7 +87,7 @@ fun ContactRow(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(ContactsDimens.cardCornerRadius))
+            .clip(RoundedCornerShape(ContactsDesignTokens.cardCornerRadius))
     ) {
         // Back layer: delete button
         IconButton(
@@ -103,10 +97,10 @@ fun ContactRow(
             },
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .padding(end = 4.dp)
-                .size(44.dp)
+                .padding(end = ContactsDesignTokens.deletePadding)
+                .size(ContactsDesignTokens.deleteButtonSize)
                 .clip(CircleShape)
-                .background(Color(0xFFE53935))
+                .background(ContactsDesignTokens.ContactsDeleteAction)
         ) {
             Icon(
                 imageVector = Icons.Default.Delete,
@@ -142,16 +136,16 @@ fun ContactRow(
                         }
                     }
                 ),
-            contentPadding = PaddingValues(15.dp)
+            contentPadding = PaddingValues(ContactsDesignTokens.cardInternalPadding)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     painter = painterResource( R.drawable.icon_user),
                     contentDescription = "Contacto ${contact.name}",
-                    tint = ContactsTeal,
-                    modifier = Modifier.size(ContactsDimens.rowIconSize)
+                    tint = ContactsDesignTokens.Primary,
+                    modifier = Modifier.size(ContactsDesignTokens.rowIconSize)
                 )
-                Spacer(Modifier.width(ContactsDimens.iconTextGap))
+                Spacer(Modifier.width(ContactsDesignTokens.spacingXSmallPadding))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = contact.name,
@@ -170,7 +164,7 @@ fun ContactRow(
                             style = MaterialTheme.typography.bodyMedium.merge(
                                 TextStyle(textDecoration = TextDecoration.Underline)
                             ),
-                            color = ContactsPhoneLink,
+                            color = ContactsDesignTokens.ContactsPhoneLink,
                             modifier = Modifier.clickable(onClick = onShowActionSheet)
                         )
                     }
@@ -180,8 +174,8 @@ fun ContactRow(
                         Icon(
                             painter = painterResource( R.drawable.icon_ellipsis),
                             contentDescription = "Más opciones",
-                            tint = ContactsTeal,
-                            modifier = Modifier.size(ContactsDimens.menuIconSize)
+                            tint = ContactsDesignTokens.Primary,
+                            modifier = Modifier.size(ContactsDesignTokens.menuIconSize)
                         )
                     }
                     DropdownMenu(
@@ -197,9 +191,9 @@ fun ContactRow(
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Eliminar", color = ContactsDeleteAction) },
+                            text = { Text("Eliminar", color = ContactsDesignTokens.ContactsDeleteAction) },
                             leadingIcon = {
-                                Icon(Icons.Default.Delete, null, tint = ContactsDeleteAction)
+                                Icon(Icons.Default.Delete, null, tint = ContactsDesignTokens.ContactsDeleteAction)
                             },
                             onClick = {
                                 showMenu = false

@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.feature.contacts.presentation
+package com.epic_engine.swisskit.feature.contacts.presentation.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -12,6 +12,8 @@ import com.epic_engine.swisskit.feature.contacts.domain.usecase.GetContactsUseCa
 import com.epic_engine.swisskit.feature.contacts.domain.usecase.SearchContactsUseCase
 import com.epic_engine.swisskit.feature.contacts.domain.usecase.UpdateContactUseCase
 import com.epic_engine.swisskit.feature.contacts.domain.util.PhoneNumberNormalizer
+import com.epic_engine.swisskit.feature.contacts.presentation.util.ContactsEvent
+import com.epic_engine.swisskit.feature.contacts.presentation.util.ContactsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview

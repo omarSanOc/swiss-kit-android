@@ -60,8 +60,7 @@ fun SwissKitNavGraph(
         ) { backStack ->
             val categoryTitle = backStack.arguments?.getString("categoryTitle") ?: ""
             ContactsScreen(
-                categoryTitle = categoryTitle,
-                onNavigateBack = { navController.navigateUp() }
+                categoryTitle = categoryTitle
             )
         }
         composable(SwissKitDestination.Finance.route) {

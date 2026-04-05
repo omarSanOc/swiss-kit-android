@@ -21,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -36,13 +35,9 @@ import com.epic_engine.swisskit.core.designsystem.components.SwissKitSearchBar
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitToast
 import com.epic_engine.swisskit.feature.contacts.presentation.components.CategoryRow
 import com.epic_engine.swisskit.feature.contacts.presentation.components.CategorySheet
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDeleteAction
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDimens
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsFABGradientBottom
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsFABGradientTop
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsTeal
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsTealDark
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsTealLight
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDesignTokens
+import com.epic_engine.swisskit.feature.contacts.presentation.util.CategoriesEvent
+import com.epic_engine.swisskit.feature.contacts.presentation.viewmodel.CategoriesViewModel
 import com.epic_engine.swisskit.ui.theme.greenContact
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,8 +60,8 @@ fun CategoriesScreen(
     }
 
     SwissKitBackground(
-        colors = listOf(ContactsTeal, ContactsTealLight),
-        darkColors = listOf(ContactsTeal, ContactsTealDark),
+        colors = listOf(ContactsDesignTokens.Primary, ContactsDesignTokens.Background),
+        darkColors = listOf(ContactsDesignTokens.Primary, ContactsDesignTokens.DarkBackground),
         content = {
             Box(modifier = Modifier.fillMaxSize()) {
                 Scaffold(
@@ -85,7 +80,8 @@ fun CategoriesScreen(
                     floatingActionButton = {
                         SwissKitFAB(
                             onClick = viewModel::onShowAddSheet,
-                            colors = listOf(ContactsFABGradientTop, ContactsFABGradientBottom)
+                            colors = listOf(ContactsDesignTokens.ContactsFABGradientTop,
+                                ContactsDesignTokens.ContactsFABGradientBottom)
                         )
                     }
                 ) { padding ->
@@ -98,8 +94,8 @@ fun CategoriesScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(padding),
-                        contentPadding = PaddingValues(bottom = 88.dp),
-                        verticalArrangement = Arrangement.spacedBy(ContactsDimens.rowVerticalInset)
+                        contentPadding = PaddingValues(bottom = ContactsDesignTokens.spacingXXXLargePadding),
+                        verticalArrangement = Arrangement.spacedBy(ContactsDesignTokens.spacingXSmallPadding)
                     ) {
                         if (uiState.categories.isEmpty()) {
                             item(key = "empty") {
@@ -118,7 +114,7 @@ fun CategoriesScreen(
                                     query = uiState.searchQuery,
                                     onQueryChange = viewModel::onSearchQueryChange,
                                     description = "Buscar categoría…",
-                                    modifier = Modifier.padding(horizontal = ContactsDimens.screenHorizontalPadding)
+                                    modifier = Modifier.padding(horizontal = ContactsDesignTokens.spacingXXXMediumPadding)
                                 )
                             }
 
@@ -144,11 +140,11 @@ fun CategoriesScreen(
                                         onRename = { viewModel.onStartRename(category) },
                                         onDelete = { viewModel.onRequestDeleteCategory(category) },
                                         modifier = Modifier
-                                            .padding(horizontal = ContactsDimens.screenHorizontalPadding)
+                                            .padding(horizontal = ContactsDesignTokens.spacingXXXMediumPadding)
                                             .animateItem(
-                                                fadeInSpec = tween(250),
-                                                fadeOutSpec = tween(250),
-                                                placementSpec = tween(250)
+                                                fadeInSpec = tween(ContactsDesignTokens.animationTimeMs),
+                                                fadeOutSpec = tween(ContactsDesignTokens.animationTimeMs),
+                                                placementSpec = tween(ContactsDesignTokens.animationTimeMs)
                                             )
                                     )
                                 }
@@ -197,7 +193,7 @@ fun CategoriesScreen(
             },
             confirmButton = {
                 TextButton(onClick = viewModel::onConfirmDeleteCategory) {
-                    Text("Eliminar", color = ContactsDeleteAction, fontWeight = FontWeight.SemiBold)
+                    Text("Eliminar", color = ContactsDesignTokens.ContactsDeleteAction, fontWeight = FontWeight.SemiBold)
                 }
             },
             dismissButton = {

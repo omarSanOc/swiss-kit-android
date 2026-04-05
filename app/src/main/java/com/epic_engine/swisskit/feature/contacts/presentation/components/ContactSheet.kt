@@ -6,9 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -21,8 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.epic_engine.swisskit.R
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDimens
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsFieldPlaceholder
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDesignTokens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,39 +41,39 @@ fun ContactSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = ContactsDimens.formSectionSpacing + 4.dp)
+                .padding(horizontal = ContactsDesignTokens.spacingXXMediumPadding)
                 .navigationBarsPadding()
-                .padding(bottom = ContactsDimens.formSectionSpacing),
+                .padding(bottom = ContactsDesignTokens.spacingMediumPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(ContactsDesignTokens.spacingXSmallPadding))
             Text(
                 text = if (isEditing) "Editar contacto" else "Nuevo contacto",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold
             )
-            Spacer(Modifier.height(ContactsDimens.formSectionSpacing))
+            Spacer(Modifier.height(ContactsDesignTokens.spacingMediumPadding))
             ContactsTextField(
                 value = nameDraft,
                 onValueChange = onNameChange,
                 placeholder = "Nombre",
-                placeholderColor = ContactsFieldPlaceholder,
+                placeholderColor = ContactsDesignTokens.ContactsFieldPlaceholder,
                 leadingIcon = R.drawable.icon_user,
                 leadingIconDescription = "Persona"
             )
-            Spacer(Modifier.height(ContactsDimens.formFieldSpacing))
+            Spacer(Modifier.height(ContactsDesignTokens.spacingSmallPadding))
             ContactsTextField(
                 value = phoneDraft,
                 onValueChange = onPhoneChange,
                 placeholder = "Teléfono",
-                placeholderColor = ContactsFieldPlaceholder,
+                placeholderColor = ContactsDesignTokens.ContactsFieldPlaceholder,
                 leadingIcon = R.drawable.icon_phone,
                 leadingIconDescription = "Teléfono",
                 isError = phoneError != null,
                 supportingText = phoneError,
                 keyboardType = KeyboardType.Phone
             )
-            Spacer(Modifier.height(ContactsDimens.formFieldSpacing))
+            Spacer(Modifier.height(ContactsDesignTokens.spacingSmallPadding))
             ContactsPrimaryButton(
                 text = "Guardar",
                 onClick = onConfirm,

@@ -9,9 +9,6 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsTeal
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsTealDark
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsTealLight
 
 @Composable
 fun SwissKitBackground(

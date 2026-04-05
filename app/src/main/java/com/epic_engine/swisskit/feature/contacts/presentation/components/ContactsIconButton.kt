@@ -3,7 +3,6 @@ package com.epic_engine.swisskit.feature.contacts.presentation.components
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,12 +16,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDimens
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsTeal
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDesignTokens
 
 enum class ContactsIconButtonVariant { Filled, Outlined }
 
@@ -35,10 +32,10 @@ fun ContactsIconButton(
     modifier: Modifier = Modifier,
     variant: ContactsIconButtonVariant = ContactsIconButtonVariant.Filled
 ) {
-    val shape = RoundedCornerShape(ContactsDimens.iconButtonCornerRadius)
+    val shape = RoundedCornerShape(ContactsDesignTokens.iconButtonCornerRadius)
     val contentPadding = androidx.compose.foundation.layout.PaddingValues(
-        vertical = ContactsDimens.iconButtonVerticalPadding,
-        horizontal = ContactsDimens.iconButtonHorizontalPadding
+        vertical = ContactsDesignTokens.iconButtonVerticalPadding,
+        horizontal = ContactsDesignTokens.iconButtonHorizontalPadding
     )
 
     when (variant) {
@@ -46,10 +43,10 @@ fun ContactsIconButton(
             onClick = onClick,
             modifier = modifier
                 .fillMaxWidth()
-                .shadow(elevation = ContactsDimens.iconButtonElevation, shape = shape),
+                .shadow(elevation = ContactsDesignTokens.iconButtonElevation, shape = shape),
             shape = shape,
             colors = ButtonDefaults.buttonColors(
-                containerColor = ContactsTeal,
+                containerColor = ContactsDesignTokens.Primary,
                 contentColor = Color.White
             ),
             contentPadding = contentPadding
@@ -58,9 +55,9 @@ fun ContactsIconButton(
                 Icon(
                     painter = painterResource(icon),
                     contentDescription = iconDescription,
-                    modifier = Modifier.size(ContactsDimens.iconButtonIconSize)
+                    modifier = Modifier.size(ContactsDesignTokens.iconButtonIconSize)
                 )
-                Spacer(Modifier.width(ContactsDimens.iconTextGap))
+                Spacer(Modifier.width(ContactsDesignTokens.spacingXSmallPadding))
                 Text(text = label, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
             }
         }
@@ -69,11 +66,11 @@ fun ContactsIconButton(
             onClick = onClick,
             modifier = modifier
                 .fillMaxWidth()
-                .shadow(elevation = ContactsDimens.iconButtonElevation, shape = shape),
+                .shadow(elevation = ContactsDesignTokens.iconButtonElevation, shape = shape),
             shape = shape,
             colors = ButtonDefaults.outlinedButtonColors(
                 containerColor = Color.White,
-                contentColor = ContactsTeal
+                contentColor = ContactsDesignTokens.Primary
             ),
             contentPadding = contentPadding
         ) {
@@ -81,11 +78,11 @@ fun ContactsIconButton(
                 Icon(
                     painter = painterResource(icon),
                     contentDescription = iconDescription,
-                    tint = ContactsTeal,
-                    modifier = Modifier.size(ContactsDimens.iconButtonIconSize)
+                    tint = ContactsDesignTokens.Primary,
+                    modifier = Modifier.size(ContactsDesignTokens.iconButtonIconSize)
                 )
-                Spacer(Modifier.width(ContactsDimens.iconTextGap))
-                Text(text = label, fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = ContactsTeal)
+                Spacer(Modifier.width(ContactsDesignTokens.spacingXSmallPadding))
+                Text(text = label, fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = ContactsDesignTokens.Primary)
             }
         }
     }

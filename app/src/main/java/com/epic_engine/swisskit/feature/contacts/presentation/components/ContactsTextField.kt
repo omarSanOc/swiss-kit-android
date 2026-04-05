@@ -15,9 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDimens
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsFieldPlaceholder
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsTeal
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDesignTokens
 
 @Composable
 fun ContactsTextField(
@@ -29,18 +27,18 @@ fun ContactsTextField(
     modifier: Modifier = Modifier,
     isError: Boolean = false,
     supportingText: String? = null,
-    placeholderColor: Color = ContactsFieldPlaceholder,
+    placeholderColor: Color = ContactsDesignTokens.ContactsFieldPlaceholder,
     keyboardType: KeyboardType = KeyboardType.Text,
     singleLine: Boolean = true
 ) {
-    val shape = RoundedCornerShape(ContactsDimens.textFieldCornerRadius)
+    val shape = RoundedCornerShape(ContactsDesignTokens.spacingSmallPadding)
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier
             .fillMaxWidth()
             .shadow(
-                elevation = ContactsDimens.textFieldElevation,
+                elevation = ContactsDesignTokens.spacingXXSmallPadding,
                 shape = shape
             ),
         shape = shape,
@@ -55,7 +53,7 @@ fun ContactsTextField(
             Icon(
                 painter = painterResource(leadingIcon),
                 contentDescription = leadingIconDescription,
-                tint = ContactsTeal
+                tint = ContactsDesignTokens.Primary
             )
         },
         isError = isError,
@@ -63,7 +61,7 @@ fun ContactsTextField(
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         singleLine = singleLine,
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = ContactsTeal,
+            focusedBorderColor = ContactsDesignTokens.Primary,
             unfocusedBorderColor = Color.Transparent,
             focusedContainerColor = Color.White,
             unfocusedContainerColor = Color.White,

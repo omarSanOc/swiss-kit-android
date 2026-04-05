@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.feature.contacts.presentation
+package com.epic_engine.swisskit.feature.contacts.presentation.util
 
 import com.epic_engine.swisskit.feature.contacts.domain.model.Contact
 import com.epic_engine.swisskit.feature.contacts.domain.model.ContactAction

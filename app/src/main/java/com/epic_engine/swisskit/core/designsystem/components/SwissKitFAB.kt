@@ -25,7 +25,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDimens
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDesignTokens
 
 @Composable
 fun SwissKitFAB(
@@ -43,8 +44,8 @@ fun SwissKitFAB(
 
     Box(
         modifier = modifier
-            .size(ContactsDimens.fabDiameter)
-            .shadow(elevation = ContactsDimens.fabElevation, shape = CircleShape)
+            .size(DesignTokens.fabDiameter)
+            .shadow(elevation = DesignTokens.fabElevation, shape = CircleShape)
             .clip(CircleShape)
             .drawBehind {
                 drawRect(
@@ -67,7 +68,7 @@ fun SwissKitFAB(
             imageVector = Icons.Default.Add,
             contentDescription = "Agregar",
             tint = Color.White,
-            modifier = Modifier.size(ContactsDimens.fabIconSize)
+            modifier = Modifier.size(DesignTokens.fabIconSize)
         )
     }
 }

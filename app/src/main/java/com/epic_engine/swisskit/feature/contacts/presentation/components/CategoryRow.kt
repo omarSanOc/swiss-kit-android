@@ -37,7 +37,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDeleteAction
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,8 +49,7 @@ import androidx.compose.ui.unit.dp
 import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitCard
 import com.epic_engine.swisskit.feature.contacts.domain.model.Category
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDimens
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsTeal
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDesignTokens
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -88,7 +86,7 @@ fun CategoryRow(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(ContactsDimens.cardCornerRadius))
+            .clip(RoundedCornerShape(ContactsDesignTokens.cardCornerRadius))
     ) {
         // Back layer: delete button
         IconButton(
@@ -98,16 +96,16 @@ fun CategoryRow(
             },
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .padding(end = 4.dp)
-                .size(44.dp)
+                .padding(end = ContactsDesignTokens.deletePadding)
+                .size(ContactsDesignTokens.deleteButtonSize)
                 .clip(CircleShape)
-                .background(Color(0xFFE53935))
+                .background(ContactsDesignTokens.ContactsDeleteAction)
         ) {
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Eliminar",
                 tint = Color.White,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(ContactsDesignTokens.deleteIconSize)
             )
         }
 
@@ -138,16 +136,16 @@ fun CategoryRow(
                     }
                 )
                 .clickable(onClick = onClick),
-            contentPadding = PaddingValues(15.dp)
+            contentPadding = PaddingValues(ContactsDesignTokens.cardInternalPadding)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     painter = painterResource( R.drawable.icon_folder),
                     contentDescription = "Categoría ${category.title}",
-                    tint = ContactsTeal,
-                    modifier = Modifier.size(ContactsDimens.rowIconSize)
+                    tint = ContactsDesignTokens.Primary,
+                    modifier = Modifier.size(ContactsDesignTokens.rowIconSize)
                 )
-                Spacer(Modifier.width(ContactsDimens.iconTextGap))
+                Spacer(Modifier.width(ContactsDesignTokens.spacingXSmallPadding))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = category.title,
@@ -166,8 +164,8 @@ fun CategoryRow(
                         Icon(
                             painter = painterResource( R.drawable.icon_ellipsis),
                             contentDescription = "Más opciones",
-                            tint = ContactsTeal,
-                            modifier = Modifier.size(ContactsDimens.menuIconSize)
+                            tint = ContactsDesignTokens.Primary,
+                            modifier = Modifier.size(ContactsDesignTokens.menuIconSize)
                         )
                     }
                     DropdownMenu(
@@ -183,9 +181,9 @@ fun CategoryRow(
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Eliminar", color = ContactsDeleteAction) },
+                            text = { Text("Eliminar", color = ContactsDesignTokens.ContactsDeleteAction) },
                             leadingIcon = {
-                                Icon(Icons.Default.Delete, null, tint = ContactsDeleteAction)
+                                Icon(Icons.Default.Delete, null, tint = ContactsDesignTokens.ContactsDeleteAction)
                             },
                             onClick = {
                                 showMenu = false

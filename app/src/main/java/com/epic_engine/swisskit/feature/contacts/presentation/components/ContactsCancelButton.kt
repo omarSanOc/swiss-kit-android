@@ -8,8 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.epic_engine.swisskit.R.drawable
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDimens
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsTeal
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDesignTokens
 
 @Composable
 fun ContactsCancelButton(
@@ -19,16 +18,16 @@ fun ContactsCancelButton(
 ) {
     TextButton(
         onClick = onClick,
-        modifier = modifier.defaultMinSize(minHeight = ContactsDimens.cancelButtonMinHeight)
+        modifier = modifier.defaultMinSize(minHeight = ContactsDesignTokens.cancelButtonMinHeight)
     ) {
         Icon(
             painter = painterResource(drawable.icon_close),
             contentDescription = "Cerrar",
-            tint = ContactsTeal
+            tint = ContactsDesignTokens.Primary
         )
         Text(
             text = label,
-            color = ContactsTeal
+            color = ContactsDesignTokens.Primary
         )
     }
 }

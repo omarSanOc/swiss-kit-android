@@ -4,7 +4,6 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -19,8 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDimens
-import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsTeal
+import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDesignTokens
 
 @Composable
 fun ContactsPrimaryButton(
@@ -42,13 +40,13 @@ fun ContactsPrimaryButton(
             .fillMaxWidth()
             .graphicsLayer { scaleX = scale; scaleY = scale },
         enabled = enabled,
-        shape = RoundedCornerShape(ContactsDimens.primaryButtonCornerRadius),
+        shape = RoundedCornerShape(ContactsDesignTokens.primaryButtonCornerRadius),
         colors = ButtonDefaults.buttonColors(
-            containerColor = ContactsTeal,
+            containerColor = ContactsDesignTokens.Primary,
             contentColor = Color.White
         ),
         contentPadding = androidx.compose.foundation.layout.PaddingValues(
-            vertical = ContactsDimens.primaryButtonVerticalPadding
+            vertical = ContactsDesignTokens.primaryButtonVerticalPadding
         )
     ) {
         Text(
