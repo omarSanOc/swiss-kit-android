@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitCard
 import com.epic_engine.swisskit.feature.converter.presentation.theme.ConverterDesignTokens
 
@@ -28,14 +29,14 @@ fun ConverterSectionCard(
     SwissKitCard(
         modifier = modifier
     ) {
-        Column(modifier = Modifier.padding(ConverterDesignTokens.dimensXXMedium)) {
+        Column(modifier = Modifier.padding(DesignTokens.dimensXXMedium)) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            Spacer(modifier = Modifier.height(ConverterDesignTokens.dimensSmall))
+            Spacer(modifier = Modifier.height(DesignTokens.dimensSmall))
             content()
         }
     }

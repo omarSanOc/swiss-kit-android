@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitToast
 import com.epic_engine.swisskit.feature.converter.domain.model.CurrencyCatalog
 import com.epic_engine.swisskit.feature.converter.presentation.theme.ConverterDesignTokens
@@ -68,9 +69,9 @@ fun CurrencyConverterContent(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = ConverterDesignTokens.dimensMedium)
-                .padding(bottom = ConverterDesignTokens.dimensXXXMedium),
-            verticalArrangement = Arrangement.spacedBy(ConverterDesignTokens.dimensXXXMedium)
+                .padding(horizontal = DesignTokens.dimensMedium)
+                .padding(bottom = DesignTokens.dimensXXXMedium),
+            verticalArrangement = Arrangement.spacedBy(DesignTokens.dimensXXXMedium)
         ) {
             // Card: Divisas
             ConverterSectionCard(title = "Divisas") {
@@ -110,7 +111,7 @@ fun CurrencyConverterContent(
                 if (uiState.fromCurrency != null && uiState.toCurrency != null &&
                     uiState.fromCurrency == uiState.toCurrency
                 ) {
-                    Spacer(modifier = Modifier.height(ConverterDesignTokens.dimensXSmall))
+                    Spacer(modifier = Modifier.height(DesignTokens.dimensXSmall))
                     Text(
                         text = "Misma moneda seleccionada",
                         style = MaterialTheme.typography.bodySmall,
@@ -120,7 +121,7 @@ fun CurrencyConverterContent(
 
                 // Loading (solo carga inicial sin datos previos)
                 if (uiState.isLoading) {
-                    Spacer(modifier = Modifier.height(ConverterDesignTokens.dimensXSmall))
+                    Spacer(modifier = Modifier.height(DesignTokens.dimensXSmall))
                     LinearProgressIndicator(
                         modifier = Modifier.fillMaxWidth(),
                         color = ConverterDesignTokens.accentBlue
@@ -129,7 +130,7 @@ fun CurrencyConverterContent(
 
                 // Error
                 if (uiState.errorMessage != null) {
-                    Spacer(modifier = Modifier.height(ConverterDesignTokens.dimensXSmall))
+                    Spacer(modifier = Modifier.height(DesignTokens.dimensXSmall))
                     Text(
                         text = uiState.errorMessage,
                         style = MaterialTheme.typography.bodySmall,
@@ -139,7 +140,7 @@ fun CurrencyConverterContent(
 
                 // Offline indicator
                 if (uiState.isOffline) {
-                    Spacer(modifier = Modifier.height(ConverterDesignTokens.dimensXXSmall))
+                    Spacer(modifier = Modifier.height(DesignTokens.dimensXXSmall))
                     Text(
                         text = "Usando datos en caché",
                         style = MaterialTheme.typography.bodySmall,

@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 
 import com.epic_engine.swisskit.feature.finance.domain.model.FinanceType
 import com.epic_engine.swisskit.feature.finance.presentation.theme.FinanceDesignTokens
@@ -45,9 +46,9 @@ fun TypeSelectorCard(
     modifier: Modifier = Modifier
 ) {
     val isExpense = type == FinanceType.EXPENSE
-    val activeColor = if (isExpense) FinanceDesignTokens.expenseRed else FinanceDesignTokens.incomeGreen
-    val activeBgColor = if (isExpense) FinanceDesignTokens.expenseRed.copy(alpha = FinanceDesignTokens.typeSelectionFillAlpha)
-                        else FinanceDesignTokens.incomeGreen.copy(alpha = FinanceDesignTokens.typeSelectionFillAlpha)
+    val activeColor = if (isExpense) FinanceDesignTokens.expenseColor else FinanceDesignTokens.incomeColor
+    val activeBgColor = if (isExpense) FinanceDesignTokens.expenseColor.copy(alpha = FinanceDesignTokens.typeSelectionFillAlpha)
+                        else FinanceDesignTokens.incomeColor.copy(alpha = FinanceDesignTokens.typeSelectionFillAlpha)
     val label = if (isExpense) "Gasto" else "Ingreso"
     val subtitle = if (isExpense) "Dinero que sale" else "Dinero que entra"
     val icon = if (isExpense) R.drawable.icon_expense else R.drawable.icon_income
@@ -58,7 +59,7 @@ fun TypeSelectorCard(
         label = "border_color_${type.name}"
     )
     val animatedBgColor by animateColorAsState(
-        targetValue = if (isSelected) activeBgColor else FinanceDesignTokens.cardSurface,
+        targetValue = if (isSelected) activeBgColor else Color.White,
         animationSpec = spring(dampingRatio = 0.85f, stiffness = Spring.StiffnessMedium),
         label = "bg_color_${type.name}"
     )
@@ -76,27 +77,27 @@ fun TypeSelectorCard(
                 onClickLabel = "Seleccionar $label"
             )
             .semantics { contentDescription = "$label: ${if (isSelected) "seleccionado" else "no seleccionado"}" },
-        shape = RoundedCornerShape(FinanceDesignTokens.typeCardRadius),
+        shape = RoundedCornerShape(DesignTokens.dimensXMedium),
         color = animatedBgColor,
-        border = BorderStroke(FinanceDesignTokens.typeCardBorderWidth, animatedBorderColor)
+        border = BorderStroke(DesignTokens.dimensXXXXSmall, animatedBorderColor)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+                .padding(DesignTokens.dimensMedium),
+            verticalArrangement = Arrangement.spacedBy(DesignTokens.dimensXXSmall)
         ) {
             Surface(
                 shape = CircleShape,
                 color = activeColor.copy(alpha = 0.15f),
-                modifier = Modifier.size(FinanceDesignTokens.typeCardIconSize + 12.dp)
+                modifier = Modifier.size(FinanceDesignTokens.dimensLarge)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         painter = painterResource(icon),
                         contentDescription = null,
                         tint = activeColor,
-                        modifier = Modifier.size(FinanceDesignTokens.typeCardIconSize)
+                        modifier = Modifier.size(DesignTokens.dimensXMedium)
                     )
                 }
             }
@@ -114,18 +115,18 @@ fun TypeSelectorCard(
                 color = Color.Gray.copy(alpha = 0.6f)
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(FinanceDesignTokens.dimensSmall))
 
             Box(
                 modifier = Modifier
                     .size(FinanceDesignTokens.typeCardIndicator)
-                    .border(2.dp, animatedBorderColor, CircleShape),
+                    .border(DesignTokens.dimensXXXXSmall, animatedBorderColor, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 if (isSelected) {
                     Box(
                         modifier = Modifier
-                            .size(10.dp)
+                            .size(FinanceDesignTokens.dimensSmall)
                             .background(activeColor, CircleShape)
                     )
                 }

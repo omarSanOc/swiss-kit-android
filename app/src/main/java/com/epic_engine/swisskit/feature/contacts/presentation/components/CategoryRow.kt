@@ -47,6 +47,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitCard
 import com.epic_engine.swisskit.feature.contacts.domain.model.Category
 import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDesignTokens
@@ -99,7 +100,7 @@ fun CategoryRow(
                 .padding(end = ContactsDesignTokens.deletePadding)
                 .size(ContactsDesignTokens.deleteButtonSize)
                 .clip(CircleShape)
-                .background(ContactsDesignTokens.ContactsDeleteAction)
+                .background(DesignTokens.deleteColor)
         ) {
             Icon(
                 imageVector = Icons.Default.Delete,
@@ -181,9 +182,9 @@ fun CategoryRow(
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Eliminar", color = ContactsDesignTokens.ContactsDeleteAction) },
+                            text = { Text("Eliminar", color = DesignTokens.deleteColor) },
                             leadingIcon = {
-                                Icon(Icons.Default.Delete, null, tint = ContactsDesignTokens.ContactsDeleteAction)
+                                Icon(Icons.Default.Delete, null, tint = DesignTokens.deleteColor)
                             },
                             onClick = {
                                 showMenu = false

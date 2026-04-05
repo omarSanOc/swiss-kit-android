@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitTabPicker
 import com.epic_engine.swisskit.feature.converter.presentation.components.CurrencyConverterContent
@@ -54,8 +55,8 @@ fun ConverterScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(ConverterDesignTokens.dimensXXLarge)
-                        .padding(horizontal = ConverterDesignTokens.dimensMedium)
+                        .height(DesignTokens.dimensXXLarge)
+                        .padding(horizontal = DesignTokens.dimensMedium)
                 ) {
                     Text(
                         text = "Conversor",
@@ -73,10 +74,10 @@ fun ConverterScreen(
                     onTabSelected = { selectedTab = it },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = ConverterDesignTokens.dimensMedium)
+                        .padding(horizontal = DesignTokens.dimensMedium)
                 )
 
-                Spacer(modifier = Modifier.height(ConverterDesignTokens.dimensXSmall))
+                Spacer(modifier = Modifier.height(DesignTokens.dimensXSmall))
 
                 // Contenido según tab
                 when (selectedTab) {

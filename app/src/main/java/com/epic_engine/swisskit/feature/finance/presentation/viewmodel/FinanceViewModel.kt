@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.feature.finance.presentation
+package com.epic_engine.swisskit.feature.finance.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,6 +13,8 @@ import com.epic_engine.swisskit.feature.finance.domain.usecase.FinanceCategorySe
 import com.epic_engine.swisskit.feature.finance.domain.usecase.GetDistinctCategoriesUseCase
 import com.epic_engine.swisskit.feature.finance.domain.usecase.ObserveFinanceUseCase
 import com.epic_engine.swisskit.feature.finance.domain.usecase.RestoreFinanceUseCase
+import com.epic_engine.swisskit.feature.finance.presentation.utils.FinanceEvent
+import com.epic_engine.swisskit.feature.finance.presentation.utils.FinanceUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

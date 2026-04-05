@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.feature.finance.presentation.theme.FinanceDesignTokens
 
 @Composable
@@ -23,18 +24,18 @@ fun FinanceToggleButton(
 ) {
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(FinanceDesignTokens.fieldRadius),
-        color = if (isActive) FinanceDesignTokens.primaryBlue
+        shape = RoundedCornerShape(DesignTokens.dimensSmall),
+        color = if (isActive) FinanceDesignTokens.primary
                 else MaterialTheme.colorScheme.surface.copy(alpha = 0.82f),
         modifier = modifier
     ) {
         Icon(
             painter = icon,
             contentDescription = contentDescription,
-            tint = if (isActive) Color.White else FinanceDesignTokens.primaryBlue,
+            tint = if (isActive) Color.White else FinanceDesignTokens.primary,
             modifier = Modifier
-                .size(FinanceDesignTokens.filterButtonHeight)
-                .padding(horizontal = 8.dp, vertical = 12.dp)
+                .size(DesignTokens.dimensXLarge)
+                .padding(horizontal = DesignTokens.dimensXSmall, vertical = DesignTokens.dimensXSmall)
         )
     }
 }

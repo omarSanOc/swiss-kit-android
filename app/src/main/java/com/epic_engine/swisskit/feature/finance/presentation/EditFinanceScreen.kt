@@ -56,6 +56,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitButton
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitCard
@@ -63,6 +64,8 @@ import com.epic_engine.swisskit.core.designsystem.components.SwissKitTextField
 import com.epic_engine.swisskit.feature.finance.domain.model.FinanceType
 import com.epic_engine.swisskit.feature.finance.presentation.components.TypeSelectorCard
 import com.epic_engine.swisskit.feature.finance.presentation.theme.FinanceDesignTokens
+import com.epic_engine.swisskit.feature.finance.presentation.utils.EditFinanceEvent
+import com.epic_engine.swisskit.feature.finance.presentation.viewmodel.EditFinanceViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -111,12 +114,12 @@ fun EditFinanceScreen(
     }
 
     SwissKitBackground(colors = listOf(
-        FinanceDesignTokens.primaryBlue,
-        FinanceDesignTokens.backgroundLight,
+        FinanceDesignTokens.primary,
+        FinanceDesignTokens.background,
     ),
         darkColors =  listOf(
-            FinanceDesignTokens.primaryBlue,
-            FinanceDesignTokens.backgroundDark
+            FinanceDesignTokens.primary,
+            FinanceDesignTokens.darkBackground
         ),
         content = {
             Box(
@@ -145,12 +148,12 @@ fun EditFinanceScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(padding)
-                            .padding(horizontal = FinanceDesignTokens.listRowInset, vertical = 12.dp)
+                            .padding(horizontal = DesignTokens.dimensXXMedium, vertical = DesignTokens.dimensSmall)
                             .verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                        verticalArrangement = Arrangement.spacedBy(DesignTokens.dimensMedium)
                     ) {
                         // 1. Tipo
-                        SwissKitCard(contentPadding = PaddingValues(20.dp)) {
+                        SwissKitCard(contentPadding = PaddingValues(DesignTokens.dimensXXMedium)) {
                             Text(
                                 text = "Tipo",
                                 style = MaterialTheme.typography.titleMedium,
@@ -159,7 +162,7 @@ fun EditFinanceScreen(
                             )
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                horizontalArrangement = Arrangement.spacedBy(DesignTokens.dimensSmall)
                             ) {
                                 TypeSelectorCard(
                                     type = FinanceType.EXPENSE,
@@ -177,7 +180,7 @@ fun EditFinanceScreen(
                         }
 
                         // 2. Monto
-                        SwissKitCard(contentPadding = PaddingValues(20.dp)) {
+                        SwissKitCard(contentPadding = PaddingValues(DesignTokens.dimensXXMedium)) {
                             Text(
                                 text = "Monto *",
                                 style = MaterialTheme.typography.titleMedium,
@@ -190,15 +193,15 @@ fun EditFinanceScreen(
                                 label = "",
                                 placeholder = "0",
                                 leadingIcon = Icons.Default.AttachMoney,
-                                accentColor = if (uiState.type == FinanceType.EXPENSE) FinanceDesignTokens.expenseRed
-                                else FinanceDesignTokens.incomeGreen,
+                                accentColor = if (uiState.type == FinanceType.EXPENSE) FinanceDesignTokens.expenseColor
+                                else FinanceDesignTokens.incomeColor,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
 
                         // 3. Título
-                        SwissKitCard(contentPadding = PaddingValues(20.dp)) {
+                        SwissKitCard(contentPadding = PaddingValues(DesignTokens.dimensXXMedium)) {
                             Text(
                                 text = "Título *",
                                 style = MaterialTheme.typography.titleMedium,
@@ -210,13 +213,13 @@ fun EditFinanceScreen(
                                 onValueChange = { viewModel.onEvent(EditFinanceEvent.TitleChanged(it)) },
                                 label = "",
                                 placeholder = "Escribe tu título",
-                                accentColor = FinanceDesignTokens.primaryBlue,
+                                accentColor = FinanceDesignTokens.primary,
                                 modifier = Modifier.fillMaxWidth(),
                             )
                         }
 
                         // 4. Fecha
-                        SwissKitCard(contentPadding = PaddingValues(20.dp)) {
+                        SwissKitCard(contentPadding = PaddingValues(DesignTokens.dimensXXMedium)) {
                             Text(
                                 text = "Fecha",
                                 style = MaterialTheme.typography.titleMedium,
@@ -235,21 +238,21 @@ fun EditFinanceScreen(
                                     Icon(
                                         imageVector = Icons.Default.CalendarMonth,
                                         contentDescription = "Seleccionar fecha",
-                                        modifier = Modifier.size(18.dp)
+                                        modifier = Modifier.size(DesignTokens.dimensXMedium)
                                     )
                                 },
-                                shape = RoundedCornerShape(FinanceDesignTokens.chipRadius),
+                                shape = RoundedCornerShape(DesignTokens.dimensXXMedium),
                                 colors = AssistChipDefaults.assistChipColors(
-                                    containerColor = FinanceDesignTokens.primaryBlue.copy(alpha = 0.12f),
-                                    labelColor = FinanceDesignTokens.primaryBlue,
-                                    leadingIconContentColor = FinanceDesignTokens.primaryBlue
+                                    containerColor = FinanceDesignTokens.primary.copy(alpha = 0.12f),
+                                    labelColor = FinanceDesignTokens.primary,
+                                    leadingIconContentColor = FinanceDesignTokens.primary
                                 ),
                                 border = null
                             )
                         }
 
                         // 5. Categoría
-                        SwissKitCard(contentPadding = PaddingValues(20.dp)) {
+                        SwissKitCard(contentPadding = PaddingValues(DesignTokens.dimensXXMedium)) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -263,12 +266,12 @@ fun EditFinanceScreen(
                                 )
                                 IconButton(
                                     onClick = { showNewCategoryInput = !showNewCategoryInput },
-                                    modifier = Modifier.size(32.dp)
+                                    modifier = Modifier.size(FinanceDesignTokens.dimensXLarge)
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Add,
                                         contentDescription = "Agregar categoría",
-                                        tint = FinanceDesignTokens.primaryBlue
+                                        tint = FinanceDesignTokens.primary
                                     )
                                 }
                             }
@@ -285,14 +288,14 @@ fun EditFinanceScreen(
                                     },
                                     label = "",
                                     placeholder = "Nueva categoría",
-                                    accentColor = FinanceDesignTokens.primaryBlue,
+                                    accentColor = FinanceDesignTokens.primary,
                                     modifier = Modifier.fillMaxWidth()
                                 )
                             }
 
                             FlowRow(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                                horizontalArrangement = Arrangement.spacedBy(DesignTokens.dimensXSmall),
+                                verticalArrangement = Arrangement.spacedBy(DesignTokens.dimensXSmall)
                             ) {
                                 uiState.availableCategories.forEach { cat ->
                                     FilterChip(
@@ -302,9 +305,9 @@ fun EditFinanceScreen(
                                             newCategoryText = cat
                                         },
                                         label = { Text(cat) },
-                                        shape = RoundedCornerShape(FinanceDesignTokens.chipRadius),
+                                        shape = RoundedCornerShape(DesignTokens.dimensXXMedium),
                                         colors = FilterChipDefaults.filterChipColors(
-                                            selectedContainerColor = FinanceDesignTokens.primaryBlue,
+                                            selectedContainerColor = FinanceDesignTokens.primary,
                                             selectedLabelColor = Color.White,
                                             containerColor = Color.Black.copy(alpha = 0.06f),
                                             labelColor = MaterialTheme.colorScheme.onSurface.copy(0.7f)
@@ -321,7 +324,7 @@ fun EditFinanceScreen(
                         }
 
                         // 6. Notas
-                        SwissKitCard(contentPadding = PaddingValues(20.dp)) {
+                        SwissKitCard(contentPadding = PaddingValues(DesignTokens.dimensXXMedium)) {
                             Text(
                                 text = "Notas",
                                 style = MaterialTheme.typography.titleMedium,
@@ -333,7 +336,7 @@ fun EditFinanceScreen(
                                 onValueChange = { viewModel.onEvent(EditFinanceEvent.NotesChanged(it)) },
                                 label = "",
                                 placeholder = "Escribe tus notas",
-                                accentColor = FinanceDesignTokens.primaryBlue,
+                                accentColor = FinanceDesignTokens.primary,
                                 maxLines = 4,
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -354,12 +357,12 @@ fun EditFinanceScreen(
                         SwissKitButton(
                             text = "Guardar",
                             onClick = { viewModel.onEvent(EditFinanceEvent.Save) },
-                            containerColor = FinanceDesignTokens.primaryBlue,
+                            containerColor = FinanceDesignTokens.primary,
                             enabled = uiState.canSave && !uiState.isSaving,
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(DesignTokens.dimensSmall))
                     }
                 }
             }

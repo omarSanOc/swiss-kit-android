@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.feature.finance.presentation
+package com.epic_engine.swisskit.feature.finance.presentation.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -9,6 +9,8 @@ import com.epic_engine.swisskit.feature.finance.domain.usecase.AddFinanceUseCase
 import com.epic_engine.swisskit.feature.finance.domain.usecase.GetDistinctCategoriesUseCase
 import com.epic_engine.swisskit.feature.finance.domain.usecase.GetFinanceByIdUseCase
 import com.epic_engine.swisskit.feature.finance.domain.usecase.UpdateFinanceUseCase
+import com.epic_engine.swisskit.feature.finance.presentation.utils.EditFinanceEvent
+import com.epic_engine.swisskit.feature.finance.presentation.utils.EditFinanceUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

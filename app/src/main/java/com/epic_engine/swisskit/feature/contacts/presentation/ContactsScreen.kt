@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitFAB
@@ -197,7 +198,7 @@ fun ContactsScreen(
             },
             confirmButton = {
                 TextButton(onClick = viewModel::onConfirmDeleteContact) {
-                    Text("Eliminar", color = ContactsDesignTokens.ContactsDeleteAction, fontWeight = FontWeight.SemiBold)
+                    Text("Eliminar", color = DesignTokens.deleteColor, fontWeight = FontWeight.SemiBold)
                 }
             },
             dismissButton = {

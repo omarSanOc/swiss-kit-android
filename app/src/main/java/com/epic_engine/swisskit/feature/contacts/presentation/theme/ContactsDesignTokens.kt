@@ -9,7 +9,7 @@ object ContactsDesignTokens {
     val DarkBackground = Color(0xFF2E3331)
     val ContactsFABGradientTop = Color(0xFF59F266)
     val ContactsFABGradientBottom = Color(0xFF0FB380)
-    val ContactsDeleteAction = Color(0xFFFF3B30)
+
     val ContactsPhoneLink = Color(0xFF007AFF)
     val ContactsFieldPlaceholder = Color(0xFF9E9E9E)
 

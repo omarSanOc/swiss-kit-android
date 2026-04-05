@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.feature.finance.presentation
+package com.epic_engine.swisskit.feature.finance.presentation.utils
 
 import com.epic_engine.swisskit.feature.finance.domain.model.Finance
 import com.epic_engine.swisskit.feature.finance.domain.model.FinanceSortOrder

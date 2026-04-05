@@ -55,6 +55,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitFAB
@@ -66,6 +67,8 @@ import com.epic_engine.swisskit.feature.finance.presentation.components.FinanceI
 import com.epic_engine.swisskit.feature.finance.presentation.components.FinanceItemRow
 import com.epic_engine.swisskit.feature.finance.presentation.components.FinanceToggleButton
 import com.epic_engine.swisskit.feature.finance.presentation.theme.FinanceDesignTokens
+import com.epic_engine.swisskit.feature.finance.presentation.utils.FinanceEvent
+import com.epic_engine.swisskit.feature.finance.presentation.viewmodel.FinanceViewModel
 import java.io.File
 import java.io.FileOutputStream
 import java.text.NumberFormat
@@ -135,7 +138,7 @@ fun FinanceScreen(
         val typeLabel = if (item.type == FinanceType.EXPENSE) "gasto" else "ingreso"
         AlertDialog(
             onDismissRequest = { itemToDelete = null },
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(DesignTokens.dimensXXMedium),
             title = {
                 Text(
                     text = "¿Eliminar $typeLabel?",
@@ -163,7 +166,7 @@ fun FinanceScreen(
                         containerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
                         contentColor = MaterialTheme.colorScheme.onSurface
                     ),
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(DesignTokens.dimensSmall)
                 ) {
                     Text("Cancelar")
                 }
@@ -174,7 +177,7 @@ fun FinanceScreen(
     if (showDeleteSelectedAlert) {
         AlertDialog(
             onDismissRequest = { showDeleteSelectedAlert = false },
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(DesignTokens.dimensXXMedium),
             title = { Text("¿Eliminar transacciones?", fontWeight = FontWeight.Bold) },
             text = {
                 Text(
@@ -202,12 +205,12 @@ fun FinanceScreen(
     }
 
     SwissKitBackground(colors = listOf(
-        FinanceDesignTokens.primaryBlue,
-        FinanceDesignTokens.backgroundLight,
+        FinanceDesignTokens.primary,
+        FinanceDesignTokens.background,
     ),
         darkColors =  listOf(
-            FinanceDesignTokens.primaryBlue,
-            FinanceDesignTokens.backgroundDark
+            FinanceDesignTokens.primary,
+            FinanceDesignTokens.darkBackground
         ),
     content = {
         Box(
@@ -323,7 +326,7 @@ fun FinanceScreen(
                             onClick = { onNavigateToEditor(null) },
                             colors = listOf(
                                 FinanceDesignTokens.gradientStart,
-                                FinanceDesignTokens.primaryBlue
+                                FinanceDesignTokens.primary
                             )
                         )
                     }
@@ -334,19 +337,19 @@ fun FinanceScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(padding),
-                    contentPadding = PaddingValues(bottom = 88.dp),
+                    contentPadding = PaddingValues(bottom = DesignTokens.dimensXXXLarge),
                 ) {
                     // Search bar + Filter + Sort row
                     item(key = "header_search") {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 18.dp, vertical = 12.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                .padding(horizontal = DesignTokens.dimensXMedium, vertical = DesignTokens.dimensSmall),
+                            horizontalArrangement = Arrangement.spacedBy(DesignTokens.dimensXSmall),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             SwissKitSearchBar(
-                                tint = FinanceDesignTokens.primaryBlue,
+                                tint = FinanceDesignTokens.primary,
                                 query = uiState.searchQuery,
                                 onQueryChange = { viewModel.onEvent(FinanceEvent.SearchChanged(it)) },
                                 modifier = Modifier.weight(1f),
@@ -388,7 +391,7 @@ fun FinanceScreen(
                             onToggleCategoryFilter = { viewModel.onEvent(FinanceEvent.ToggleCategoryFilter(it)) },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 18.dp)
+                                .padding(horizontal = DesignTokens.dimensXMedium)
                         )
                     }
 
@@ -400,7 +403,7 @@ fun FinanceScreen(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 24.dp, vertical = 12.dp),
+                                .padding(horizontal = DesignTokens.dimensXXXMedium, vertical = DesignTokens.dimensSmall),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -428,7 +431,7 @@ fun FinanceScreen(
                                 iconTint = Color.White,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = 60.dp)
+                                    .padding(top = FinanceDesignTokens.dimensXXXLarge)
                             )
                         }
                     } else {
@@ -452,8 +455,8 @@ fun FinanceScreen(
                                 modifier = Modifier
                                     .animateItem()
                                     .padding(
-                                        horizontal = FinanceDesignTokens.listRowInset,
-                                        vertical = FinanceDesignTokens.listRowGap
+                                        horizontal = DesignTokens.dimensXXMedium,
+                                        vertical = DesignTokens.dimensXXXSmall
                                     )
                             )
                         }

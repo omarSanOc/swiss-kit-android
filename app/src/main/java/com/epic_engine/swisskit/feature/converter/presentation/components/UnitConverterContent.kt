@@ -37,6 +37,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.feature.converter.domain.model.UnitCategory
 import com.epic_engine.swisskit.feature.converter.presentation.theme.ConverterDesignTokens
 import com.epic_engine.swisskit.feature.converter.presentation.utils.UnitConverterEvent
@@ -53,15 +54,15 @@ fun UnitConverterContent(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = ConverterDesignTokens.dimensMedium)
-            .padding(bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(ConverterDesignTokens.dimensXXXMedium)
+            .padding(horizontal = DesignTokens.dimensMedium)
+            .padding(bottom = DesignTokens.dimensXXXMedium),
+        verticalArrangement = Arrangement.spacedBy(DesignTokens.dimensXXXMedium)
     ) {
         // Card: Categoría
         ConverterSectionCard(title = "Categoría") {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(ConverterDesignTokens.dimensSmall)
+                horizontalArrangement = Arrangement.spacedBy(DesignTokens.dimensSmall)
             ) {
                 CategoryDropdown(
                     selected = uiState.selectedCategory,
@@ -95,7 +96,7 @@ fun UnitConverterContent(
                 onSelected = { onEvent(UnitConverterEvent.FromUnitSelected(it)) },
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(ConverterDesignTokens.dimensSmall))
+            Spacer(modifier = Modifier.height(DesignTokens.dimensSmall))
             UnitPickerDropdown(
                 label = "A",
                 selected = uiState.toUnit,
@@ -128,7 +129,7 @@ fun UnitConverterContent(
                             text = uiState.toUnit.symbol,
                             fontSize = 14.sp,
                             color = Color.Gray,
-                            modifier = Modifier.padding(end = ConverterDesignTokens.dimensXXXSmall)
+                            modifier = Modifier.padding(end = DesignTokens.dimensXXXSmall)
                         )
                     }
                 } else null

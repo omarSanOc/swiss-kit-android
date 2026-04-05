@@ -44,6 +44,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitCard
 import com.epic_engine.swisskit.feature.finance.domain.model.Finance
 import com.epic_engine.swisskit.feature.finance.domain.model.FinanceType
@@ -70,12 +71,10 @@ fun FinanceItemRow(
     val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale("es", "MX")) }
     val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy", Locale("es", "MX")) }
     val isIncome = item.type == FinanceType.INCOME
-    val amountColor = if (isIncome) FinanceDesignTokens.incomeGreen else FinanceDesignTokens.expenseRed
+    val amountColor = if (isIncome) FinanceDesignTokens.incomeColor else FinanceDesignTokens.expenseColor
     val itemDescription = "${if (isIncome) "Ingreso" else "Gasto"}: ${item.title}"
-
-    val actionButtonsWidth = 56.dp
     val density = LocalDensity.current
-    val actionButtonsWidthPx = with(density) { actionButtonsWidth.toPx() }
+    val actionButtonsWidthPx = with(density) { DesignTokens.dimensXXLarge.toPx() }
     val scope = rememberCoroutineScope()
     val offsetX = remember { Animatable(0f) }
 
@@ -95,7 +94,7 @@ fun FinanceItemRow(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(FinanceDesignTokens.transactionCardRadius))
+            .clip(RoundedCornerShape(DesignTokens.dimensXXXMedium))
             .semantics { contentDescription = itemDescription }
     ) {
         // Back layer: delete button
@@ -106,16 +105,16 @@ fun FinanceItemRow(
             },
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .padding(end = 4.dp)
-                .size(44.dp)
+                .padding(end = DesignTokens.dimensXXSmall)
+                .size(FinanceDesignTokens.dimensXXLarge)
                 .clip(CircleShape)
-                .background(Color(0xFFE53935))
+                .background(DesignTokens.deleteColor)
         ) {
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Eliminar transacción",
                 tint = Color.White,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(DesignTokens.dimensXXMedium)
             )
         }
 
@@ -126,7 +125,7 @@ fun FinanceItemRow(
                     .fillMaxWidth()
                     .then(
                         if (isSelectionMode && isSelected)
-                            Modifier.border(2.dp, FinanceDesignTokens.primaryBlue, RoundedCornerShape(FinanceDesignTokens.transactionCardRadius))
+                            Modifier.border(DesignTokens.dimensXXXXSmall, FinanceDesignTokens.primary, RoundedCornerShape(DesignTokens.dimensXXXMedium))
                         else Modifier
                     )
                     .offset { IntOffset(offsetX.value.roundToInt(), 0) }
@@ -153,13 +152,13 @@ fun FinanceItemRow(
                         }
                     )
                     .clickable(onClick = onClick),
-                contentPadding = PaddingValues(8.dp)
+                contentPadding = PaddingValues(DesignTokens.dimensXSmall)
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    verticalArrangement = Arrangement.spacedBy(3.dp)
+                        .padding(horizontal = DesignTokens.dimensMedium, vertical = DesignTokens.dimensSmall),
+                    verticalArrangement = Arrangement.spacedBy(FinanceDesignTokens.dimensXXXXSmall)
                 ) {
                     Text(
                         text = item.title,
@@ -178,7 +177,7 @@ fun FinanceItemRow(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Surface(
-                            shape = RoundedCornerShape(FinanceDesignTokens.amountBadgeRadius),
+                            shape = RoundedCornerShape(DesignTokens.dimensSmall),
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
                         ) {
                             Text(
@@ -186,7 +185,7 @@ fun FinanceItemRow(
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onSurface.copy(0.7f),
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                modifier = Modifier.padding(horizontal = DesignTokens.dimensXXSmall, vertical = DesignTokens.dimensXXXXSmall)
                             )
                         }
                         Text(
@@ -205,13 +204,13 @@ fun FinanceItemRow(
                     imageVector = if (isSelected) Icons.Filled.CheckCircle
                                   else Icons.Outlined.RadioButtonUnchecked,
                     contentDescription = null,
-                    tint = if (isSelected) FinanceDesignTokens.primaryBlue
+                    tint = if (isSelected) FinanceDesignTokens.primary
                            else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.35f),
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .offset { IntOffset(offsetX.value.roundToInt(), 0) }
-                        .padding(top = 10.dp, end = 10.dp)
-                        .size(22.dp)
+                        .padding(top = FinanceDesignTokens.dimensSmall, end = FinanceDesignTokens.dimensSmall)
+                        .size(FinanceDesignTokens.dimensMedium)
                 )
             }
         }

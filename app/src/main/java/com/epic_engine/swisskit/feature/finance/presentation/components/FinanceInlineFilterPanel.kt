@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitCard
 import com.epic_engine.swisskit.feature.finance.domain.usecase.FinanceCategorySelectionEngine
 import com.epic_engine.swisskit.feature.finance.presentation.theme.FinanceDesignTokens
@@ -42,13 +43,13 @@ fun FinanceInlineFilterPanel(
         exit = shrinkVertically() + fadeOut(),
         modifier = modifier
     ) {
-        SwissKitCard(contentPadding = PaddingValues(8.dp)) {
+        SwissKitCard(contentPadding = PaddingValues(DesignTokens.dimensXSmall)) {
             FlowRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(12.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(DesignTokens.dimensSmall),
+                horizontalArrangement = Arrangement.spacedBy(DesignTokens.dimensXSmall),
+                verticalArrangement = Arrangement.spacedBy(DesignTokens.dimensXSmall)
             ) {
                 val allChips = listOf(
                     FinanceCategorySelectionEngine.LABEL_ALL,
@@ -67,9 +68,9 @@ fun FinanceInlineFilterPanel(
                                 color = if (isSelected) Color.White else Color.DarkGray
                             )
                         },
-                        shape = RoundedCornerShape(FinanceDesignTokens.chipRadius),
+                        shape = RoundedCornerShape(DesignTokens.dimensXXMedium),
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = FinanceDesignTokens.primaryBlue,
+                            selectedContainerColor = FinanceDesignTokens.primary,
                             selectedLabelColor = Color.White,
                             containerColor = Color(0xFFE0E0E0),
                             labelColor = MaterialTheme.colorScheme.onSurface.copy(0.7f)

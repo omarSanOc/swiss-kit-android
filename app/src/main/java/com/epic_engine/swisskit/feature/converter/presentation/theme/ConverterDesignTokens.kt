@@ -13,20 +13,7 @@ object ConverterDesignTokens {
     val gradientEnd = Color(0xFFF3F4F6)
     val gradientDarkEnd = Color(0xFF49494A)
 
-    // ═══════════════ DIMENS ═══════════════
-    val dimensXXXLarge = 88.dp
-    val dimensXXLarge = 56.dp
-    val dimensXLarge = 48.dp
-    val dimensLarge = 36.dp
-    val dimensXXXMedium = 24.dp
-    val dimensXXMedium = 20.dp
-    val dimensXMedium = 18.dp
-    val dimensMedium = 16.dp
-    val dimensSmall = 12.dp
-    val dimensXSmall = 8.dp
-    val dimensXXSmall = 6.dp
-    val dimensXXXSmall = 4.dp
-    val dimensXXXXSmall = 2.dp
+
 
     // ═══════════════ OPACITY ═══════════════
     val borderAlpha = 0.6f

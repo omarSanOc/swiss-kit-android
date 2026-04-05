@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.feature.converter.presentation.theme.ConverterDesignTokens
 
 @Composable
@@ -47,7 +48,7 @@ fun ConverterOutlinedField(
         ),
         singleLine = true,
         keyboardOptions = keyboardOptions,
-        shape = RoundedCornerShape(ConverterDesignTokens.dimensXMedium),
+        shape = RoundedCornerShape(DesignTokens.dimensXMedium),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = ConverterDesignTokens.borderColor,
             unfocusedBorderColor = MaterialTheme.colorScheme.outline,
@@ -92,7 +93,7 @@ fun ConverterSelectorField(
             )
         },
         singleLine = true,
-        shape = RoundedCornerShape(ConverterDesignTokens.dimensXMedium),
+        shape = RoundedCornerShape(DesignTokens.dimensXMedium),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = ConverterDesignTokens.borderColor,
             unfocusedBorderColor = if (expanded) ConverterDesignTokens.borderColor
@@ -133,7 +134,7 @@ fun ConverterReadOnlyField(
         ),
         trailingIcon = trailingContent,
         singleLine = true,
-        shape = RoundedCornerShape(ConverterDesignTokens.dimensXMedium),
+        shape = RoundedCornerShape(DesignTokens.dimensXMedium),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.outline,
             unfocusedBorderColor = MaterialTheme.colorScheme.outline,
