@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.feature.converter.presentation.unit
+package com.epic_engine.swisskit.feature.converter.presentation.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -22,7 +22,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,12 +38,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.feature.converter.domain.model.UnitCategory
-import com.epic_engine.swisskit.feature.converter.presentation.components.ConverterOutlinedField
-import com.epic_engine.swisskit.feature.converter.presentation.components.ConverterReadOnlyField
-import com.epic_engine.swisskit.feature.converter.presentation.components.ConverterSectionCard
-import com.epic_engine.swisskit.feature.converter.presentation.components.ConverterSelectorField
-import com.epic_engine.swisskit.feature.converter.presentation.components.UnitPickerDropdown
 import com.epic_engine.swisskit.feature.converter.presentation.theme.ConverterDesignTokens
+import com.epic_engine.swisskit.feature.converter.presentation.utils.UnitConverterEvent
+import com.epic_engine.swisskit.feature.converter.presentation.utils.UnitConverterUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,15 +53,15 @@ fun UnitConverterContent(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = ConverterDesignTokens.screenHorizontalPadding)
+            .padding(horizontal = ConverterDesignTokens.dimensMedium)
             .padding(bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(ConverterDesignTokens.sectionSpacing)
+        verticalArrangement = Arrangement.spacedBy(ConverterDesignTokens.dimensXXXMedium)
     ) {
         // Card: Categoría
         ConverterSectionCard(title = "Categoría") {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(ConverterDesignTokens.dimensSmall)
             ) {
                 CategoryDropdown(
                     selected = uiState.selectedCategory,
@@ -99,7 +95,7 @@ fun UnitConverterContent(
                 onSelected = { onEvent(UnitConverterEvent.FromUnitSelected(it)) },
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(ConverterDesignTokens.fieldSpacing))
+            Spacer(modifier = Modifier.height(ConverterDesignTokens.dimensSmall))
             UnitPickerDropdown(
                 label = "A",
                 selected = uiState.toUnit,
@@ -132,7 +128,7 @@ fun UnitConverterContent(
                             text = uiState.toUnit.symbol,
                             fontSize = 14.sp,
                             color = Color.Gray,
-                            modifier = Modifier.padding(end = 4.dp)
+                            modifier = Modifier.padding(end = ConverterDesignTokens.dimensXXXSmall)
                         )
                     }
                 } else null

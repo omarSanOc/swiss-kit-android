@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.feature.converter.presentation.currency
+package com.epic_engine.swisskit.feature.converter.presentation.components
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -35,11 +35,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitToast
 import com.epic_engine.swisskit.feature.converter.domain.model.CurrencyCatalog
-import com.epic_engine.swisskit.feature.converter.presentation.components.ConverterOutlinedField
-import com.epic_engine.swisskit.feature.converter.presentation.components.ConverterReadOnlyField
-import com.epic_engine.swisskit.feature.converter.presentation.components.ConverterSectionCard
-import com.epic_engine.swisskit.feature.converter.presentation.components.CurrencyPickerDropdown
 import com.epic_engine.swisskit.feature.converter.presentation.theme.ConverterDesignTokens
+import com.epic_engine.swisskit.feature.converter.presentation.utils.CurrencyConverterEvent
+import com.epic_engine.swisskit.feature.converter.presentation.utils.CurrencyConverterUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,9 +68,9 @@ fun CurrencyConverterContent(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = ConverterDesignTokens.screenHorizontalPadding)
-                .padding(bottom = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(ConverterDesignTokens.sectionSpacing)
+                .padding(horizontal = ConverterDesignTokens.dimensMedium)
+                .padding(bottom = ConverterDesignTokens.dimensXXXMedium),
+            verticalArrangement = Arrangement.spacedBy(ConverterDesignTokens.dimensXXXMedium)
         ) {
             // Card: Divisas
             ConverterSectionCard(title = "Divisas") {
@@ -112,7 +110,7 @@ fun CurrencyConverterContent(
                 if (uiState.fromCurrency != null && uiState.toCurrency != null &&
                     uiState.fromCurrency == uiState.toCurrency
                 ) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(ConverterDesignTokens.dimensXSmall))
                     Text(
                         text = "Misma moneda seleccionada",
                         style = MaterialTheme.typography.bodySmall,
@@ -122,7 +120,7 @@ fun CurrencyConverterContent(
 
                 // Loading (solo carga inicial sin datos previos)
                 if (uiState.isLoading) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(ConverterDesignTokens.dimensXSmall))
                     LinearProgressIndicator(
                         modifier = Modifier.fillMaxWidth(),
                         color = ConverterDesignTokens.accentBlue
@@ -131,7 +129,7 @@ fun CurrencyConverterContent(
 
                 // Error
                 if (uiState.errorMessage != null) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(ConverterDesignTokens.dimensXSmall))
                     Text(
                         text = uiState.errorMessage,
                         style = MaterialTheme.typography.bodySmall,
@@ -141,7 +139,7 @@ fun CurrencyConverterContent(
 
                 // Offline indicator
                 if (uiState.isOffline) {
-                    Spacer(modifier = Modifier.height(6.dp))
+                    Spacer(modifier = Modifier.height(ConverterDesignTokens.dimensXXSmall))
                     Text(
                         text = "Usando datos en caché",
                         style = MaterialTheme.typography.bodySmall,

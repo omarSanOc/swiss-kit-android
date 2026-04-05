@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.feature.converter.presentation.currency
+package com.epic_engine.swisskit.feature.converter.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,6 +7,8 @@ import com.epic_engine.swisskit.feature.converter.domain.model.CurrencyCatalog
 import com.epic_engine.swisskit.feature.converter.domain.model.Currency
 import com.epic_engine.swisskit.feature.converter.domain.usecase.GetLatestRatesUseCase
 import com.epic_engine.swisskit.feature.converter.domain.repository.RatesRepository
+import com.epic_engine.swisskit.feature.converter.presentation.utils.CurrencyConverterEvent
+import com.epic_engine.swisskit.feature.converter.presentation.utils.CurrencyConverterUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow

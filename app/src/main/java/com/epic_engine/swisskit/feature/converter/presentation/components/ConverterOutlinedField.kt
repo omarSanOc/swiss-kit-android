@@ -47,7 +47,7 @@ fun ConverterOutlinedField(
         ),
         singleLine = true,
         keyboardOptions = keyboardOptions,
-        shape = RoundedCornerShape(ConverterDesignTokens.fieldCornerRadius),
+        shape = RoundedCornerShape(ConverterDesignTokens.dimensXMedium),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = ConverterDesignTokens.borderColor,
             unfocusedBorderColor = MaterialTheme.colorScheme.outline,
@@ -92,7 +92,7 @@ fun ConverterSelectorField(
             )
         },
         singleLine = true,
-        shape = RoundedCornerShape(ConverterDesignTokens.fieldCornerRadius),
+        shape = RoundedCornerShape(ConverterDesignTokens.dimensXMedium),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = ConverterDesignTokens.borderColor,
             unfocusedBorderColor = if (expanded) ConverterDesignTokens.borderColor
@@ -133,7 +133,7 @@ fun ConverterReadOnlyField(
         ),
         trailingIcon = trailingContent,
         singleLine = true,
-        shape = RoundedCornerShape(ConverterDesignTokens.fieldCornerRadius),
+        shape = RoundedCornerShape(ConverterDesignTokens.dimensXMedium),
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.outline,
             unfocusedBorderColor = MaterialTheme.colorScheme.outline,

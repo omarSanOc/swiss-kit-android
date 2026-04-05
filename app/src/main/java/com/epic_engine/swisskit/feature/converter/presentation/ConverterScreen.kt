@@ -24,11 +24,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitTabPicker
-import com.epic_engine.swisskit.feature.converter.presentation.currency.CurrencyConverterContent
-import com.epic_engine.swisskit.feature.converter.presentation.currency.CurrencyConverterViewModel
+import com.epic_engine.swisskit.feature.converter.presentation.components.CurrencyConverterContent
+import com.epic_engine.swisskit.feature.converter.presentation.components.UnitConverterContent
 import com.epic_engine.swisskit.feature.converter.presentation.theme.ConverterDesignTokens
-import com.epic_engine.swisskit.feature.converter.presentation.unit.UnitConverterContent
-import com.epic_engine.swisskit.feature.converter.presentation.unit.UnitConverterViewModel
+import com.epic_engine.swisskit.feature.converter.presentation.viewmodel.CurrencyConverterViewModel
+import com.epic_engine.swisskit.feature.converter.presentation.viewmodel.UnitConverterViewModel
 
 @Composable
 fun ConverterScreen(
@@ -54,8 +54,8 @@ fun ConverterScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(ConverterDesignTokens.toolbarHeight)
-                        .padding(horizontal = ConverterDesignTokens.screenHorizontalPadding)
+                        .height(ConverterDesignTokens.dimensXXLarge)
+                        .padding(horizontal = ConverterDesignTokens.dimensMedium)
                 ) {
                     Text(
                         text = "Conversor",
@@ -73,10 +73,10 @@ fun ConverterScreen(
                     onTabSelected = { selectedTab = it },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = ConverterDesignTokens.screenHorizontalPadding)
+                        .padding(horizontal = ConverterDesignTokens.dimensMedium)
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(ConverterDesignTokens.dimensXSmall))
 
                 // Contenido según tab
                 when (selectedTab) {

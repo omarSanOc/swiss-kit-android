@@ -28,14 +28,14 @@ fun ConverterSectionCard(
     SwissKitCard(
         modifier = modifier
     ) {
-        Column(modifier = Modifier.padding(ConverterDesignTokens.cardInternalPadding)) {
+        Column(modifier = Modifier.padding(ConverterDesignTokens.dimensXXMedium)) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(ConverterDesignTokens.dimensSmall))
             content()
         }
     }

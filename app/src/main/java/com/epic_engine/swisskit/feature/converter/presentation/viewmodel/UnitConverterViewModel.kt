@@ -1,8 +1,9 @@
-package com.epic_engine.swisskit.feature.converter.presentation.unit
+package com.epic_engine.swisskit.feature.converter.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.epic_engine.swisskit.feature.converter.domain.model.UnitCatalog
-import com.epic_engine.swisskit.feature.converter.domain.model.UnitCategory
+import com.epic_engine.swisskit.feature.converter.presentation.utils.UnitConverterEvent
+import com.epic_engine.swisskit.feature.converter.presentation.utils.UnitConverterUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

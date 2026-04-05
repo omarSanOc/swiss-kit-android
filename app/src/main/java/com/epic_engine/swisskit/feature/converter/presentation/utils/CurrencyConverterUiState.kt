@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.feature.converter.presentation.currency
+package com.epic_engine.swisskit.feature.converter.presentation.utils
 
 import com.epic_engine.swisskit.feature.converter.domain.model.Currency
 import com.epic_engine.swisskit.feature.converter.domain.model.Rates
