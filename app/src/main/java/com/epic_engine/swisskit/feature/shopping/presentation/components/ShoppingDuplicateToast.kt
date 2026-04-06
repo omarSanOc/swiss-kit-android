@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 
 @Composable
 fun ShoppingDuplicateToast(
@@ -33,13 +34,13 @@ fun ShoppingDuplicateToast(
         modifier = modifier
     ) {
         Surface(
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(DesignTokens.dimensSmall),
             color = MaterialTheme.colorScheme.errorContainer,
-            shadowElevation = 4.dp
+            shadowElevation = DesignTokens.dimensXXXSmall
         ) {
             Row(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(horizontal = DesignTokens.dimensMedium, vertical = DesignTokens.dimensSmall),
+                horizontalArrangement = Arrangement.spacedBy(DesignTokens.dimensXSmall),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(

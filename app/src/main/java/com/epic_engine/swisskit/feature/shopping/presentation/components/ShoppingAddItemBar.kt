@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.feature.home.presentation.theme.HomeDesignTokens
 
 @Composable
@@ -35,18 +36,18 @@ fun ShoppingAddItemBar(
 ) {
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(DesignTokens.dimensSmall),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Surface(
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(DesignTokens.dimensSmall),
             color = MaterialTheme.colorScheme.surface.copy(alpha = 0.82f),
             modifier = Modifier
                 .weight(1f)
-                .height(48.dp)
+                .height(DesignTokens.dimensXLarge)
         ) {
             Row(
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = DesignTokens.dimensMedium),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
@@ -83,16 +84,16 @@ fun ShoppingAddItemBar(
         Surface(
             onClick = onAdd,
             enabled = value.isNotBlank(),
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(DesignTokens.dimensSmall),
             color = MaterialTheme.colorScheme.surface.copy(alpha = 0.82f),
-            modifier = Modifier.size(48.dp)
+            modifier = Modifier.size(DesignTokens.dimensXLarge)
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Agregar",
                     tint = HomeDesignTokens.yellowShopping,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(DesignTokens.dimensXXXMedium)
                 )
             }
         }

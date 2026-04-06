@@ -41,9 +41,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitCard
 import com.epic_engine.swisskit.feature.home.presentation.theme.HomeDesignTokens
 import com.epic_engine.swisskit.feature.shopping.domain.model.ShoppingItem
+import com.epic_engine.swisskit.feature.shopping.presentation.theme.ShoppingDesignTokens
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -57,9 +59,8 @@ fun ShoppingItemRow(
     onEdit: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val actionButtonsWidth = 104.dp
     val density = LocalDensity.current
-    val actionButtonsWidthPx = with(density) { actionButtonsWidth.toPx() }
+    val actionButtonsWidthPx = with(density) { ShoppingDesignTokens.dimensXXXLarge.toPx() }
 
     val offsetX = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
@@ -80,14 +81,14 @@ fun ShoppingItemRow(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(DesignTokens.dimensXXMedium))
     ) {
         // Capa trasera: botones de acción
         Row(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .padding(end = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                .padding(end = DesignTokens.dimensXXXSmall),
+            horizontalArrangement = Arrangement.spacedBy(DesignTokens.dimensXSmall),
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
@@ -96,15 +97,15 @@ fun ShoppingItemRow(
                     closeSwipe()
                 },
                 modifier = Modifier
-                    .size(44.dp)
+                    .size(ShoppingDesignTokens.dimensLarge)
                     .clip(CircleShape)
-                    .background(Color(0xFFFF9800))
+                    .background(ShoppingDesignTokens.editColor)
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = "Editar",
                     tint = Color.White,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(DesignTokens.dimensXXMedium)
                 )
             }
 
@@ -114,15 +115,15 @@ fun ShoppingItemRow(
                     closeSwipe()
                 },
                 modifier = Modifier
-                    .size(44.dp)
+                    .size(ShoppingDesignTokens.dimensLarge)
                     .clip(CircleShape)
-                    .background(Color(0xFFE53935))
+                    .background(DesignTokens.deleteColor)
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Eliminar",
                     tint = Color.White,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(DesignTokens.dimensXXMedium)
                 )
             }
         }
@@ -154,27 +155,27 @@ fun ShoppingItemRow(
                         }
                     }
                 ),
-            contentPadding = PaddingValues(4.dp)
+            contentPadding = PaddingValues(DesignTokens.dimensXXXSmall)
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    .padding(horizontal = DesignTokens.dimensMedium, vertical = ShoppingDesignTokens.dimensXMedium),
+                horizontalArrangement = Arrangement.spacedBy(DesignTokens.dimensSmall),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     imageVector = if (item.isChecked) Icons.Filled.CheckCircle else Icons.Outlined.Circle,
                     contentDescription = if (item.isChecked) "Desmarcar" else "Marcar",
-                    tint = if (item.isChecked) HomeDesignTokens.yellowShopping
+                    tint = if (item.isChecked) ShoppingDesignTokens.Primary
                            else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     modifier = Modifier
-                        .size(24.dp)
+                        .size(DesignTokens.dimensXXXMedium)
                         .clip(CircleShape)
                         .clickable(onClick = onToggle)
                 )
 
-                Spacer(modifier = Modifier.width(4.dp))
+                Spacer(modifier = Modifier.width(DesignTokens.dimensXXXSmall))
 
                 Text(
                     text = item.name,
@@ -187,7 +188,7 @@ fun ShoppingItemRow(
                                      else TextDecoration.None,
                     modifier = Modifier
                         .weight(1f)
-                        .padding(vertical = 6.dp)
+                        .padding(vertical = DesignTokens.dimensXXSmall)
                 )
             }
         }

@@ -21,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
+import com.epic_engine.swisskit.feature.shopping.presentation.theme.ShoppingDesignTokens
 
 @Composable
 fun ShoppingActionButtons(
@@ -36,7 +38,7 @@ fun ShoppingActionButtons(
     ) {
         Row(
             modifier = modifier,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(DesignTokens.dimensXSmall)
         ) {
             ActionButton(
                 text = "Desmarcar",
@@ -60,15 +62,15 @@ private fun ActionButton(
 ) {
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(DesignTokens.dimensSmall),
         color = MaterialTheme.colorScheme.surface.copy(alpha = 0.82f),
-        border = BorderStroke(1.dp, Color.Black.copy(alpha = 0.08f))
+        border = BorderStroke(ShoppingDesignTokens.dimensXXXSmall, Color.Black.copy(alpha = 0.08f))
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 14.dp)
-                .heightIn(min = 44.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                .padding(horizontal = ShoppingDesignTokens.dimensXMedium)
+                .heightIn(min = ShoppingDesignTokens.dimensLarge),
+            horizontalArrangement = Arrangement.spacedBy(ShoppingDesignTokens.dimensMedium),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(

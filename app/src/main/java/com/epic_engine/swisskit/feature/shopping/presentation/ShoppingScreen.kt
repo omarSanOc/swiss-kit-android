@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
 import com.epic_engine.swisskit.feature.home.presentation.theme.HomeDesignTokens
@@ -54,6 +55,7 @@ import com.epic_engine.swisskit.feature.shopping.presentation.components.Shoppin
 import com.epic_engine.swisskit.feature.shopping.presentation.components.ShoppingAddItemBar
 import com.epic_engine.swisskit.feature.shopping.presentation.components.ShoppingDuplicateToast
 import com.epic_engine.swisskit.feature.shopping.presentation.components.ShoppingItemRow
+import com.epic_engine.swisskit.feature.shopping.presentation.theme.ShoppingDesignTokens
 import com.epic_engine.swisskit.feature.shopping.presentation.utils.ShoppingEvent
 import com.epic_engine.swisskit.feature.shopping.presentation.viewmodel.ShoppingViewModel
 import kotlinx.coroutines.delay
@@ -83,8 +85,8 @@ fun ShoppingScreen(
     }
 
     SwissKitBackground(
-        colors = listOf(HomeDesignTokens.yellowShopping, HomeDesignTokens.yellowBackground),
-        darkColors = listOf(HomeDesignTokens.yellowShopping, HomeDesignTokens.yellowDarkBackground),
+        colors = listOf(ShoppingDesignTokens.Primary, ShoppingDesignTokens.background),
+        darkColors = listOf(ShoppingDesignTokens.Primary, ShoppingDesignTokens.darkBackground),
         content = {
             Box(modifier = Modifier.fillMaxSize()) {
                 Scaffold(
@@ -129,8 +131,8 @@ fun ShoppingScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding),
-                        contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 24.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        contentPadding = PaddingValues(start = DesignTokens.dimensMedium, top = DesignTokens.dimensXSmall, end = DesignTokens.dimensMedium, bottom = DesignTokens.dimensXXXMedium),
+                        verticalArrangement = Arrangement.spacedBy(DesignTokens.dimensXSmall)
                     ) {
                         item(key = "add_bar") {
                             ShoppingAddItemBar(
@@ -202,7 +204,7 @@ fun ShoppingScreen(
                     message = uiState.duplicateMessage,
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
-                        .padding(16.dp)
+                        .padding(DesignTokens.dimensMedium)
                 )
             }
         }
@@ -265,7 +267,7 @@ fun ShoppingScreen(
                     value = uiState.editText,
                     onValueChange = { viewModel.onEvent(ShoppingEvent.EditTextChanged(it)) },
                     singleLine = true,
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(DesignTokens.dimensSmall),
                     colors = TextFieldDefaults.colors(
                         focusedTextColor = Color.Black,
                         unfocusedTextColor = Color.Black,
@@ -274,7 +276,7 @@ fun ShoppingScreen(
                         disabledContainerColor = Color(0xFFEEEEEE),
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        cursorColor = HomeDesignTokens.yellowShopping
+                        cursorColor = ShoppingDesignTokens.Primary
                     ),
                     modifier = Modifier.fillMaxWidth(),
                     textStyle = MaterialTheme.typography.bodyLarge,
