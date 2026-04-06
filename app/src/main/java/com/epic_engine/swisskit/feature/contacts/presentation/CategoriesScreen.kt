@@ -39,7 +39,7 @@ import com.epic_engine.swisskit.feature.contacts.presentation.components.Categor
 import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDesignTokens
 import com.epic_engine.swisskit.feature.contacts.presentation.util.CategoriesEvent
 import com.epic_engine.swisskit.feature.contacts.presentation.viewmodel.CategoriesViewModel
-import com.epic_engine.swisskit.ui.theme.greenContact
+import com.epic_engine.swisskit.feature.home.presentation.theme.HomeDesignTokens.greenContact
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,7 +111,7 @@ fun CategoriesScreen(
                         } else {
                             item(key = "search_bar") {
                                 SwissKitSearchBar(
-                                    tint = greenContact,
+                                    tint = ContactsDesignTokens.Primary,
                                     query = uiState.searchQuery,
                                     onQueryChange = viewModel::onSearchQueryChange,
                                     description = "Buscar categoría…",

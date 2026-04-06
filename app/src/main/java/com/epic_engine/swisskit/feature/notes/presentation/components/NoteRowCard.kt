@@ -47,9 +47,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitCard
 import com.epic_engine.swisskit.feature.notes.domain.model.Note
-import com.epic_engine.swisskit.feature.notes.presentation.NotesColors
+import com.epic_engine.swisskit.feature.notes.presentation.theme.NotesDesignTokens
+import com.epic_engine.swisskit.feature.notes.presentation.utils.displayTitle
+import com.epic_engine.swisskit.feature.notes.presentation.utils.previewText
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -79,10 +82,8 @@ fun NoteRowCard(
     val displayDate = formatDate(note.updatedAt)
     val a11yLabel = "$displayTitle. $displayPreview. $displayDate"
     val titleColor = if (isSystemInDarkTheme()) Color.White else Color.Black
-
-    val actionButtonsWidth = 56.dp
     val density = LocalDensity.current
-    val actionButtonsWidthPx = with(density) { actionButtonsWidth.toPx() }
+    val actionButtonsWidthPx = with(density) { DesignTokens.dimensXXLarge.toPx() }
     val offsetX = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
 
@@ -102,7 +103,7 @@ fun NoteRowCard(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(DesignTokens.dimensXXMedium))
     ) {
         // Capa trasera: botón de eliminar
         IconButton(
@@ -112,16 +113,16 @@ fun NoteRowCard(
             },
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .padding(end = 4.dp)
-                .size(44.dp)
+                .padding(end = DesignTokens.dimensXXXSmall)
+                .size(NotesDesignTokens.dimensXLarge)
                 .clip(CircleShape)
-                .background(Color(0xFFE53935))
+                .background(DesignTokens.deleteColor)
         ) {
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Eliminar",
                 tint = Color.White,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(DesignTokens.dimensXXMedium)
             )
         }
 
@@ -170,7 +171,7 @@ fun NoteRowCard(
                         CustomAccessibilityAction("Eliminar") { onLongClick(); true }
                     )
                 },
-            contentPadding = PaddingValues(20.dp)
+            contentPadding = PaddingValues(DesignTokens.dimensXXMedium)
         ) {
             Box(modifier = Modifier.fillMaxWidth()) {
                 // Content column (title row + preview)
@@ -191,15 +192,15 @@ fun NoteRowCard(
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.weight(1f)
                         )
-                        Spacer(Modifier.width(8.dp))
+                        Spacer(Modifier.width(DesignTokens.dimensXSmall))
                         if (note.reminderAt != null) {
                             Icon(
                                 imageVector = Icons.Default.Alarm,
                                 contentDescription = "Tiene recordatorio",
-                                tint = NotesColors.Purple,
-                                modifier = Modifier.size(12.dp)
+                                tint = NotesDesignTokens.Primary,
+                                modifier = Modifier.size(DesignTokens.dimensSmall)
                             )
-                            Spacer(Modifier.width(2.dp))
+                            Spacer(Modifier.width(DesignTokens.dimensXXXXSmall))
                         }
                         Text(
                             text = displayDate,
@@ -226,9 +227,9 @@ fun NoteRowCard(
                         onCheckedChange = null,
                         modifier = Modifier
                             .align(Alignment.CenterEnd)
-                            .padding(start = 8.dp),
+                            .padding(start = DesignTokens.dimensXSmall),
                         colors = CheckboxDefaults.colors(
-                            checkedColor = NotesColors.Purple,
+                            checkedColor = NotesDesignTokens.Primary,
                             uncheckedColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                         )
                     )
@@ -237,25 +238,6 @@ fun NoteRowCard(
         }
     }
 }
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-internal fun Note.displayTitle(): String {
-    if (title.isNotBlank()) return title
-    val firstLine = content.lineSequence().firstOrNull { it.isNotBlank() } ?: ""
-    return firstLine.take(60).ifBlank { "Sin titulo" }
-}
-
-private fun Note.previewText(): String {
-    val plain = content
-        .replace(Regex("\\*\\*(.*?)\\*\\*"), "$1")
-        .replace(Regex("\\*(.*?)\\*"), "$1")
-        .replace(Regex("^-\\s", RegexOption.MULTILINE), "• ")
-        .replace("\n", " ")
-        .trim()
-    return plain.take(100)
-}
-
 private fun formatDate(epochMillis: Long): String {
     val sdf = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
     return sdf.format(Date(epochMillis))

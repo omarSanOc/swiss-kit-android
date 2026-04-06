@@ -25,7 +25,7 @@ fun SwissKitButton(
         onClick = onClick,
         modifier = modifier.height(48.dp),
         enabled = enabled,
-        shape = RoundedCornerShape(DesignTokens.buttonCornerRadius),
+        shape = RoundedCornerShape(DesignTokens.dimensMedium),
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
             contentColor = contentColor

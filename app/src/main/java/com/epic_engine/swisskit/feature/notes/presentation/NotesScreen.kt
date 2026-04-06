@@ -33,10 +33,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitFAB
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitSearchBar
+import com.epic_engine.swisskit.feature.home.presentation.theme.HomeDesignTokens
 import com.epic_engine.swisskit.feature.notes.presentation.components.NoteRowCard
 import com.epic_engine.swisskit.feature.notes.presentation.components.NotesEmptyState
-import com.epic_engine.swisskit.feature.notes.presentation.components.displayTitle
-import com.epic_engine.swisskit.ui.theme.purpleNotes
+import com.epic_engine.swisskit.feature.notes.presentation.theme.NotesDesignTokens
+import com.epic_engine.swisskit.feature.notes.presentation.utils.NotesEvent
+import com.epic_engine.swisskit.feature.notes.presentation.utils.displayTitle
+import com.epic_engine.swisskit.feature.notes.presentation.viewmodel.NotesViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,8 +66,8 @@ fun NotesScreen(
     }
 
     SwissKitBackground(
-        colors = listOf(NotesDesignTokens.Primary, NotesDesignTokens.Background),
-        darkColors = listOf(NotesDesignTokens.PurpleAccentDark, NotesDesignTokens.DarkBackground),
+        colors = listOf(NotesDesignTokens.Primary, NotesDesignTokens.background),
+        darkColors = listOf(NotesDesignTokens.Primary, NotesDesignTokens.darkBackground),
         content = {
             Scaffold(
                 containerColor = Color.Transparent,
@@ -80,7 +83,7 @@ fun NotesScreen(
                 floatingActionButton = {
                     SwissKitFAB(
                         onClick = viewModel::onAddNote,
-                        colors = listOf(NotesColors.FABGradientTop, NotesColors.FABGradientBottom)
+                        colors = listOf(NotesDesignTokens.FABGradientTop, NotesDesignTokens.FABGradientBottom)
                     )
                 },
                 snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -94,7 +97,7 @@ fun NotesScreen(
             ) {
                     item(key = "search_bar") {
                         SwissKitSearchBar(
-                            tint = purpleNotes,
+                            tint = HomeDesignTokens.purpleNotes,
                             query = uiState.searchQuery,
                             onQueryChange = viewModel::onSearchQueryChange,
                             modifier = Modifier.padding(top = 12.dp),

@@ -65,8 +65,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.notesBackgroundBrush
 import com.epic_engine.swisskit.feature.notes.presentation.components.NoteFormattingToolbar
+import com.epic_engine.swisskit.feature.notes.presentation.components.ReminderBottomSheet
+import com.epic_engine.swisskit.feature.notes.presentation.theme.NotesDesignTokens
+import com.epic_engine.swisskit.feature.notes.presentation.utils.NoteDetailEvent
+import com.epic_engine.swisskit.feature.notes.presentation.utils.toWhatsAppFormat
+import com.epic_engine.swisskit.feature.notes.presentation.viewmodel.NoteDetailViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -137,166 +143,168 @@ fun NoteDetailScreen(
     }
 
     // ── Layout ────────────────────────────────────────────────────────────────
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(notesBackgroundBrush())
-    ) {
-        Scaffold(
-            containerColor = Color.Transparent,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-            snackbarHost = { SnackbarHost(snackbarHostState) },
-            topBar = {
-                TopAppBar(
-                    title = { Text(
-                        text = if (noteId == null) {"Crear Nota"} else {"Editar Nota"},
-                        style = MaterialTheme.typography.titleLarge,
-                        color = Color.White
+    SwissKitBackground(
+        colors = listOf(NotesDesignTokens.Primary, NotesDesignTokens.background),
+        darkColors = listOf(NotesDesignTokens.Primary, NotesDesignTokens.darkBackground),
+        content = {
+            Scaffold(
+                containerColor = Color.Transparent,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                snackbarHost = { SnackbarHost(snackbarHostState) },
+                topBar = {
+                    TopAppBar(
+                        title = { Text(
+                            text = if (noteId == null) {"Crear Nota"} else {"Editar Nota"},
+                            style = MaterialTheme.typography.titleLarge,
+                            color = Color.White
                         )},
-                    actions = {
-                        Box {
-                            IconButton(onClick = { showOverflowMenu = true }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.icon_ellipsis),
-                                    contentDescription = "Más opciones",
-                                    tint = if (isDark) Color.White else Color.Black
-                                )
-                            }
-                            DropdownMenu(
-                                expanded = showOverflowMenu,
-                                onDismissRequest = { showOverflowMenu = false }
-                            ) {
-                                DropdownMenuItem(
-                                    text = { Text("Guardar nota") },
-                                    onClick = {
-                                        showOverflowMenu = false
-                                        viewModel.onSave()
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Guardar como recordatorio") },
-                                    onClick = {
-                                        showOverflowMenu = false
-                                        viewModel.onSaveAndShowReminder()
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Compartir nota") },
-                                    onClick = {
-                                        showOverflowMenu = false
-                                        val shareText = buildString {
-                                            if (uiState.titleDraft.isNotBlank()) {
-                                                appendLine(uiState.titleDraft)
-                                                appendLine()
-                                            }
-                                            append(uiState.contentDraft.toWhatsAppFormat())
-                                        }
-                                        val sendIntent = Intent(Intent.ACTION_SEND).apply {
-                                            type = "text/plain"
-                                            putExtra(Intent.EXTRA_SUBJECT, uiState.titleDraft)
-                                            putExtra(Intent.EXTRA_TEXT, shareText)
-                                        }
-                                        context.startActivity(Intent.createChooser(sendIntent, "Compartir nota"))
-                                    }
-                                )
-                                if (uiState.note != null) {
-                                    DropdownMenuItem(
-                                        text = { Text("Eliminar", color = Color.Red) },
-                                        onClick = {
-                                            showOverflowMenu = false
-                                            showDeleteDialog = true
-                                        }
+                        actions = {
+                            Box {
+                                IconButton(onClick = { showOverflowMenu = true }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.icon_ellipsis),
+                                        contentDescription = "Más opciones",
+                                        tint = if (isDark) Color.White else Color.Black
                                     )
                                 }
+                                DropdownMenu(
+                                    expanded = showOverflowMenu,
+                                    onDismissRequest = { showOverflowMenu = false }
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text("Guardar nota") },
+                                        onClick = {
+                                            showOverflowMenu = false
+                                            viewModel.onSave()
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Guardar como recordatorio") },
+                                        onClick = {
+                                            showOverflowMenu = false
+                                            viewModel.onSaveAndShowReminder()
+                                        }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text("Compartir nota") },
+                                        onClick = {
+                                            showOverflowMenu = false
+                                            val shareText = buildString {
+                                                if (uiState.titleDraft.isNotBlank()) {
+                                                    appendLine(uiState.titleDraft)
+                                                    appendLine()
+                                                }
+                                                append(uiState.contentDraft.toWhatsAppFormat())
+                                            }
+                                            val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                                                type = "text/plain"
+                                                putExtra(Intent.EXTRA_SUBJECT, uiState.titleDraft)
+                                                putExtra(Intent.EXTRA_TEXT, shareText)
+                                            }
+                                            context.startActivity(Intent.createChooser(sendIntent, "Compartir nota"))
+                                        }
+                                    )
+                                    if (uiState.note != null) {
+                                        DropdownMenuItem(
+                                            text = { Text("Eliminar", color = Color.Red) },
+                                            onClick = {
+                                                showOverflowMenu = false
+                                                showDeleteDialog = true
+                                            }
+                                        )
+                                    }
+                                }
                             }
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.Transparent
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color.Transparent
+                        )
                     )
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 8.dp, bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Title field (glassmorphism — thinMaterial 60 % alpha)
-                BasicTextField(
-                    value = uiState.titleDraft,
-                    onValueChange = viewModel::onTitleChange,
-                    textStyle = MaterialTheme.typography.headlineSmall.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    ),
-                    cursorBrush = SolidColor(NotesColors.Purple),
-                    singleLine = true,
+                },
+            ) { innerPadding ->
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .defaultMinSize(minHeight = 48.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.60f))
-                        .padding(horizontal = 12.dp, vertical = 12.dp),
-                    decorationBox = { innerTextField ->
-                        Box(contentAlignment = Alignment.CenterStart) {
-                            if (uiState.titleDraft.isEmpty()) {
-                                Text(
-                                    text = "Titulo de la nota",
-                                    style = MaterialTheme.typography.headlineSmall.copy(
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 8.dp, bottom = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    // Title field (glassmorphism — thinMaterial 60 % alpha)
+                    BasicTextField(
+                        value = uiState.titleDraft,
+                        onValueChange = viewModel::onTitleChange,
+                        textStyle = MaterialTheme.typography.headlineSmall.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        ),
+                        cursorBrush = SolidColor(NotesDesignTokens.Primary),
+                        singleLine = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .defaultMinSize(minHeight = 48.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.60f))
+                            .padding(horizontal = 12.dp, vertical = 12.dp),
+                        decorationBox = { innerTextField ->
+                            Box(contentAlignment = Alignment.CenterStart) {
+                                if (uiState.titleDraft.isEmpty()) {
+                                    Text(
+                                        text = "Titulo de la nota",
+                                        style = MaterialTheme.typography.headlineSmall.copy(
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                        )
                                     )
-                                )
+                                }
+                                innerTextField()
                             }
-                            innerTextField()
                         }
-                    }
-                )
+                    )
 
-                NoteFormattingToolbar(
-                    onBold = ::applyBold,
-                    onItalic = ::applyItalic,
-                    onBullet = ::applyBullet
-                )
+                    NoteFormattingToolbar(
+                        onBold = ::applyBold,
+                        onItalic = ::applyItalic,
+                        onBullet = ::applyBullet
+                    )
 
-                // Content field
-                BasicTextField(
-                    value = contentFieldValue,
-                    onValueChange = { newValue ->
-                        contentFieldValue = newValue
-                        viewModel.onContentChange(newValue.text)
-                    },
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(
-                        color = MaterialTheme.colorScheme.onSurface
-                    ),
-                    cursorBrush = SolidColor(NotesColors.Purple),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.60f))
-                        .padding(12.dp),
-                    decorationBox = { innerTextField ->
-                        Box(contentAlignment = Alignment.TopStart) {
-                            if (contentFieldValue.text.isEmpty()) {
-                                Text(
-                                    text = "Escribe tu nota...",
-                                    style = MaterialTheme.typography.bodyLarge.copy(
-                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    // Content field
+                    BasicTextField(
+                        value = contentFieldValue,
+                        onValueChange = { newValue ->
+                            contentFieldValue = newValue
+                            viewModel.onContentChange(newValue.text)
+                        },
+                        textStyle = MaterialTheme.typography.bodyLarge.copy(
+                            color = MaterialTheme.colorScheme.onSurface
+                        ),
+                        cursorBrush = SolidColor(NotesDesignTokens.Primary),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.60f))
+                            .padding(12.dp),
+                        decorationBox = { innerTextField ->
+                            Box(contentAlignment = Alignment.TopStart) {
+                                if (contentFieldValue.text.isEmpty()) {
+                                    Text(
+                                        text = "Escribe tu nota...",
+                                        style = MaterialTheme.typography.bodyLarge.copy(
+                                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                        )
                                     )
-                                )
+                                }
+                                innerTextField()
                             }
-                            innerTextField()
                         }
-                    }
-                )
+                    )
+                }
             }
         }
-    }
+    )
+
+
 
     // ── Delete confirmation dialog ─────────────────────────────────────────────
     if (showDeleteDialog) {
@@ -327,153 +335,4 @@ fun NoteDetailScreen(
             onDismiss = viewModel::onDismissReminderPicker
         )
     }
-}
-
-
-
-
-
-
-// ── Reminder bottom sheet ─────────────────────────────────────────────────────
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ReminderBottomSheet(
-    isDark: Boolean,
-    onConfirm: (Long) -> Unit,
-    onDismiss: () -> Unit
-) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val accentColor = if (isDark) NotesColors.PurpleAccentDark else NotesColors.Purple
-    val sheetBg = if (isDark) NotesColors.ReminderSheetDark else NotesColors.ReminderSheetLight
-
-    // Internal navigation: date → time
-    var showTimePicker by remember { mutableStateOf(false) }
-    var selectedDateMillis by remember { mutableStateOf<Long?>(null) }
-    val datePickerState = rememberDatePickerState()
-    val timePickerState = rememberTimePickerState()
-
-    if (!showTimePicker) {
-        // ── Date picker ───────────────────────────────────────────────────────
-        DatePickerDialog(
-            onDismissRequest = onDismiss,
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        selectedDateMillis = datePickerState.selectedDateMillis
-                        if (selectedDateMillis != null) showTimePicker = true
-                    }
-                ) { Text("Siguiente", color = accentColor) }
-            },
-            dismissButton = {
-                TextButton(onClick = onDismiss) { Text("Cancelar", color = accentColor) }
-            }
-        ) {
-            DatePicker(state = datePickerState)
-        }
-    } else {
-        // ── Time picker in a ModalBottomSheet ─────────────────────────────────
-        ModalBottomSheet(
-            onDismissRequest = onDismiss,
-            sheetState = sheetState,
-            containerColor = sheetBg,
-            shape = RoundedCornerShape(topStart = 36.dp, topEnd = 36.dp),
-            tonalElevation = 0.dp
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .padding(bottom = 24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Drag handle
-                Surface(
-                    modifier = Modifier
-                        .padding(top = 8.dp)
-                        .width(68.dp)
-                        .height(6.dp),
-                    shape = RoundedCornerShape(3.dp),
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.35f)
-                ) {}
-
-                Text(
-                    text = "Nuevo recordatorio",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-
-                TimePicker(state = timePickerState)
-
-                // Action buttons
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    TextButton(
-                        onClick = onDismiss,
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("Cancelar", color = accentColor)
-                    }
-                    androidx.compose.material3.Button(
-                        onClick = {
-                            val dateMillis = selectedDateMillis ?: return@Button
-                            val cal = Calendar.getInstance().apply {
-                                timeInMillis = dateMillis
-                                set(Calendar.HOUR_OF_DAY, timePickerState.hour)
-                                set(Calendar.MINUTE, timePickerState.minute)
-                                set(Calendar.SECOND, 0)
-                                set(Calendar.MILLISECOND, 0)
-                            }
-                            onConfirm(cal.timeInMillis)
-                        },
-                        modifier = Modifier.weight(1f),
-                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                            containerColor = accentColor,
-                            contentColor = Color.White
-                        )
-                    ) {
-                        Text("Guardar")
-                    }
-                }
-            }
-        }
-    }
-}
-
-/**
- * Converts internal Markdown syntax to WhatsApp-compatible format.
- *
- * Internal → WhatsApp:
- *  **bold**  →  *bold*
- *  *italic*  →  _italic_
- *  - bullet  →  • bullet
- *
- * Uses a placeholder to avoid converting bold markers twice when
- * processing italic in the second pass.
- */
-private fun String.toWhatsAppFormat(): String {
-    val boldPlaceholder = "\u0001"
-    // Pass 1 – protect bold spans (** … **) by replacing with a placeholder
-    var result = Regex("""\*\*(.+?)\*\*""", RegexOption.DOT_MATCHES_ALL)
-        .replace(this) { "$boldPlaceholder${it.groupValues[1]}$boldPlaceholder" }
-    // Pass 2 – convert remaining single-asterisk italic to _underscore_
-    result = Regex("""\*(.+?)\*""", RegexOption.DOT_MATCHES_ALL)
-        .replace(result) { "_${it.groupValues[1]}_" }
-    // Pass 3 – restore bold placeholders with WhatsApp bold (single asterisk)
-    result = Regex("""\u0001(.+?)\u0001""", RegexOption.DOT_MATCHES_ALL)
-        .replace(result) { "*${it.groupValues[1]}*" }
-    // Pass 4 – convert Markdown bullets ("- text") to Unicode bullet ("• text")
-    result = result.lines().joinToString("\n") { line ->
-        if (line.startsWith("- ")) "• ${line.removePrefix("- ")}" else line
-    }
-    return result
-}
-
-private fun formatDateTime(epochMillis: Long): String {
-    val sdf = SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault())
-    return sdf.format(Date(epochMillis))
 }

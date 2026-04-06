@@ -67,6 +67,7 @@ import com.epic_engine.swisskit.feature.qrscanner.domain.model.QRContentType
 import com.epic_engine.swisskit.feature.qrscanner.domain.model.ScanMode
 import com.epic_engine.swisskit.feature.qrscanner.presentation.components.GeneratorTab
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitTabPicker
+import com.epic_engine.swisskit.feature.home.presentation.theme.HomeDesignTokens
 import com.epic_engine.swisskit.feature.qrscanner.presentation.components.ScanResultBottomSheet
 import com.epic_engine.swisskit.feature.qrscanner.presentation.components.ScannerTab
 import com.epic_engine.swisskit.feature.qrscanner.presentation.theme.QRScannerDesignTokens
@@ -74,9 +75,6 @@ import com.epic_engine.swisskit.feature.qrscanner.presentation.util.QRCameraEven
 import com.epic_engine.swisskit.feature.qrscanner.presentation.util.QRScannerEvent
 import com.epic_engine.swisskit.feature.qrscanner.presentation.viewmodel.QRCameraViewModel
 import com.epic_engine.swisskit.feature.qrscanner.presentation.viewmodel.QRScannerViewModel
-import com.epic_engine.swisskit.ui.theme.pinkBackground
-import com.epic_engine.swisskit.ui.theme.pinkDarkBackground
-import com.epic_engine.swisskit.ui.theme.pinkQrScanner
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -130,8 +128,8 @@ fun QRScannerScreen(
     }
 
     SwissKitBackground(
-        colors = listOf(pinkQrScanner, pinkBackground),
-        darkColors = listOf(pinkQrScanner, pinkDarkBackground),
+        colors = listOf(HomeDesignTokens.pinkQrScanner, HomeDesignTokens.pinkBackground),
+        darkColors = listOf(HomeDesignTokens.pinkQrScanner, HomeDesignTokens.pinkDarkBackground),
         content = {
         Box(modifier =
             Modifier

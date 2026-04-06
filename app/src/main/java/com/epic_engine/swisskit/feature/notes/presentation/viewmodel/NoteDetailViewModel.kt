@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.feature.notes.presentation
+package com.epic_engine.swisskit.feature.notes.presentation.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -8,6 +8,8 @@ import com.epic_engine.swisskit.feature.notes.domain.usecase.DeleteNoteUseCase
 import com.epic_engine.swisskit.feature.notes.domain.usecase.GetNoteByIdUseCase
 import com.epic_engine.swisskit.feature.notes.domain.usecase.SaveNoteUseCase
 import com.epic_engine.swisskit.feature.notes.domain.usecase.SetNoteReminderUseCase
+import com.epic_engine.swisskit.feature.notes.presentation.utils.NoteDetailEvent
+import com.epic_engine.swisskit.feature.notes.presentation.utils.NoteDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

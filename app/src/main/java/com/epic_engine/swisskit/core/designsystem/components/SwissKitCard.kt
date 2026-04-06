@@ -18,9 +18,9 @@ fun SwissKitCard(
 ) {
     Card(
         modifier = modifier,
-        shape = RoundedCornerShape(DesignTokens.cardCornerRadius),
+        shape = RoundedCornerShape(DesignTokens.dimensXXXMedium),
         colors = CardDefaults.cardColors(containerColor = containerColor),
-        elevation = CardDefaults.cardElevation(defaultElevation = DesignTokens.cardElevation),
+        elevation = CardDefaults.cardElevation(defaultElevation = DesignTokens.dimensXXXXSmall),
         content = content
     )
 }

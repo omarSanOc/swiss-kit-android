@@ -20,6 +20,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
+import com.epic_engine.swisskit.feature.notes.presentation.theme.NotesDesignTokens
 
 @Composable
 fun NoteFormattingToolbar(
@@ -31,17 +33,17 @@ fun NoteFormattingToolbar(
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp)),
-        shape = RoundedCornerShape(12.dp),
+            .clip(RoundedCornerShape(DesignTokens.dimensSmall)),
+        shape = RoundedCornerShape(DesignTokens.dimensSmall),
         color = MaterialTheme.colorScheme.surface.copy(alpha = 0.60f),
         tonalElevation = 0.dp
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 10.dp),
+                .padding(horizontal = DesignTokens.dimensMedium, vertical = NotesDesignTokens.dimensSmall),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.spacedBy(NotesDesignTokens.dimensSmall)
         ) {
             FormatTextButton(
                 label = "B",
@@ -74,10 +76,10 @@ private fun FormatTextButton(
 ) {
     OutlinedButton(
         onClick = onClick,
-        modifier = Modifier.defaultMinSize(minWidth = 32.dp, minHeight = 32.dp),
-        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
-        shape = RoundedCornerShape(6.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)),
+        modifier = Modifier.defaultMinSize(minWidth = NotesDesignTokens.dimensLarge, minHeight = NotesDesignTokens.dimensLarge),
+        contentPadding = PaddingValues(horizontal = DesignTokens.dimensXSmall, vertical = DesignTokens.dimensXXXSmall),
+        shape = RoundedCornerShape(DesignTokens.dimensXXSmall),
+        border = BorderStroke(NotesDesignTokens.dimensXXXSmall, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)),
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = MaterialTheme.colorScheme.onSurface
         )

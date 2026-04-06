@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
-import com.epic_engine.swisskit.ui.theme.yellowShopping
+import com.epic_engine.swisskit.feature.home.presentation.theme.HomeDesignTokens
 
 @Composable
 fun ShoppingAddItemBar(
@@ -67,7 +67,7 @@ fun ShoppingAddItemBar(
                         textStyle = MaterialTheme.typography.bodyLarge.copy(
                             color = MaterialTheme.colorScheme.onSurface
                         ),
-                        cursorBrush = SolidColor(yellowShopping),
+                        cursorBrush = SolidColor(HomeDesignTokens.yellowShopping),
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.Words,
                             imeAction = ImeAction.Done
@@ -91,7 +91,7 @@ fun ShoppingAddItemBar(
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Agregar",
-                    tint = yellowShopping,
+                    tint = HomeDesignTokens.yellowShopping,
                     modifier = Modifier.size(24.dp)
                 )
             }

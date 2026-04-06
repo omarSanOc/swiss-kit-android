@@ -42,8 +42,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitCard
+import com.epic_engine.swisskit.feature.home.presentation.theme.HomeDesignTokens
 import com.epic_engine.swisskit.feature.shopping.domain.model.ShoppingItem
-import com.epic_engine.swisskit.ui.theme.yellowShopping
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -166,7 +166,7 @@ fun ShoppingItemRow(
                 Icon(
                     imageVector = if (item.isChecked) Icons.Filled.CheckCircle else Icons.Outlined.Circle,
                     contentDescription = if (item.isChecked) "Desmarcar" else "Marcar",
-                    tint = if (item.isChecked) yellowShopping
+                    tint = if (item.isChecked) HomeDesignTokens.yellowShopping
                            else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     modifier = Modifier
                         .size(24.dp)

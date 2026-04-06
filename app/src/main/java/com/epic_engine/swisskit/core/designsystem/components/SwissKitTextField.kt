@@ -54,7 +54,7 @@ fun SwissKitTextField(
         isError = isError,
         singleLine = maxLines == 1,
         maxLines = maxLines,
-        shape = RoundedCornerShape(DesignTokens.inputCornerRadius),
+        shape = RoundedCornerShape(DesignTokens.dimensSmall),
         visualTransformation = visualTransformation,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,

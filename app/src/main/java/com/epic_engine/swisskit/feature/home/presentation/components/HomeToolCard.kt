@@ -24,7 +24,9 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.feature.home.presentation.model.Tool
+import com.epic_engine.swisskit.feature.home.presentation.theme.HomeDesignTokens
 
 @Composable
 fun HomeToolCard(
@@ -36,7 +38,7 @@ fun HomeToolCard(
         modifier = modifier
             .fillMaxWidth()
             .clickable(role = Role.Button, onClick = onClick),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(DesignTokens.dimensXXXMedium),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(
             containerColor = tool.backgroundColor
@@ -45,13 +47,13 @@ fun HomeToolCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(DesignTokens.dimensMedium),
             horizontalAlignment = Alignment.Start
         ) {
             Box(
                 modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(14.dp))
+                    .size(DesignTokens.dimensXLarge)
+                    .clip(RoundedCornerShape(HomeDesignTokens.dimensSmall))
                     .background(tool.color.copy(alpha = 0.15f)),
                 contentAlignment = Alignment.Center
             ) {
@@ -59,11 +61,11 @@ fun HomeToolCard(
                     painter = painterResource(id = tool.icon),
                     contentDescription = tool.name,
                     tint = tool.color,
-                    modifier = Modifier.size(26.dp)
+                    modifier = Modifier.size(HomeDesignTokens.dimensMedium)
                 )
             }
 
-            Spacer(Modifier.height(14.dp))
+            Spacer(Modifier.height(HomeDesignTokens.dimensSmall))
 
             Text(
                 text = tool.name,
@@ -72,7 +74,7 @@ fun HomeToolCard(
                 color = tool.color
             )
 
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(DesignTokens.dimensXXXSmall))
 
             Text(
                 text = tool.description,

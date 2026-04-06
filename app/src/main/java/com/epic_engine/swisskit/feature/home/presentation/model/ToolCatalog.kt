@@ -1,19 +1,8 @@
 package com.epic_engine.swisskit.feature.home.presentation.model
 
 import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.feature.home.presentation.theme.HomeDesignTokens
 import com.epic_engine.swisskit.navigation.SwissKitDestination
-import com.epic_engine.swisskit.ui.theme.blueBackground
-import com.epic_engine.swisskit.ui.theme.blueFinance
-import com.epic_engine.swisskit.ui.theme.grayBackground
-import com.epic_engine.swisskit.ui.theme.grayConverter
-import com.epic_engine.swisskit.ui.theme.greenBackground
-import com.epic_engine.swisskit.ui.theme.greenContact
-import com.epic_engine.swisskit.ui.theme.pinkBackground
-import com.epic_engine.swisskit.ui.theme.pinkQrScanner
-import com.epic_engine.swisskit.ui.theme.purpleBackground
-import com.epic_engine.swisskit.ui.theme.purpleNotes
-import com.epic_engine.swisskit.ui.theme.yellowBackground
-import com.epic_engine.swisskit.ui.theme.yellowShopping
 
 /**
  * Equivalente al enum ToolRoute de iOS + lista de herramientas de HomeView.
@@ -27,8 +16,8 @@ object ToolCatalog {
             name = "Finanzas",
             description = "Maneja finanzas",
             icon = R.drawable.icon_wallet,
-            color = blueFinance,
-            backgroundColor = blueBackground,
+            color = HomeDesignTokens.blueFinance,
+            backgroundColor = HomeDesignTokens.blueBackground,
             destination = SwissKitDestination.Finance
         ),
         Tool(
@@ -36,8 +25,8 @@ object ToolCatalog {
             name = "Contactos",
             description = "Gestiona contactos",
             icon = R.drawable.icon_contact,
-            color = greenContact,
-            backgroundColor = greenBackground,
+            color = HomeDesignTokens.greenContact,
+            backgroundColor = HomeDesignTokens.greenBackground,
             destination = SwissKitDestination.Contacts
         ),
         Tool(
@@ -45,8 +34,8 @@ object ToolCatalog {
             name = "Notas",
             description = "Escribe tus notas",
             icon = R.drawable.icon_notes,
-            color = purpleNotes,
-            backgroundColor = purpleBackground,
+            color = HomeDesignTokens.purpleNotes,
+            backgroundColor = HomeDesignTokens.purpleBackground,
             destination = SwissKitDestination.Notes
         ),
         Tool(
@@ -54,8 +43,8 @@ object ToolCatalog {
             name = "Código QR",
             description = "Escanea / Genera",
             icon = R.drawable.icon_qr,
-            color = pinkQrScanner,
-            backgroundColor = pinkBackground,
+            color = HomeDesignTokens.pinkQrScanner,
+            backgroundColor = HomeDesignTokens.pinkBackground,
             destination = SwissKitDestination.QrScanner
         ),
         Tool(
@@ -63,8 +52,8 @@ object ToolCatalog {
             name = "Conversor",
             description = "Unidades / Divisas",
             icon = R.drawable.icon_converter,
-            color = grayConverter,
-            backgroundColor = grayBackground,
+            color = HomeDesignTokens.grayConverter,
+            backgroundColor = HomeDesignTokens.grayBackground,
             destination = SwissKitDestination.Converter
         ),
         Tool(
@@ -72,8 +61,8 @@ object ToolCatalog {
             name = "Compras",
             description = "Lista de compras",
             icon = R.drawable.icon_shopping,
-            color = yellowShopping,
-            backgroundColor = yellowBackground,
+            color = HomeDesignTokens.yellowShopping,
+            backgroundColor = HomeDesignTokens.yellowBackground,
             destination = SwissKitDestination.Shopping
         )
     )

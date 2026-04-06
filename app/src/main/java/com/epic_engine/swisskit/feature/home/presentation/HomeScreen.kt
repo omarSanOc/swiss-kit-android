@@ -19,8 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.feature.home.presentation.components.HomeToolCard
 import com.epic_engine.swisskit.feature.home.presentation.model.ToolCatalog
+import com.epic_engine.swisskit.feature.home.presentation.theme.HomeDesignTokens
 import com.epic_engine.swisskit.navigation.SwissKitDestination
 
 @Composable
@@ -32,13 +34,13 @@ fun HomeScreen(
             columns = GridCells.Fixed(2),
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                top = 72.dp,
-                bottom = 160.dp
+                start = DesignTokens.dimensMedium,
+                end = DesignTokens.dimensMedium,
+                top = HomeDesignTokens.dimensXLarge,
+                bottom = HomeDesignTokens.dimensXXLarge
             ),
-            verticalArrangement = Arrangement.spacedBy(14.dp),
-            horizontalArrangement = Arrangement.spacedBy(14.dp)
+            verticalArrangement = Arrangement.spacedBy(HomeDesignTokens.dimensSmall),
+            horizontalArrangement = Arrangement.spacedBy(HomeDesignTokens.dimensSmall)
         ) {
             item(span = { GridItemSpan(maxLineSpan) }) {
                 HomeHeader()
@@ -58,7 +60,7 @@ fun HomeScreen(
         HomeFooter(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 60.dp)
+                .padding(bottom = HomeDesignTokens.dimensLarge)
         )
     }
 }
@@ -68,7 +70,7 @@ private fun HomeHeader() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 16.dp)
+            .padding(bottom = DesignTokens.dimensMedium)
     ) {
         Text(
             text = "SwissKit",
@@ -91,7 +93,7 @@ private fun HomeFooter(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = DesignTokens.dimensMedium),
         contentAlignment = Alignment.Center
     ) {
         Text(

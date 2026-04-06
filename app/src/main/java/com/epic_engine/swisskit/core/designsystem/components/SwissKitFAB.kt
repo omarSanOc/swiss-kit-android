@@ -45,7 +45,7 @@ fun SwissKitFAB(
     Box(
         modifier = modifier
             .size(DesignTokens.fabDiameter)
-            .shadow(elevation = DesignTokens.fabElevation, shape = CircleShape)
+            .shadow(elevation = DesignTokens.dimensSmall, shape = CircleShape)
             .clip(CircleShape)
             .drawBehind {
                 drawRect(

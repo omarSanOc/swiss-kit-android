@@ -17,7 +17,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
-import com.epic_engine.swisskit.feature.notes.presentation.NotesColors
+import com.epic_engine.swisskit.feature.notes.presentation.theme.NotesDesignTokens
+
 
 /** Diagonal linear gradient shared by all Notes screens. */
 @Composable
@@ -25,8 +26,8 @@ fun notesBackgroundBrush(): Brush {
     val isDark = isSystemInDarkTheme()
     return Brush.linearGradient(
         colors = listOf(
-            NotesColors.Purple,
-            if (isDark) NotesColors.PurpleDark else NotesColors.PurpleLight
+            NotesDesignTokens.Primary,
+            if (isDark) NotesDesignTokens.darkBackground else NotesDesignTokens.background
         ),
         start = Offset.Zero,
         end = Offset.Infinite
@@ -49,8 +50,8 @@ fun SwissKitCard(
             .shadow(
                 elevation = 8.dp,
                 shape = RoundedCornerShape(20.dp),
-                ambientColor = NotesColors.CardShadow,
-                spotColor = NotesColors.CardShadow
+                ambientColor = NotesDesignTokens.CardShadow,
+                spotColor = NotesDesignTokens.CardShadow
             ),
         shape = RoundedCornerShape(20.dp),
         color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),

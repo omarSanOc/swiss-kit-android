@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.feature.notes.presentation.util
+package com.epic_engine.swisskit.feature.notes.presentation.utils
 
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle

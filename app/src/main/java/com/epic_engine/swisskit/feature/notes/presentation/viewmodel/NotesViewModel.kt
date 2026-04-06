@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.feature.notes.presentation
+package com.epic_engine.swisskit.feature.notes.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,6 +6,8 @@ import com.epic_engine.swisskit.feature.notes.domain.model.Note
 import com.epic_engine.swisskit.feature.notes.domain.usecase.DeleteNotesUseCase
 import com.epic_engine.swisskit.feature.notes.domain.usecase.ObserveNotesUseCase
 import com.epic_engine.swisskit.feature.notes.domain.usecase.SearchNotesUseCase
+import com.epic_engine.swisskit.feature.notes.presentation.utils.NotesEvent
+import com.epic_engine.swisskit.feature.notes.presentation.utils.NotesUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow

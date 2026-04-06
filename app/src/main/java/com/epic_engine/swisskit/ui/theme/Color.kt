@@ -13,27 +13,6 @@ val Pink40 = Color(0xFF7D5260)
 val redHome = Color(0xFFFB2A2A)
 val redBackground = Color(0xFFD1D3D4)
 
-val blueFinance = Color(0xFF0080FF)
-val blueBackground = Color(0xFFE6F2FF)
-
-val greenContact = Color(0xFF0FB380)
-val greenBackground = Color(0xFFE0F5EE)
-
-val purpleNotes = Color(0xFF6A5ACD)
-val purpleBackground = Color(0xFFEFEAFF)
-
-val pinkQrScanner = Color(0xFFE64480)
-val pinkBackground = Color(0xFFFCE8EF)
-val pinkDarkBackground = Color(0xFF4A4345)
-
-val grayConverter = Color(0xFF6B7280)
-val grayBackground = Color(0xFFF3F4F6)
-
-val yellowShopping = Color(0xFFFFA200)
-val yellowBackground = Color(0xFFFFEAC7)
-
-val yellowDarkBackground = Color(0xFF414141)
-
 val redAnimation = Color(0xFFFB2A2A)
 val orangeAnimation = Color(0xFFFF7A00)
 val yellowAnimation = Color(0xFFFFD500)

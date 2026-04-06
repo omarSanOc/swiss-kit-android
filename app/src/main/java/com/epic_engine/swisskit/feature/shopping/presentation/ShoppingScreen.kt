@@ -49,13 +49,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
+import com.epic_engine.swisskit.feature.home.presentation.theme.HomeDesignTokens
 import com.epic_engine.swisskit.feature.shopping.presentation.components.ShoppingActionButtons
 import com.epic_engine.swisskit.feature.shopping.presentation.components.ShoppingAddItemBar
 import com.epic_engine.swisskit.feature.shopping.presentation.components.ShoppingDuplicateToast
 import com.epic_engine.swisskit.feature.shopping.presentation.components.ShoppingItemRow
-import com.epic_engine.swisskit.ui.theme.yellowBackground
-import com.epic_engine.swisskit.ui.theme.yellowDarkBackground
-import com.epic_engine.swisskit.ui.theme.yellowShopping
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,8 +81,8 @@ fun ShoppingScreen(
     }
 
     SwissKitBackground(
-        colors = listOf(yellowShopping, yellowBackground),
-        darkColors = listOf(yellowShopping, yellowDarkBackground),
+        colors = listOf(HomeDesignTokens.yellowShopping, HomeDesignTokens.yellowBackground),
+        darkColors = listOf(HomeDesignTokens.yellowShopping, HomeDesignTokens.yellowDarkBackground),
         content = {
             Box(modifier = Modifier.fillMaxSize()) {
                 Scaffold(
@@ -274,7 +272,7 @@ fun ShoppingScreen(
                         disabledContainerColor = Color(0xFFEEEEEE),
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        cursorColor = yellowShopping
+                        cursorColor = HomeDesignTokens.yellowShopping
                     ),
                     modifier = Modifier.fillMaxWidth(),
                     textStyle = MaterialTheme.typography.bodyLarge,

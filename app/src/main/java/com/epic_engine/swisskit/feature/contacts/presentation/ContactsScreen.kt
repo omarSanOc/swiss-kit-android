@@ -43,7 +43,6 @@ import com.epic_engine.swisskit.feature.contacts.presentation.components.Contact
 import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDesignTokens
 import com.epic_engine.swisskit.feature.contacts.presentation.util.ContactsEvent
 import com.epic_engine.swisskit.feature.contacts.presentation.viewmodel.ContactsViewModel
-import com.epic_engine.swisskit.ui.theme.greenContact
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,7 +110,7 @@ fun ContactsScreen(
                         } else {
                             item(key = "search_bar") {
                                 SwissKitSearchBar(
-                                    tint = greenContact,
+                                    tint = ContactsDesignTokens.Primary,
                                     query = uiState.searchQuery,
                                     onQueryChange = viewModel::onSearchQueryChange,
                                     description = "Buscar contacto…",

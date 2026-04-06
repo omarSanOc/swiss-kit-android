@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.feature.notes.presentation
+package com.epic_engine.swisskit.feature.notes.presentation.utils
 
 import com.epic_engine.swisskit.feature.notes.domain.model.Note
 
