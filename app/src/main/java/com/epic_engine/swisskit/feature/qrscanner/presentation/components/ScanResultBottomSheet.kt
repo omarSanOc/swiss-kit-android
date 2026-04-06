@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.feature.qrscanner.domain.model.QRContentType
 import com.epic_engine.swisskit.feature.qrscanner.presentation.theme.QRScannerDesignTokens
 import com.epic_engine.swisskit.feature.qrscanner.presentation.util.PendingQRResult
@@ -57,7 +58,7 @@ fun ScanResultBottomSheet(
     ) {
         Column(
             modifier = Modifier
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = DesignTokens.dimensXXXMedium)
                 .navigationBarsPadding()
                 .verticalScroll(rememberScrollState())
         ) {
@@ -65,17 +66,17 @@ fun ScanResultBottomSheet(
                 text = "Código detectado",
                 style = MaterialTheme.typography.titleLarge
             )
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(DesignTokens.dimensSmall))
             Text(
                 text = pendingResult.content,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = DesignTokens.dimensXSmall)
             )
             if (pendingResult.type in openableTypes) {
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(DesignTokens.dimensXSmall))
                 OutlinedButton(
                     onClick = { onOpenContent(pendingResult); onDismiss() },
                     modifier = Modifier.fillMaxWidth()
@@ -83,7 +84,7 @@ fun ScanResultBottomSheet(
                     Text("Abrir")
                 }
             }
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(DesignTokens.dimensSmall))
             OutlinedTextField(
                 value = label,
                 onValueChange = { label = it },
@@ -91,10 +92,10 @@ fun ScanResultBottomSheet(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(DesignTokens.dimensMedium))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(space = 8.dp, alignment = Alignment.End)
+                horizontalArrangement = Arrangement.spacedBy(space = DesignTokens.dimensXSmall, alignment = Alignment.End)
             ) {
                 TextButton(onClick = onDismiss) { Text("Cancelar") }
                 Button(
@@ -106,7 +107,7 @@ fun ScanResultBottomSheet(
                     Text("Guardar")
                 }
             }
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(DesignTokens.dimensXSmall))
         }
     }
 }

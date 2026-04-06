@@ -58,6 +58,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitToast
@@ -68,6 +69,8 @@ import com.epic_engine.swisskit.feature.qrscanner.domain.model.ScanMode
 import com.epic_engine.swisskit.feature.qrscanner.presentation.components.GeneratorTab
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitTabPicker
 import com.epic_engine.swisskit.feature.home.presentation.theme.HomeDesignTokens
+import com.epic_engine.swisskit.feature.qrscanner.presentation.components.CameraPermissionDeniedScreen
+import com.epic_engine.swisskit.feature.qrscanner.presentation.components.QRHeader
 import com.epic_engine.swisskit.feature.qrscanner.presentation.components.ScanResultBottomSheet
 import com.epic_engine.swisskit.feature.qrscanner.presentation.components.ScannerTab
 import com.epic_engine.swisskit.feature.qrscanner.presentation.theme.QRScannerDesignTokens
@@ -128,8 +131,8 @@ fun QRScannerScreen(
     }
 
     SwissKitBackground(
-        colors = listOf(HomeDesignTokens.pinkQrScanner, HomeDesignTokens.pinkBackground),
-        darkColors = listOf(HomeDesignTokens.pinkQrScanner, HomeDesignTokens.pinkDarkBackground),
+        colors = listOf(QRScannerDesignTokens.Primary, QRScannerDesignTokens.background),
+        darkColors = listOf(QRScannerDesignTokens.Primary, QRScannerDesignTokens.darkBackground),
         content = {
         Box(modifier =
             Modifier
@@ -163,8 +166,8 @@ fun QRScannerScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(
-                                    horizontal = QRScannerDesignTokens.screenHorizontalPadding,
-                                    vertical = 8.dp
+                                    horizontal = DesignTokens.dimensXXXMedium,
+                                    vertical = DesignTokens.dimensXSmall
                                 )
                         )
                     }
@@ -179,7 +182,7 @@ fun QRScannerScreen(
                             .verticalScroll(generatorScrollState)
                             .padding(padding)
                             .imePadding()
-                            .padding(bottom = 80.dp)
+                            .padding(bottom = QRScannerDesignTokens.dimensXXLarge)
                     ) {
                         GeneratorTab(
                             uiState = scannerUiState,
@@ -293,128 +296,8 @@ fun QRScannerScreen(
     }
 }
 
-@Composable
-private fun QRHeader(
-    selectedIndex: Int,
-    scanMode: ScanMode,
-    hasScans: Boolean,
-    showOverflowMenu: Boolean,
-    onOpenOverflow: () -> Unit,
-    onDismissOverflow: () -> Unit,
-    onSetScanMode: (ScanMode) -> Unit,
-    onRequestDeleteAll: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 4.dp, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
 
-        Text(
-            text = "Código QR",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.SemiBold,
-            color = Color.White,
-            textAlign = TextAlign.Start,
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 16.dp)
-        )
-        if (selectedIndex == 0) {
-            Box {
-                IconButton(onClick = onOpenOverflow) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "Opciones",
-                        tint = Color.White
-                    )
-                }
-                DropdownMenu(
-                    expanded = showOverflowMenu,
-                    onDismissRequest = onDismissOverflow
-                ) {
-                    Text(
-                        text = "Modo de escaneo",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Normal") },
-                        leadingIcon = {
-                            if (scanMode == ScanMode.SINGLE) {
-                                Icon(
-                                    imageVector = Icons.Default.Check,
-                                    contentDescription = null,
-                                    tint = QRScannerDesignTokens.Primary
-                                )
-                            }
-                        },
-                        onClick = { onSetScanMode(ScanMode.SINGLE) }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Continuo") },
-                        leadingIcon = {
-                            if (scanMode == ScanMode.CONTINUOUS) {
-                                Icon(
-                                    imageVector = Icons.Default.Check,
-                                    contentDescription = null,
-                                    tint = QRScannerDesignTokens.Primary
-                                )
-                            }
-                        },
-                        onClick = { onSetScanMode(ScanMode.CONTINUOUS) }
-                    )
-                    HorizontalDivider()
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                "Eliminar historial",
-                                color = if (hasScans) MaterialTheme.colorScheme.error
-                                        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-                            )
-                        },
-                        onClick = onRequestDeleteAll,
-                        enabled = hasScans
-                    )
-                }
-            }
-        } else {
-            Spacer(Modifier.width(48.dp))
-        }
-    }
-}
 
-@Composable
-private fun CameraPermissionDeniedScreen(onOpenSettings: () -> Unit) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.padding(horizontal = 24.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.CameraAlt,
-                contentDescription = null,
-                modifier = Modifier.padding(8.dp),
-                tint = Color.White.copy(alpha = 0.5f)
-            )
-            Text(
-                text = "Se necesita permiso de cámara para escanear códigos QR",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.White,
-                textAlign = TextAlign.Center
-            )
-            Button(
-                onClick = onOpenSettings,
-                colors = ButtonDefaults.buttonColors(containerColor = QRScannerDesignTokens.Primary)
-            ) {
-                Text("Ir a Ajustes")
-            }
-        }
-    }
-}
 
 private fun shareQRBitmap(context: android.content.Context, bitmap: Bitmap) {
     runCatching {

@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitSearchBar
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitToast
 import com.epic_engine.swisskit.feature.qrscanner.domain.model.QRScan
@@ -67,7 +68,7 @@ fun ScannerTab(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = QRScannerDesignTokens.screenHorizontalPadding)
+                    .padding(horizontal = DesignTokens.dimensXXXMedium)
                     .height(QRScannerDesignTokens.cameraCardHeight)
                     .clip(RoundedCornerShape(20.dp))
             ) {
@@ -87,8 +88,8 @@ fun ScannerTab(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        horizontal = QRScannerDesignTokens.screenHorizontalPadding,
-                        vertical = 12.dp
+                        horizontal = DesignTokens.dimensXXXMedium,
+                        vertical = DesignTokens.dimensSmall
                     ),
                 description = "Buscar escaneos"
             )
@@ -122,7 +123,7 @@ fun ScannerTab(
                 onClick = onResumeScanning,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(end = 24.dp, bottom = 32.dp)
+                    .padding(end = DesignTokens.dimensXXXMedium, bottom = QRScannerDesignTokens.dimensLarge)
             )
         }
     }
@@ -130,11 +131,11 @@ fun ScannerTab(
 
 @Composable
 private fun CameraCornerMarkers(modifier: Modifier = Modifier) {
-    val color = QRScannerDesignTokens.CornerMarker
+    val color = QRScannerDesignTokens.Primary
     Canvas(modifier = modifier) {
-        val strokeWidth = 4.dp.toPx()
-        val cornerLen = 28.dp.toPx()
-        val padding = 16.dp.toPx()
+        val strokeWidth = DesignTokens.dimensXXXSmall.toPx()
+        val cornerLen = QRScannerDesignTokens.dimensXXMedium.toPx()
+        val padding = DesignTokens.dimensMedium.toPx()
 
         val left = padding
         val top = padding
@@ -160,7 +161,6 @@ private fun QRResumeFAB(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val fabSize = 56.dp
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(
@@ -172,8 +172,8 @@ private fun QRResumeFAB(
     val pink = QRScannerDesignTokens.Primary
     Box(
         modifier = modifier
-            .size(fabSize)
-            .shadow(elevation = 6.dp, shape = CircleShape)
+            .size(DesignTokens.dimensXXLarge)
+            .shadow(elevation = DesignTokens.dimensXXSmall, shape = CircleShape)
             .clip(CircleShape)
             .drawBehind {
                 drawRect(
@@ -196,7 +196,7 @@ private fun QRResumeFAB(
             imageVector = Icons.Default.CameraAlt,
             contentDescription = "Reanudar escaneo",
             tint = Color.White,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(DesignTokens.dimensXXXMedium)
         )
     }
 }

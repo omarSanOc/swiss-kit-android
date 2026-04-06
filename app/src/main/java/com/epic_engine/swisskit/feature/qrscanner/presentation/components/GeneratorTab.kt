@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitButton
 import com.epic_engine.swisskit.feature.qrscanner.presentation.theme.QRScannerDesignTokens
 import com.epic_engine.swisskit.feature.qrscanner.presentation.util.QRScannerUiState
@@ -48,9 +49,9 @@ fun GeneratorTab(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(DesignTokens.dimensMedium),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(DesignTokens.dimensMedium)
     ) {
         QRGeneratorInput(
             value = uiState.generatorInput,
@@ -67,39 +68,39 @@ fun GeneratorTab(
         )
 
         if (uiState.isGenerating) {
-            CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
-            Spacer(Modifier.width(8.dp))
+            CircularProgressIndicator(modifier = Modifier.size(DesignTokens.dimensXMedium), strokeWidth = DesignTokens.dimensXXXXSmall)
+            Spacer(Modifier.width(DesignTokens.dimensXSmall))
         }
 
         uiState.generatedBitmap?.let { bitmap ->
             Card(
-                shape = RoundedCornerShape(12.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                shape = RoundedCornerShape(DesignTokens.dimensSmall),
+                elevation = CardDefaults.cardElevation(defaultElevation = DesignTokens.dimensXXXSmall)
             ) {
                 Image(
                     bitmap = bitmap.asImageBitmap(),
                     contentDescription = "Código QR generado",
                     modifier = Modifier
                         .size(280.dp)
-                        .padding(16.dp)
+                        .padding(DesignTokens.dimensMedium)
                 )
             }
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(DesignTokens.dimensXSmall)
             ) {
                 SwissKitButton(
                     text = "Compartir QR",
                     onClick = onShare,
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = DesignTokens.dimensXXXSmall),
                     containerColor = QRScannerDesignTokens.Primary
                 )
 
                 SwissKitButton(
                     text = "Guardar imagen",
                     onClick = onSaveToGallery,
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
+                    modifier = Modifier.fillMaxWidth().padding(vertical = DesignTokens.dimensXXXXSmall),
                     containerColor = QRScannerDesignTokens.Primary
                 )
             }

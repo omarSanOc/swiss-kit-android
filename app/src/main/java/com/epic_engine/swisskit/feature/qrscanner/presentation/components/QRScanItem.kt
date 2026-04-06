@@ -55,6 +55,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitCard
 import com.epic_engine.swisskit.feature.qrscanner.domain.model.QRContentType
 import com.epic_engine.swisskit.feature.qrscanner.domain.model.QRScan
@@ -83,9 +84,8 @@ fun QRScanItem(
     onOpenContent: () -> Unit,
     onRequestDelete: () -> Unit
 ) {
-    val deleteButtonWidth = 56.dp
     val density = LocalDensity.current
-    val deleteButtonWidthPx = with(density) { deleteButtonWidth.toPx() }
+    val deleteButtonWidthPx = with(density) { DesignTokens.dimensXXLarge.toPx() }
 
     val onSurface        = MaterialTheme.colorScheme.onSurface
     val onSurfaceVariant = MaterialTheme.colorScheme.onSurfaceVariant
@@ -101,7 +101,7 @@ fun QRScanItem(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(DesignTokens.dimensXXMedium))
     ) {
         // Back layer: delete button
         IconButton(
@@ -111,16 +111,16 @@ fun QRScanItem(
             },
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .padding(end = 4.dp)
-                .size(44.dp)
+                .padding(end = DesignTokens.dimensXXMedium)
+                .size(QRScannerDesignTokens.dimensXLarge)
                 .clip(CircleShape)
-                .background(Color(0xFFE53935))
+                .background(DesignTokens.deleteColor)
         ) {
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Eliminar",
                 tint = Color.White,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(DesignTokens.dimensXXMedium)
             )
         }
 
@@ -152,21 +152,21 @@ fun QRScanItem(
                         onClick = onCopy,
                         onLongClick = { menuExpanded = true }
                     ),
-            contentPadding = PaddingValues(8.dp)
+            contentPadding = PaddingValues(DesignTokens.dimensXSmall)
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
+                        .padding(DesignTokens.dimensSmall),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.icon_link),
                         contentDescription = null,
-                        modifier = Modifier.size(24.dp),
+                        modifier = Modifier.size(DesignTokens.dimensXXXMedium),
                         tint = QRScannerDesignTokens.Primary
                     )
-                    Spacer(Modifier.width(12.dp))
+                    Spacer(Modifier.width(DesignTokens.dimensSmall))
                     Column(modifier = Modifier.weight(1f)) {
                         if (scan.label.isNotBlank()) {
                             Text(
@@ -215,16 +215,4 @@ fun QRScanItem(
 private fun formatDate(epochMillis: Long): String {
     val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
     return sdf.format(Date(epochMillis))
-}
-
-private fun QRContentType.icon(): ImageVector = when (this) {
-    QRContentType.URL -> Icons.Default.Link
-    QRContentType.WIFI -> Icons.Default.Wifi
-    QRContentType.CONTACT -> Icons.Default.Person
-    QRContentType.EMAIL -> Icons.Default.Email
-    QRContentType.PHONE -> Icons.Default.Phone
-    QRContentType.LOCATION -> Icons.Default.LocationOn
-    QRContentType.CALENDAR -> Icons.Default.CalendarMonth
-    QRContentType.BARCODE -> Icons.Default.QrCode
-    QRContentType.TEXT -> Icons.Default.TextFields
 }

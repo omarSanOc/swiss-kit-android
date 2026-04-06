@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.feature.shopping.presentation
+package com.epic_engine.swisskit.feature.shopping.presentation.utils
 
 import com.epic_engine.swisskit.feature.shopping.domain.model.ShoppingItem
 

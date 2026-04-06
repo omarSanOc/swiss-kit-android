@@ -54,6 +54,8 @@ import com.epic_engine.swisskit.feature.shopping.presentation.components.Shoppin
 import com.epic_engine.swisskit.feature.shopping.presentation.components.ShoppingAddItemBar
 import com.epic_engine.swisskit.feature.shopping.presentation.components.ShoppingDuplicateToast
 import com.epic_engine.swisskit.feature.shopping.presentation.components.ShoppingItemRow
+import com.epic_engine.swisskit.feature.shopping.presentation.utils.ShoppingEvent
+import com.epic_engine.swisskit.feature.shopping.presentation.viewmodel.ShoppingViewModel
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)

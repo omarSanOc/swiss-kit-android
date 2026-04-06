@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.feature.shopping.presentation
+package com.epic_engine.swisskit.feature.shopping.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,6 +11,8 @@ import com.epic_engine.swisskit.feature.shopping.domain.usecase.EditShoppingItem
 import com.epic_engine.swisskit.feature.shopping.domain.usecase.ObserveShoppingItemsUseCase
 import com.epic_engine.swisskit.feature.shopping.domain.usecase.ToggleShoppingItemUseCase
 import com.epic_engine.swisskit.feature.shopping.domain.usecase.UncheckAllItemsUseCase
+import com.epic_engine.swisskit.feature.shopping.presentation.utils.ShoppingEvent
+import com.epic_engine.swisskit.feature.shopping.presentation.utils.ShoppingUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

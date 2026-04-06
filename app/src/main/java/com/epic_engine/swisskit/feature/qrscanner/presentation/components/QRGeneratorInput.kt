@@ -25,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.feature.qrscanner.presentation.theme.QRScannerDesignTokens
 
 @Composable
@@ -36,15 +37,15 @@ fun QRGeneratorInput(
 ) {
     val isDark = isSystemInDarkTheme()
     val containerColor = if (isDark) QRScannerDesignTokens.InputBackgroundDark
-    else        QRScannerDesignTokens.InputBackground
+    else QRScannerDesignTokens.InputBackground
     val textColor = MaterialTheme.colorScheme.onSurface
     val placeholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
 
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = QRScannerDesignTokens.InputMinHeight),
-        shape = RoundedCornerShape(QRScannerDesignTokens.InputCornerRadius),
+            .heightIn(min = DesignTokens.dimensXXLarge),
+        shape = RoundedCornerShape(DesignTokens.dimensMedium),
         color = containerColor,
         tonalElevation = 0.dp
     ) {
@@ -60,16 +61,16 @@ fun QRGeneratorInput(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 14.dp),
+                        .padding(horizontal = DesignTokens.dimensMedium, vertical = QRScannerDesignTokens.dimensMedium),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.icon_qr),
                         contentDescription = null,
                         tint = QRScannerDesignTokens.Primary,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(DesignTokens.dimensXXXMedium)
                     )
-                    Spacer(Modifier.width(12.dp))
+                    Spacer(Modifier.width(DesignTokens.dimensSmall))
                     Box(Modifier.weight(1f)) {
                         if (value.isEmpty()) {
                             Text(
