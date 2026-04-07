@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -105,9 +106,9 @@ fun ContactRow(
         ) {
             Icon(
                 imageVector = Icons.Default.Delete,
-                contentDescription = "Eliminar",
+                contentDescription = stringResource(R.string.common_delete),
                 tint = Color.White,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(DesignTokens.dimensXXMedium)
             )
         }
 
@@ -184,7 +185,7 @@ fun ContactRow(
                         onDismissRequest = { showMenu = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("Editar contacto") },
+                            text = { Text(stringResource(R.string.contacts_item_option_edit_contact)) },
                             leadingIcon = { Icon(Icons.Default.Edit, null) },
                             onClick = {
                                 showMenu = false
@@ -192,7 +193,7 @@ fun ContactRow(
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Eliminar", color = DesignTokens.deleteColor) },
+                            text = { Text(stringResource(R.string.common_delete), color = DesignTokens.deleteColor) },
                             leadingIcon = {
                                 Icon(Icons.Default.Delete, null, tint = DesignTokens.deleteColor)
                             },

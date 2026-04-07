@@ -1,5 +1,6 @@
 package com.epic_engine.swisskit.feature.notes.presentation.utils
 
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.feature.notes.domain.model.Note
 
 // ── Lista ────────────────────────────────────────────────────────────
@@ -15,7 +16,7 @@ data class NotesUiState(
 sealed interface NotesEvent {
     data object NavigateToCreate : NotesEvent
     data class NavigateToDetail(val noteId: String) : NotesEvent
-    data class ShowError(val message: String) : NotesEvent
+    data class ShowError(val message: UiText) : NotesEvent
     data object SelectionDeleted : NotesEvent
     data object NoteDeleted : NotesEvent
 }
@@ -34,6 +35,6 @@ data class NoteDetailUiState(
 sealed interface NoteDetailEvent {
     data object Saved : NoteDetailEvent
     data object Deleted : NoteDetailEvent
-    data class ShowError(val message: String) : NoteDetailEvent
+    data class ShowError(val message: UiText) : NoteDetailEvent
     data class ReminderSet(val at: Long) : NoteDetailEvent
 }

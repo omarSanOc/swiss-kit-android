@@ -19,8 +19,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.feature.shopping.presentation.theme.ShoppingDesignTokens
 
@@ -41,12 +43,12 @@ fun ShoppingActionButtons(
             horizontalArrangement = Arrangement.spacedBy(DesignTokens.dimensXSmall)
         ) {
             ActionButton(
-                text = "Desmarcar",
+                text = stringResource(R.string.shopping_uncheck_all),
                 count = checkedCount,
                 onClick = onUncheckAll
             )
             ActionButton(
-                text = "Borrar marcados",
+                text = stringResource(R.string.shopping_delete_marked),
                 count = checkedCount,
                 onClick = onDeleteChecked
             )

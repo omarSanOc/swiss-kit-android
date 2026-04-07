@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- App -->
+    <string name="app_name">SwissKit</string>
+    <string name="app_description">Your digital Swiss army knife for everyday life.</string>
+    <string name="home_footer">Made to simplify your life</string>
+
+    <!-- Home – tool names and descriptions -->
+    <string name="home_finance_name">Finance</string>
+    <string name="home_finance_description">Manage finances</string>
+    <string name="home_contacts_name">Contacts</string>
+    <string name="home_contacts_description">Manage contacts</string>
+    <string name="home_notes_name">Notes</string>
+    <string name="home_notes_description">Write your notes</string>
+    <string name="home_qr_name">QR Code</string>
+    <string name="home_qr_description">Scan / Generate</string>
+    <string name="home_converter_name">Converter</string>
+    <string name="home_converter_description">Units / Currencies</string>
+    <string name="home_shopping_name">Shopping</string>
+    <string name="home_shopping_description">Shopping list</string>
+
+    <!-- Common actions -->
+    <string name="common_delete">Delete</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_save">Save</string>
+    <string name="common_ok">OK</string>
+    <string name="common_error">Error</string>
+    <string name="common_search">Search</string>
+
+    <!-- Finance -->
+    <string name="finance_title">Finance</string>
+    <string name="finance_total">Total</string>
+    <string name="finance_empty_title">No transactions</string>
+    <string name="finance_empty_subtitle">Add your first transaction using the + button</string>
+    <string name="finance_selected_count">%1$d selected</string>
+    <string name="finance_cancel_selection_cd">Cancel selection</string>
+    <string name="finance_more_options_cd">More options</string>
+    <string name="finance_exit_selection_mode">Exit selection mode</string>
+    <string name="finance_deselect_all">Deselect all</string>
+    <string name="finance_select_all">Select all</string>
+    <string name="finance_delete_selected_count">Delete %1$d selected transactions</string>
+    <string name="finance_export_to_file">Export to file</string>
+    <string name="finance_import_from_file">Import from file</string>
+    <string name="finance_share_pdf">Share as PDF</string>
+    <string name="finance_enter_selection_mode">Enter selection mode</string>
+    <string name="finance_filter_cd">Filters</string>
+    <string name="finance_filter_all">All</string>
+    <string name="finance_filter_income">Income</string>
+    <string name="finance_filter_expense">Expense</string>
+    <string name="finance_sort_cd">Sort</string>
+    <string name="finance_search_cd">Search</string>
+    <!-- Finance – delete dialogs -->
+    <string name="finance_delete_expense_title">Delete expense?</string>
+    <string name="finance_delete_income_title">Delete income?</string>
+    <string name="finance_delete_confirm_message">This action will delete this transaction. Are you sure you want to continue?</string>
+    <string name="finance_delete_selected_title">Delete transactions?</string>
+    <string name="finance_delete_selected_message">%1$d selected transactions will be deleted. Are you sure you want to continue?</string>
+    <!-- Finance – messages -->
+    <string name="finance_file_saved">File saved</string>
+    <string name="finance_share_pdf_chooser">Share PDF</string>
+    <string name="finance_error_delete">Error deleting transaction</string>
+    <string name="finance_error_delete_selected">Error deleting transactions</string>
+    <string name="finance_error_export_pdf">Error generating PDF</string>
+    <string name="finance_error_backup">Error generating backup</string>
+    <string name="finance_error_restore">Error restoring backup: invalid format</string>
+    <string name="finance_restored_count">%1$d transactions restored</string>
+    <string name="finance_deleted_count">%1$d transactions deleted</string>
+
+    <!-- Edit Finance -->
+    <string name="edit_finance_new_title">New transaction</string>
+    <string name="edit_finance_edit_title">Edit transaction</string>
+    <string name="edit_finance_type_section">Type</string>
+    <string name="edit_finance_expense">Expense</string>
+    <string name="edit_finance_income">Income</string>
+    <string name="edit_finance_expense_description">Money coming out</string>
+    <string name="edit_finance_income_description">Money coming in</string>
+    <string name="edit_finance_amount_section">Amount *</string>
+    <string name="edit_finance_title_section">Title *</string>
+    <string name="edit_finance_title_placeholder">Enter a title</string>
+    <string name="edit_finance_date_section">Date</string>
+    <string name="edit_finance_date_cd">Select date</string>
+    <string name="edit_finance_category_section">Category</string>
+    <string name="edit_finance_add_category_cd">Add category</string>
+    <string name="edit_finance_new_category_placeholder">New category</string>
+    <string name="edit_finance_notes_section">Notes</string>
+    <string name="edit_finance_notes_placeholder">Write your notes</string>
+
+    <!-- PDF Report -->
+    <string name="pdf_report_title">SwissKit — Finance Report</string>
+    <string name="pdf_generated_on">Generated on %1$s</string>
+    <string name="pdf_col_date">Date</string>
+    <string name="pdf_col_title">Title</string>
+    <string name="pdf_col_type">Type</string>
+    <string name="pdf_col_category">Category</string>
+    <string name="pdf_col_amount">Amount</string>
+    <string name="pdf_type_income">Income</string>
+    <string name="pdf_type_expense">Expense</string>
+    <string name="pdf_summary">Summary</string>
+    <string name="pdf_total_income">Total income:</string>
+    <string name="pdf_total_expenses">Total expenses:</string>
+    <string name="pdf_net_balance">Net balance:</string>
+
+    <!-- Notes -->
+    <string name="notes_title">Notes</string>
+    <string name="notes_search_cd">Search notes</string>
+    <string name="notes_empty_title">Notes</string>
+    <string name="notes_empty_subtitle">Write your notes here</string>
+    <string name="notes_no_results_subtitle">No results for your search</string>
+    <string name="notes_delete_title">Delete note?</string>
+    <string name="notes_delete_message">This action will delete \"%1$s\". This cannot be undone.</string>
+    <string name="notes_deleted_snackbar">Note deleted</string>
+    <string name="notes_selection_deleted_snackbar">Notes deleted</string>
+    <string name="notes_error_delete">Error deleting</string>
+    <!-- Note Detail -->
+    <string name="note_detail_create_title">Create Note</string>
+    <string name="note_detail_edit_title">Edit Note</string>
+    <string name="note_detail_title_placeholder">Note title</string>
+    <string name="note_detail_content_placeholder">Write your note…</string>
+    <string name="note_detail_more_options_cd">More options</string>
+    <string name="note_detail_save_menu">Save note</string>
+    <string name="note_detail_save_reminder_menu">Save as reminder</string>
+    <string name="note_detail_share_menu">Share note</string>
+    <string name="note_detail_share_chooser">Share note</string>
+    <string name="note_detail_delete_title">Delete note?</string>
+    <string name="note_detail_delete_message">This action will delete %1$s. This cannot be undone.</string>
+    <string name="note_detail_reminder_set">Reminder set</string>
+    <string name="note_detail_error_save">Error saving</string>
+    <!-- Note reminder notification -->
+    <string name="notes_reminder_channel_name">Note reminders</string>
+    <string name="notes_reminder_body">You have a pending reminder</string>
+    <string name="notes_reminder_default_title">Reminder</string>
+
+    <!-- Shopping -->
+    <string name="shopping_title">Shopping list</string>
+    <string name="shopping_add_purchase">Add your purchase</string>
+    <string name="shopping_uncheck_all">Uncheck all</string>
+    <string name="shopping_delete_marked">Delete marked</string>
+    <string name="shopping_share_cd">Share list</string>
+    <string name="shopping_share_chooser">Share list</string>
+    <string name="shopping_empty_title">Your list is empty</string>
+    <string name="shopping_empty_subtitle">Add items to get started</string>
+    <string name="shopping_delete_checked_title">Delete checked</string>
+    <string name="shopping_delete_checked_message">Are you sure you want to delete all checked items?</string>
+    <string name="shopping_delete_item_title">Delete item?</string>
+    <string name="shopping_delete_item_message">This action will delete %1$s. This cannot be undone.</string>
+    <string name="shopping_edit_title">Edit item</string>
+    <!-- Shopping – share text sections -->
+    <string name="shopping_share_list_header">🛒 Shopping List</string>
+    <string name="shopping_share_pending_section">Pending:</string>
+    <string name="shopping_share_completed_section">Completed:</string>
+    <!-- Shopping – messages -->
+    <string name="shopping_duplicate_message">\"%1$s\" is already in your list</string>
+    <string name="shopping_invalid_name">Invalid name</string>
+    <string name="shopping_error_add">Error adding item</string>
+    <string name="shopping_error_update">Error updating item</string>
+    <string name="shopping_error_delete">Error deleting item</string>
+    <string name="shopping_error_uncheck">Error unchecking items</string>
+    <string name="shopping_error_delete_checked">Error deleting checked items</string>
+    <string name="shopping_error_edit">Error editing item</string>
+
+    <!-- Contacts -->
+    <string name="category_title">Categories</string>
+    <string name="category_empty_title">No categories</string>
+    <string name="category_empty_subtitle">Create your first category using the + button</string>
+    <string name="category_no_results_title">No results</string>
+    <string name="category_no_results_subtitle">No contacts match your search</string>
+    <string name="category_search_cd">Search category…</string>
+    <string name="category_delete_title">Delete category?</string>
+    <string name="category_delete_message">\"%1$s\" will be removed from your categories.</string>
+    <string name="category_toast_updated">Renamed category</string>
+    <string name="category_toast_saved">Category created</string>
+    <string name="category_toast_deleted">Category deleted</string>
+    <string name="category_sheet_new_title">New category</string>
+    <string name="category_sheet_edit_title">Rename category</string>
+    <string name="category_sheet_name_placeholder">Category name</string>
+    <string name="category_item_option_rename">Rename</string>
+    <string name="category_item_contact">contact</string>
+
+
+    <string name="contacts_empty_title">No contacts</string>
+    <string name="contacts_empty_subtitle">Create your first contact using the + button</string>
+    <string name="contacts_no_results_title">No results</string>
+    <string name="contacts_no_results_subtitle">No contacts match your search</string>
+    <string name="contacts_search_cd">Search contact…</string>
+
+    <string name="contacts_delete_title">Delete contact?</string>
+    <string name="contacts_delete_message">\"%1$s\" will be removed from your contacts.</string>
+
+    <string name="contacts_toast_calling">Starting call…</string>
+    <string name="contacts_toast_whatsapp">Opening WhatsApp…</string>
+    <string name="contacts_toast_updated">Contact updated</string>
+    <string name="contacts_toast_saved">Contact saved</string>
+    <string name="contacts_toast_deleted">Contact deleted</string>
+    <string name="contacts_phone_error">Invalid number (7–15 digits)</string>
+
+    <string name="contacts_sheet_new_title">New contact</string>
+    <string name="contacts_sheet_edit_title">Edit contact</string>
+    <string name="contacts_sheet_name_placeholder">Name</string>
+    <string name="contacts_sheet_name_cd">Person</string>
+    <string name="contacts_sheet_phone_placeholder">Phone</string>
+    <string name="contacts_sheet_phone_cd">Phone</string>
+    <string name="contacts_item_option_edit_contact">Edit contact</string>
+
+    <!-- QR Scanner -->
+    <string name="qr_title">QR Code</string>
+    <string name="qr_tab_scanner">Scanner</string>
+    <string name="qr_tab_generator">Generator</string>
+    <string name="qr_menu_scan_mode">Scan mode</string>
+    <string name="qr_menu_normal_scan">Normal scan</string>
+    <string name="qr_menu_continuous_scan">Continuous scan</string>
+    <string name="qr_camera_permission_text">Camera permission is required to scan QR codes</string>
+    <string name="qr_search_scans">Search scans</string>
+    <string name="qr_history_title">History</string>
+    <string name="qr_no_scans_title">No scans yet</string>
+    <string name="qr_no_scans_subtitle">Scan a QR to get started</string>
+    <string name="qr_open_settings">Go to Settings</string>
+    <string name="qr_camera_unavailable_title">Camera unavailable</string>
+    <string name="qr_camera_unavailable_subtitle">This device does not have a compatible camera</string>
+    <string name="qr_saved_to_gallery">Image saved to gallery</string>
+    <string name="qr_copied">Copied</string>
+    <string name="qr_edit_label_title">Edit label</string>
+    <string name="qr_edit_label_field">Label</string>
+    <string name="qr_share_chooser">Share QR</string>
+    <string name="qr_feedback_saved">Saved: %1$s</string>
+    <string name="qr_feedback_updated">Updated: %1$s</string>
+    <string name="qr_feedback_error_save">Error saving</string>
+    <string name="qr_error_save_scan">Error saving scan</string>
+    <string name="qr_error_save_image">Error saving image</string>
+    <string name="qr_error_update_label">Error updating label</string>
+    <string name="qr_generate_qr_title">Generate QR code</string>
+    <string name="qr_share_qr_title">Share QR code</string>
+    <string name="qr_save_image_title">Save image</string>
+    <string name="qr_code_detected_title">Code detected</string>
+    <string name="qr_open_title">Open</string>
+
+    <!-- Converter -->
+    <string name="converter_title">Converter</string>
+    <string name="converter_tab_units">Units</string>
+    <string name="converter_tab_currencies">Currencies</string>
+    <string name="converter_error_no_cache">No connection and no cached data available</string>
+    <string name="converter_currencies_title">Currencies</string>
+    <string name="converter_amount_title">Amount</string>
+    <string name="converter_data_cache">Using cached data</string>
+    <string name="converter_copy_clipboard">Copied to clipboard</string>
+    <!-- Converter – unit categories -->
+    <string name="converter_category_title">Category</string>
+    <string name="converter_category_length">Length</string>
+    <string name="converter_category_weight">Weight</string>
+    <string name="converter_category_volume">Volume</string>
+    <!-- Converter – unit names (length) -->
+    <string name="converter_unit_title">Units</string>
+    <string name="converter_unit_millimeter">Millimeter</string>
+    <string name="converter_unit_centimeter">Centimeter</string>
+    <string name="converter_unit_meter">Meter</string>
+    <string name="converter_unit_kilometer">Kilometer</string>
+    <string name="converter_unit_inch">Inch</string>
+    <string name="converter_unit_foot">Foot</string>
+    <string name="converter_unit_yard">Yard</string>
+    <string name="converter_unit_mile">Mile</string>
+    <!-- Converter – unit names (weight) -->
+    <string name="converter_unit_milligram">Milligram</string>
+    <string name="converter_unit_gram">Gram</string>
+    <string name="converter_unit_kilogram">Kilogram</string>
+    <string name="converter_unit_ton">Ton</string>
+    <string name="converter_unit_pound">Pound</string>
+    <string name="converter_unit_ounce">Ounce</string>
+    <!-- Converter – unit names (volume) -->
+    <string name="converter_unit_milliliter">Milliliter</string>
+    <string name="converter_unit_liter">Liter</string>
+    <string name="converter_unit_fl_oz">Fl. oz</string>
+    <string name="converter_unit_cup">Cup</string>
+    <string name="converter_unit_pint">Pint</string>
+    <string name="converter_unit_quart">Quart</string>
+    <string name="converter_unit_gallon">Gallon</string>
+
+    <string name="converter_quantity_title">Quantity</string>
+    <string name="converter_result_title">"Result"</string>
+</resources>

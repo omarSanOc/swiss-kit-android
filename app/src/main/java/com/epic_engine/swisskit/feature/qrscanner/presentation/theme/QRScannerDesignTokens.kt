@@ -9,11 +9,17 @@ object QRScannerDesignTokens {
     val darkBackground = Color(0xFF4A4345)
     val HistoryCard     = Color(0x852C2224)
 
+    val editColor = Color(0xFF7C5CBF)
+
+    val dimensXXXLarge = 280.dp
     val dimensXXLarge = 80.dp
     val dimensXLarge = 44.dp
     val dimensLarge = 32.dp
     val dimensXXMedium = 28.dp
     val dimensMedium = 14.dp
+
+    val swipeWidthTwoActions   = 104.dp
+    val swipeWidthThreeActions = 152.dp
 
     // Input field
     val InputBackground     = Color(0xFFF0F0F0)

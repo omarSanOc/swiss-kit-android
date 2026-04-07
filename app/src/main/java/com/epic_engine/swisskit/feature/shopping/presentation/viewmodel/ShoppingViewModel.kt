@@ -11,6 +11,8 @@ import com.epic_engine.swisskit.feature.shopping.domain.usecase.EditShoppingItem
 import com.epic_engine.swisskit.feature.shopping.domain.usecase.ObserveShoppingItemsUseCase
 import com.epic_engine.swisskit.feature.shopping.domain.usecase.ToggleShoppingItemUseCase
 import com.epic_engine.swisskit.feature.shopping.domain.usecase.UncheckAllItemsUseCase
+import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.feature.shopping.presentation.utils.ShoppingEvent
 import com.epic_engine.swisskit.feature.shopping.presentation.utils.ShoppingUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -96,13 +98,13 @@ class ShoppingViewModel @Inject constructor(
                 .onFailure { error ->
                     when (error) {
                         is DuplicateItemException -> _uiState.update {
-                            it.copy(duplicateMessage = "\"${error.itemName}\" ya está en tu lista")
+                            it.copy(duplicateMessage = UiText.StringRes(R.string.shopping_duplicate_message, error.itemName))
                         }
                         is IllegalArgumentException -> _uiState.update {
-                            it.copy(userMessage = error.message ?: "Nombre inválido")
+                            it.copy(userMessage = UiText.StringRes(R.string.shopping_invalid_name))
                         }
                         else -> _uiState.update {
-                            it.copy(userMessage = "Error al agregar el ítem")
+                            it.copy(userMessage = UiText.StringRes(R.string.shopping_error_add))
                         }
                     }
                 }
@@ -112,7 +114,7 @@ class ShoppingViewModel @Inject constructor(
     private fun handleToggle(item: ShoppingItem) {
         viewModelScope.launch {
             toggleItem(item).onFailure {
-                _uiState.update { s -> s.copy(userMessage = "Error al actualizar el ítem") }
+                _uiState.update { s -> s.copy(userMessage = UiText.StringRes(R.string.shopping_error_update)) }
             }
         }
     }
@@ -120,7 +122,7 @@ class ShoppingViewModel @Inject constructor(
     private fun handleDelete(item: ShoppingItem) {
         viewModelScope.launch {
             deleteItem(item).onFailure {
-                _uiState.update { s -> s.copy(userMessage = "Error al eliminar el ítem") }
+                _uiState.update { s -> s.copy(userMessage = UiText.StringRes(R.string.shopping_error_delete)) }
             }
         }
     }
@@ -130,7 +132,7 @@ class ShoppingViewModel @Inject constructor(
         _uiState.update { it.copy(itemToDelete = null) }
         viewModelScope.launch {
             deleteItem(item).onFailure {
-                _uiState.update { s -> s.copy(userMessage = "Error al eliminar el ítem") }
+                _uiState.update { s -> s.copy(userMessage = UiText.StringRes(R.string.shopping_error_delete)) }
             }
         }
     }
@@ -142,7 +144,7 @@ class ShoppingViewModel @Inject constructor(
         _uiState.update { it.copy(editingItem = null, editText = "") }
         viewModelScope.launch {
             editItem(item, newName).onFailure {
-                _uiState.update { s -> s.copy(userMessage = "Error al editar el ítem") }
+                _uiState.update { s -> s.copy(userMessage = UiText.StringRes(R.string.shopping_error_edit)) }
             }
         }
     }
@@ -150,7 +152,7 @@ class ShoppingViewModel @Inject constructor(
     private fun handleUncheckAll() {
         viewModelScope.launch {
             uncheckAll().onFailure {
-                _uiState.update { s -> s.copy(userMessage = "Error al desmarcar los ítems") }
+                _uiState.update { s -> s.copy(userMessage = UiText.StringRes(R.string.shopping_error_uncheck)) }
             }
         }
     }
@@ -158,25 +160,9 @@ class ShoppingViewModel @Inject constructor(
     private fun handleDeleteChecked() {
         viewModelScope.launch {
             deleteChecked().onFailure {
-                _uiState.update { s -> s.copy(userMessage = "Error al eliminar ítems marcados") }
+                _uiState.update { s -> s.copy(userMessage = UiText.StringRes(R.string.shopping_error_delete_checked)) }
             }
         }
     }
 
-    fun buildShareText(): String {
-        val state = uiState.value
-        val lines = mutableListOf<String>()
-        lines.add("🛒 Lista de Compras")
-        lines.add("")
-        if (state.pendingItems.isNotEmpty()) {
-            lines.add("Pendientes:")
-            state.pendingItems.forEach { lines.add("• ${it.name}") }
-        }
-        if (state.checkedItems.isNotEmpty()) {
-            if (state.pendingItems.isNotEmpty()) lines.add("")
-            lines.add("Completados:")
-            state.checkedItems.forEach { lines.add("✓ ${it.name}") }
-        }
-        return lines.joinToString("\n")
-    }
 }

@@ -9,6 +9,8 @@ import com.epic_engine.swisskit.feature.finance.domain.usecase.AddFinanceUseCase
 import com.epic_engine.swisskit.feature.finance.domain.usecase.GetDistinctCategoriesUseCase
 import com.epic_engine.swisskit.feature.finance.domain.usecase.GetFinanceByIdUseCase
 import com.epic_engine.swisskit.feature.finance.domain.usecase.UpdateFinanceUseCase
+import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.feature.finance.presentation.utils.EditFinanceEvent
 import com.epic_engine.swisskit.feature.finance.presentation.utils.EditFinanceUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -51,7 +53,7 @@ class EditFinanceViewModel @Inject constructor(
             if (item != null) {
                 loadForEdit(item)
             } else {
-                _uiState.update { it.copy(validationError = "Transacción no encontrada") }
+                _uiState.update { it.copy(validationError = UiText.StringRes(R.string.common_error)) }
             }
         }
     }
@@ -88,7 +90,7 @@ class EditFinanceViewModel @Inject constructor(
     private fun handleSave() {
         val state = _uiState.value
         val amount = state.amountInput.toDoubleOrNull()
-            ?: run { _uiState.update { it.copy(validationError = "Monto inválido") }; return }
+            ?: run { _uiState.update { it.copy(validationError = UiText.StringRes(R.string.common_error)) }; return }
 
         val finance = Finance(
             id = state.id ?: UUID.randomUUID().toString(),
@@ -105,7 +107,7 @@ class EditFinanceViewModel @Inject constructor(
             val result = if (state.isEditing) updateFinance(finance) else addFinance(finance)
             result
                 .onSuccess { _uiState.update { it.copy(isSaving = false, savedSuccessfully = true) } }
-                .onFailure { e -> _uiState.update { it.copy(isSaving = false, validationError = e.message) } }
+                .onFailure { e -> _uiState.update { it.copy(isSaving = false, validationError = e.message?.let { UiText.Dynamic(it) } ?: UiText.StringRes(R.string.common_error)) } }
         }
     }
 }

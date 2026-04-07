@@ -17,9 +17,9 @@ class FilterFinanceUseCase @Inject constructor() {
                 item.title.lowercase().contains(q) || (item.notes?.lowercase()?.contains(q) == true)
             }
             val matchesCategory = when {
-                selectedCategories.isEmpty() || FinanceCategorySelectionEngine.LABEL_ALL in selectedCategories -> true
-                FinanceCategorySelectionEngine.LABEL_INCOME in selectedCategories -> item.type == FinanceType.INCOME
-                FinanceCategorySelectionEngine.LABEL_EXPENSE in selectedCategories -> item.type == FinanceType.EXPENSE
+                selectedCategories.isEmpty() || FinanceCategorySelectionEngine.KEY_ALL in selectedCategories -> true
+                FinanceCategorySelectionEngine.KEY_INCOME in selectedCategories -> item.type == FinanceType.INCOME
+                FinanceCategorySelectionEngine.KEY_EXPENSE in selectedCategories -> item.type == FinanceType.EXPENSE
                 else -> item.category in selectedCategories
             }
             matchesQuery && matchesCategory

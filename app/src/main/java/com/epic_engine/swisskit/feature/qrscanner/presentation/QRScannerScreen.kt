@@ -4,36 +4,20 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.CameraAlt
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -51,25 +35,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitTabPicker
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitToast
 import com.epic_engine.swisskit.feature.qrscanner.domain.detector.QRContentDetector
 import com.epic_engine.swisskit.feature.qrscanner.domain.model.CameraState
 import com.epic_engine.swisskit.feature.qrscanner.domain.model.QRContentType
-import com.epic_engine.swisskit.feature.qrscanner.domain.model.ScanMode
-import com.epic_engine.swisskit.feature.qrscanner.presentation.components.GeneratorTab
-import com.epic_engine.swisskit.core.designsystem.components.SwissKitTabPicker
-import com.epic_engine.swisskit.feature.home.presentation.theme.HomeDesignTokens
 import com.epic_engine.swisskit.feature.qrscanner.presentation.components.CameraPermissionDeniedScreen
+import com.epic_engine.swisskit.feature.qrscanner.presentation.components.GeneratorTab
 import com.epic_engine.swisskit.feature.qrscanner.presentation.components.QRHeader
 import com.epic_engine.swisskit.feature.qrscanner.presentation.components.ScanResultBottomSheet
 import com.epic_engine.swisskit.feature.qrscanner.presentation.components.ScannerTab
@@ -114,7 +95,7 @@ fun QRScannerScreen(
     LaunchedEffect(Unit) {
         qrCameraViewModel.events.collect { event ->
             when (event) {
-                is QRCameraEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
+                is QRCameraEvent.ShowError -> snackbarHostState.showSnackbar(event.message.asString(context))
             }
         }
     }
@@ -122,8 +103,8 @@ fun QRScannerScreen(
     LaunchedEffect(Unit) {
         qrScannerViewModel.events.collect { event ->
             when (event) {
-                is QRScannerEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
-                QRScannerEvent.QRSavedToGallery -> screenToastMessage = "Imagen guardada en galería"
+                is QRScannerEvent.ShowError -> snackbarHostState.showSnackbar(event.message.asString(context))
+                QRScannerEvent.QRSavedToGallery -> screenToastMessage = context.getString(R.string.qr_saved_to_gallery)
                 QRScannerEvent.AllScansDeleted -> { /* handled via state */ }
                 is QRScannerEvent.ShareQR -> shareQRBitmap(context, event.bitmap)
             }
@@ -160,7 +141,7 @@ fun QRScannerScreen(
                             }
                         )
                         SwissKitTabPicker(
-                            options = listOf("Escáner", "Generador"),
+                            options = listOf(stringResource(R.string.qr_tab_scanner), stringResource(R.string.qr_tab_generator)),
                             selectedIndex = selectedIndex,
                             onTabSelected = { selectedIndex = it },
                             modifier = Modifier
@@ -218,8 +199,8 @@ fun QRScannerScreen(
                             }
                             CameraState.Unavailable -> {
                                 SwissKitEmptyView(
-                                    title = "Cámara no disponible",
-                                    subtitle = "Este dispositivo no tiene cámara compatible",
+                                    title = stringResource(R.string.qr_camera_unavailable_title),
+                                    subtitle = stringResource(R.string.qr_camera_unavailable_subtitle),
                                     iconTint = Color.White.copy(alpha = 0.6f),
                                     modifier = Modifier.fillMaxSize()
                                 )
@@ -235,7 +216,7 @@ fun QRScannerScreen(
                                     onClearFeedback = qrCameraViewModel::onClearFeedback,
                                     onCopyScan = { scan ->
                                         clipboardManager.setText(AnnotatedString(scan.content))
-                                        screenToastMessage = "Copiado"
+                                        screenToastMessage = context.getString(R.string.qr_copied)
                                     },
                                     onEditLabel = qrScannerViewModel::onEditLabel,
                                     onOpenContent = { scan -> openContent(context, scan.content, scan.type) },
@@ -276,21 +257,27 @@ fun QRScannerScreen(
     scannerUiState.editingLabelScan?.let {
         AlertDialog(
             onDismissRequest = qrScannerViewModel::onDismissEditLabel,
-            title = { Text("Editar etiqueta") },
+            title = { Text(stringResource(R.string.qr_edit_label_title)) },
             text = {
                 OutlinedTextField(
                     value = scannerUiState.editLabelDraft,
                     onValueChange = qrScannerViewModel::onEditLabelDraftChange,
-                    label = { Text("Etiqueta") },
+                    label = { Text(stringResource(R.string.qr_edit_label_field)) },
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = QRScannerDesignTokens.Primary,
+                        unfocusedBorderColor = QRScannerDesignTokens.Primary,
+                        focusedLabelColor = QRScannerDesignTokens.Primary,
+                        unfocusedLabelColor = QRScannerDesignTokens.Primary
+                    )
                 )
             },
             confirmButton = {
-                TextButton(onClick = qrScannerViewModel::onConfirmEditLabel) { Text("Guardar") }
+                TextButton(onClick = qrScannerViewModel::onConfirmEditLabel) { Text(text = stringResource(R.string.common_save), color = QRScannerDesignTokens.Primary) }
             },
             dismissButton = {
-                TextButton(onClick = qrScannerViewModel::onDismissEditLabel) { Text("Cancelar") }
+                TextButton(onClick = qrScannerViewModel::onDismissEditLabel) { Text(stringResource(R.string.common_cancel), color = QRScannerDesignTokens.Primary) }
             }
         )
     }
@@ -311,7 +298,7 @@ private fun shareQRBitmap(context: android.content.Context, bitmap: Bitmap) {
             putExtra(android.content.Intent.EXTRA_STREAM, uri)
             addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        context.startActivity(android.content.Intent.createChooser(intent, "Compartir QR"))
+        context.startActivity(android.content.Intent.createChooser(intent, context.getString(R.string.qr_share_chooser)))
     }
 }
 

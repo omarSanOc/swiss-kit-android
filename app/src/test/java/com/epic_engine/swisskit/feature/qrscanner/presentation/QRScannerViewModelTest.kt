@@ -8,6 +8,8 @@ import com.epic_engine.swisskit.feature.qrscanner.domain.usecase.DeleteQRScanUse
 import com.epic_engine.swisskit.feature.qrscanner.domain.usecase.GenerateQRBitmapUseCase
 import com.epic_engine.swisskit.feature.qrscanner.domain.usecase.ObserveQRScansUseCase
 import com.epic_engine.swisskit.feature.qrscanner.domain.usecase.UpdateQRScanLabelUseCase
+import com.epic_engine.swisskit.feature.qrscanner.presentation.util.QRScannerEvent
+import com.epic_engine.swisskit.feature.qrscanner.presentation.viewmodel.QRScannerViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.just

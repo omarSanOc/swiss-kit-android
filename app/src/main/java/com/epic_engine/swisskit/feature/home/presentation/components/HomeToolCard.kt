@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -59,7 +60,7 @@ fun HomeToolCard(
             ) {
                 Icon(
                     painter = painterResource(id = tool.icon),
-                    contentDescription = tool.name,
+                    contentDescription = stringResource(tool.name),
                     tint = tool.color,
                     modifier = Modifier.size(HomeDesignTokens.dimensMedium)
                 )
@@ -68,7 +69,7 @@ fun HomeToolCard(
             Spacer(Modifier.height(HomeDesignTokens.dimensSmall))
 
             Text(
-                text = tool.name,
+                text = stringResource(tool.name),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = tool.color
@@ -77,7 +78,7 @@ fun HomeToolCard(
             Spacer(Modifier.height(DesignTokens.dimensXXXSmall))
 
             Text(
-                text = tool.description,
+                text = stringResource(tool.description),
                 style = MaterialTheme.typography.bodySmall,
                 color = tool.color.copy(alpha = 0.7f),
                 maxLines = 2,

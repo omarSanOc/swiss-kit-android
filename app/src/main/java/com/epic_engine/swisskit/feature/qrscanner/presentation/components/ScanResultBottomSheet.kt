@@ -17,8 +17,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,7 +29,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.feature.qrscanner.domain.model.QRContentType
 import com.epic_engine.swisskit.feature.qrscanner.presentation.theme.QRScannerDesignTokens
@@ -63,7 +67,7 @@ fun ScanResultBottomSheet(
                 .verticalScroll(rememberScrollState())
         ) {
             Text(
-                text = "Código detectado",
+                text = stringResource(R.string.qr_code_detected_title),
                 style = MaterialTheme.typography.titleLarge
             )
             Spacer(Modifier.height(DesignTokens.dimensSmall))
@@ -81,30 +85,36 @@ fun ScanResultBottomSheet(
                     onClick = { onOpenContent(pendingResult); onDismiss() },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Abrir")
+                    Text(text = stringResource(R.string.qr_open_title), color = QRScannerDesignTokens.Primary)
                 }
             }
             Spacer(Modifier.height(DesignTokens.dimensSmall))
             OutlinedTextField(
                 value = label,
                 onValueChange = { label = it },
-                label = { Text("Etiqueta") },
+                label = { Text(stringResource(R.string.qr_edit_label_field)) },
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = QRScannerDesignTokens.Primary,
+                    unfocusedBorderColor = QRScannerDesignTokens.Primary,
+                    focusedLabelColor = QRScannerDesignTokens.Primary,
+                    unfocusedLabelColor = QRScannerDesignTokens.Primary
+                )
             )
             Spacer(Modifier.height(DesignTokens.dimensMedium))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(space = DesignTokens.dimensXSmall, alignment = Alignment.End)
             ) {
-                TextButton(onClick = onDismiss) { Text("Cancelar") }
+                TextButton(onClick = onDismiss) { Text(text = stringResource(R.string.common_cancel), color = QRScannerDesignTokens.Primary) }
                 Button(
                     onClick = { onSave(pendingResult.content, label) },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = QRScannerDesignTokens.Primary
                     )
                 ) {
-                    Text("Guardar")
+                    Text(stringResource(R.string.common_save))
                 }
             }
             Spacer(Modifier.height(DesignTokens.dimensXSmall))

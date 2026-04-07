@@ -1,5 +1,6 @@
 package com.epic_engine.swisskit.feature.finance.presentation.utils
 
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.feature.finance.domain.model.FinanceType
 
 data class EditFinanceUiState(
@@ -11,7 +12,7 @@ data class EditFinanceUiState(
     val category: String = "General",
     val type: FinanceType = FinanceType.EXPENSE,
     val isSaving: Boolean = false,
-    val validationError: String? = null,
+    val validationError: UiText? = null,
     val savedSuccessfully: Boolean = false,
     val availableCategories: List<String> = emptyList()
 ) {

@@ -5,6 +5,7 @@ import com.epic_engine.swisskit.feature.qrscanner.domain.model.QRScan
 import com.epic_engine.swisskit.feature.qrscanner.domain.model.QRScanSaveResult
 import com.epic_engine.swisskit.feature.qrscanner.domain.model.ScanMode
 import com.epic_engine.swisskit.feature.qrscanner.domain.usecase.SaveQRScanUseCase
+import com.epic_engine.swisskit.feature.qrscanner.presentation.viewmodel.QRCameraViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk

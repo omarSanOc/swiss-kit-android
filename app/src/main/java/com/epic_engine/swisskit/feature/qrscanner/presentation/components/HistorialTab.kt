@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
@@ -45,8 +46,8 @@ fun HistorialTab(
         ) {
             SwissKitEmptyView(
                 icon = R.drawable.icon_qr,
-                title = "Sin escaneos",
-                subtitle = "Escanea un código para empezar",
+                title = stringResource(R.string.qr_no_scans_title),
+                subtitle = stringResource(R.string.qr_no_scans_subtitle),
                 iconTint = Color.White.copy(alpha = 0.7f),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -64,7 +65,7 @@ fun HistorialTab(
         ) {
             item {
                 Text(
-                    text = "Historial",
+                    text = stringResource(R.string.qr_history_title),
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.White,
                     modifier = Modifier.padding(vertical = DesignTokens.dimensXXXSmall)
@@ -89,10 +90,10 @@ fun HistorialTab(
             title = { Text("Eliminar escaneo") },
             text = { Text("¿Eliminar \"${scan.label.ifBlank { scan.content.take(40) }}\"?") },
             confirmButton = {
-                TextButton(onClick = onConfirmDeleteScan) { Text("Eliminar") }
+                TextButton(onClick = onConfirmDeleteScan) { Text(stringResource(R.string.common_delete)) }
             },
             dismissButton = {
-                TextButton(onClick = onDismissDialog) { Text("Cancelar") }
+                TextButton(onClick = onDismissDialog) { Text(stringResource(R.string.common_cancel)) }
             }
         )
     }

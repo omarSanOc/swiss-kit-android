@@ -63,8 +63,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.notesBackgroundBrush
 import com.epic_engine.swisskit.feature.notes.presentation.components.NoteFormattingToolbar
@@ -104,9 +106,9 @@ fun NoteDetailScreen(
         viewModel.events.collect { event ->
             when (event) {
                 NoteDetailEvent.Saved, NoteDetailEvent.Deleted -> onNavigateBack()
-                is NoteDetailEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
+                is NoteDetailEvent.ShowError -> snackbarHostState.showSnackbar(event.message.asString(context))
                 is NoteDetailEvent.ReminderSet ->
-                    snackbarHostState.showSnackbar("Recordatorio configurado")
+                    snackbarHostState.showSnackbar(context.getString(R.string.note_detail_reminder_set))
             }
         }
     }
@@ -154,7 +156,7 @@ fun NoteDetailScreen(
                 topBar = {
                     TopAppBar(
                         title = { Text(
-                            text = if (noteId == null) {"Crear Nota"} else {"Editar Nota"},
+                            text = stringResource(if (noteId == null) R.string.note_detail_create_title else R.string.note_detail_edit_title),
                             style = MaterialTheme.typography.titleLarge,
                             color = Color.White
                         )},
@@ -163,7 +165,7 @@ fun NoteDetailScreen(
                                 IconButton(onClick = { showOverflowMenu = true }) {
                                     Icon(
                                         painter = painterResource(R.drawable.icon_ellipsis),
-                                        contentDescription = "Más opciones",
+                                        contentDescription = stringResource(R.string.note_detail_more_options_cd),
                                         tint = if (isDark) Color.White else Color.Black
                                     )
                                 }
@@ -172,21 +174,21 @@ fun NoteDetailScreen(
                                     onDismissRequest = { showOverflowMenu = false }
                                 ) {
                                     DropdownMenuItem(
-                                        text = { Text("Guardar nota") },
+                                        text = { Text(stringResource(R.string.note_detail_save_menu)) },
                                         onClick = {
                                             showOverflowMenu = false
                                             viewModel.onSave()
                                         }
                                     )
                                     DropdownMenuItem(
-                                        text = { Text("Guardar como recordatorio") },
+                                        text = { Text(stringResource(R.string.note_detail_save_reminder_menu)) },
                                         onClick = {
                                             showOverflowMenu = false
                                             viewModel.onSaveAndShowReminder()
                                         }
                                     )
                                     DropdownMenuItem(
-                                        text = { Text("Compartir nota") },
+                                        text = { Text(stringResource(R.string.note_detail_share_menu)) },
                                         onClick = {
                                             showOverflowMenu = false
                                             val shareText = buildString {
@@ -201,12 +203,12 @@ fun NoteDetailScreen(
                                                 putExtra(Intent.EXTRA_SUBJECT, uiState.titleDraft)
                                                 putExtra(Intent.EXTRA_TEXT, shareText)
                                             }
-                                            context.startActivity(Intent.createChooser(sendIntent, "Compartir nota"))
+                                            context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.note_detail_share_chooser)))
                                         }
                                     )
                                     if (uiState.note != null) {
                                         DropdownMenuItem(
-                                            text = { Text("Eliminar", color = Color.Red) },
+                                            text = { Text(stringResource(R.string.common_delete), color = Color.Red) },
                                             onClick = {
                                                 showOverflowMenu = false
                                                 showDeleteDialog = true
@@ -250,7 +252,7 @@ fun NoteDetailScreen(
                             Box(contentAlignment = Alignment.CenterStart) {
                                 if (uiState.titleDraft.isEmpty()) {
                                     Text(
-                                        text = "Titulo de la nota",
+                                        text = stringResource(R.string.note_detail_title_placeholder),
                                         style = MaterialTheme.typography.headlineSmall.copy(
                                             fontWeight = FontWeight.SemiBold,
                                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
@@ -289,7 +291,7 @@ fun NoteDetailScreen(
                             Box(contentAlignment = Alignment.TopStart) {
                                 if (contentFieldValue.text.isEmpty()) {
                                     Text(
-                                        text = "Escribe tu nota...",
+                                        text = stringResource(R.string.note_detail_content_placeholder),
                                         style = MaterialTheme.typography.bodyLarge.copy(
                                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                         )
@@ -311,18 +313,18 @@ fun NoteDetailScreen(
         val noteName = uiState.note?.title?.ifBlank { "esta nota" } ?: "esta nota"
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Eliminar nota?") },
-            text = { Text("Esta accion eliminara $noteName. No se puede deshacer.") },
+            title = { Text(stringResource(R.string.note_detail_delete_title)) },
+            text = { Text(stringResource(R.string.note_detail_delete_message, noteName)) },
             confirmButton = {
                 TextButton(onClick = {
                     showDeleteDialog = false
                     viewModel.onDelete()
                 }) {
-                    Text("Eliminar", color = Color.Red)
+                    Text(stringResource(R.string.common_delete), color = Color.Red)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) { Text("Cancelar") }
+                TextButton(onClick = { showDeleteDialog = false }) { Text(stringResource(R.string.common_cancel)) }
             }
         )
     }

@@ -1,5 +1,6 @@
 package com.epic_engine.swisskit.feature.shopping.presentation.utils
 
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.feature.shopping.domain.model.ShoppingItem
 
 data class ShoppingUiState(
@@ -7,12 +8,12 @@ data class ShoppingUiState(
     val checkedItems: List<ShoppingItem> = emptyList(),
     val inputText: String = "",
     val isLoading: Boolean = false,
-    val userMessage: String? = null,
+    val userMessage: UiText? = null,
     val editingItem: ShoppingItem? = null,
     val editText: String = "",
     val showDeleteCheckedDialog: Boolean = false,
     val itemToDelete: ShoppingItem? = null,
-    val duplicateMessage: String? = null
+    val duplicateMessage: UiText? = null
 ) {
     val hasCheckedItems: Boolean get() = checkedItems.isNotEmpty()
     val hasAnyItems: Boolean get() = pendingItems.isNotEmpty() || checkedItems.isNotEmpty()

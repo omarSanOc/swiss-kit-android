@@ -20,9 +20,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.feature.qrscanner.domain.model.ScanMode
 import com.epic_engine.swisskit.feature.qrscanner.presentation.theme.QRScannerDesignTokens
 
@@ -40,19 +43,19 @@ fun QRHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 4.dp, vertical = 4.dp),
+            .padding(horizontal = DesignTokens.dimensXXXSmall, vertical = DesignTokens.dimensXXXSmall),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
         Text(
-            text = "Código QR",
+            text = stringResource(R.string.qr_title),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.SemiBold,
             color = Color.White,
             textAlign = TextAlign.Start,
             modifier = Modifier
                 .weight(1f)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = DesignTokens.dimensMedium)
         )
         if (selectedIndex == 0) {
             Box {
@@ -68,13 +71,13 @@ fun QRHeader(
                     onDismissRequest = onDismissOverflow
                 ) {
                     Text(
-                        text = "Modo de escaneo",
+                        text = stringResource(R.string.qr_menu_scan_mode),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                     )
                     DropdownMenuItem(
-                        text = { Text("Normal") },
+                        text = { Text(stringResource(R.string.qr_menu_normal_scan)) },
                         leadingIcon = {
                             if (scanMode == ScanMode.SINGLE) {
                                 Icon(
@@ -87,7 +90,7 @@ fun QRHeader(
                         onClick = { onSetScanMode(ScanMode.SINGLE) }
                     )
                     DropdownMenuItem(
-                        text = { Text("Continuo") },
+                        text = { Text(stringResource(R.string.qr_menu_continuous_scan)) },
                         leadingIcon = {
                             if (scanMode == ScanMode.CONTINUOUS) {
                                 Icon(
@@ -103,7 +106,7 @@ fun QRHeader(
                     DropdownMenuItem(
                         text = {
                             Text(
-                                "Eliminar historial",
+                                stringResource(R.string.common_delete),
                                 color = if (hasScans) MaterialTheme.colorScheme.error
                                 else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                             )

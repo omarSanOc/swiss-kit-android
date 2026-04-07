@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -49,8 +50,8 @@ fun TypeSelectorCard(
     val activeColor = if (isExpense) FinanceDesignTokens.expenseColor else FinanceDesignTokens.incomeColor
     val activeBgColor = if (isExpense) FinanceDesignTokens.expenseColor.copy(alpha = FinanceDesignTokens.typeSelectionFillAlpha)
                         else FinanceDesignTokens.incomeColor.copy(alpha = FinanceDesignTokens.typeSelectionFillAlpha)
-    val label = if (isExpense) "Gasto" else "Ingreso"
-    val subtitle = if (isExpense) "Dinero que sale" else "Dinero que entra"
+    val label = if (isExpense) stringResource(R.string.edit_finance_expense) else stringResource(R.string.edit_finance_income)
+    val subtitle = if (isExpense) stringResource(R.string.edit_finance_expense_description) else stringResource(R.string.edit_finance_income_description)
     val icon = if (isExpense) R.drawable.icon_expense else R.drawable.icon_income
 
     val animatedBorderColor by animateColorAsState(
@@ -84,7 +85,7 @@ fun TypeSelectorCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(DesignTokens.dimensMedium),
+                .padding(DesignTokens.dimensSmall),
             verticalArrangement = Arrangement.spacedBy(DesignTokens.dimensXXSmall)
         ) {
             Surface(

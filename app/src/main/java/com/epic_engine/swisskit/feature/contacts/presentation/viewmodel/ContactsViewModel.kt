@@ -12,6 +12,8 @@ import com.epic_engine.swisskit.feature.contacts.domain.usecase.GetContactsUseCa
 import com.epic_engine.swisskit.feature.contacts.domain.usecase.SearchContactsUseCase
 import com.epic_engine.swisskit.feature.contacts.domain.usecase.UpdateContactUseCase
 import com.epic_engine.swisskit.feature.contacts.domain.util.PhoneNumberNormalizer
+import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.feature.contacts.presentation.util.ContactsEvent
 import com.epic_engine.swisskit.feature.contacts.presentation.util.ContactsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -88,8 +90,8 @@ class ContactsViewModel @Inject constructor(
             ContactAction.WHATSAPP -> PhoneNumberNormalizer.toWhatsAppUrl(contact.phone)
         }
         val toastMsg = when (action) {
-            ContactAction.CALL -> "Iniciando llamada…"
-            ContactAction.WHATSAPP -> "Abriendo WhatsApp…"
+            ContactAction.CALL -> UiText.StringRes(R.string.contacts_toast_calling)
+            ContactAction.WHATSAPP -> UiText.StringRes(R.string.contacts_toast_whatsapp)
         }
         _uiState.update { it.copy(actionSheetContact = null, toastMessage = toastMsg) }
         viewModelScope.launch {
@@ -127,7 +129,7 @@ class ContactsViewModel @Inject constructor(
     fun onSaveContact() {
         val state = _uiState.value
         if (!PhoneNumberNormalizer.isValid(state.phoneDraft)) {
-            _uiState.update { it.copy(phoneError = "Número inválido (7–15 dígitos)") }
+            _uiState.update { it.copy(phoneError = UiText.StringRes(R.string.contacts_phone_error)) }
             return
         }
         viewModelScope.launch {
@@ -138,11 +140,11 @@ class ContactsViewModel @Inject constructor(
                     addContact(state.nameDraft, state.phoneDraft, categoryId)
                 }
             }.onSuccess {
-                val msg = if (state.editingContact != null) "Contacto actualizado" else "Contacto guardado"
+                val msg = if (state.editingContact != null) UiText.StringRes(R.string.contacts_toast_updated) else UiText.StringRes(R.string.contacts_toast_saved)
                 _uiState.update { it.copy(showAddSheet = false, editingContact = null, toastMessage = msg) }
                 _events.emit(ContactsEvent.ContactSaved)
             }.onFailure {
-                _events.emit(ContactsEvent.ShowError(it.message ?: "Error"))
+                _events.emit(ContactsEvent.ShowError(UiText.StringRes(R.string.common_error)))
             }
         }
     }
@@ -159,8 +161,8 @@ class ContactsViewModel @Inject constructor(
         _uiState.update { it.copy(confirmDeleteContact = null) }
         viewModelScope.launch {
             runCatching { deleteContact(contact) }
-                .onSuccess { _uiState.update { it.copy(toastMessage = "Contacto eliminado") } }
-                .onFailure { _events.emit(ContactsEvent.ShowError(it.message ?: "Error")) }
+                .onSuccess { _uiState.update { it.copy(toastMessage = UiText.StringRes(R.string.contacts_toast_deleted)) } }
+                .onFailure { _events.emit(ContactsEvent.ShowError(UiText.StringRes(R.string.common_error))) }
         }
     }
 
@@ -188,14 +190,14 @@ class ContactsViewModel @Inject constructor(
                     onClearSelection()
                     _events.emit(ContactsEvent.SelectionDeleted)
                 }
-                .onFailure { _events.emit(ContactsEvent.ShowError(it.message ?: "Error")) }
+                .onFailure { _events.emit(ContactsEvent.ShowError(UiText.StringRes(R.string.common_error))) }
         }
     }
 
     fun onDeleteAll() {
         viewModelScope.launch {
             runCatching { deleteAllContacts(categoryId) }
-                .onFailure { _events.emit(ContactsEvent.ShowError(it.message ?: "Error")) }
+                .onFailure { _events.emit(ContactsEvent.ShowError(UiText.StringRes(R.string.common_error))) }
         }
     }
 

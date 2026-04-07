@@ -1,6 +1,7 @@
 package com.epic_engine.swisskit.feature.home.presentation.model
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color
 import com.epic_engine.swisskit.navigation.SwissKitDestination
 
@@ -10,8 +11,8 @@ import com.epic_engine.swisskit.navigation.SwissKitDestination
  */
 data class Tool(
     val id: String,
-    val name: String,
-    val description: String,
+    @StringRes val name: Int,
+    @StringRes val description: Int,
     @DrawableRes val icon: Int,
     val color: Color,
     val backgroundColor: Color,

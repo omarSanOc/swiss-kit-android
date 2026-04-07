@@ -1,6 +1,7 @@
 package com.epic_engine.swisskit.feature.converter.presentation.components
 
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.ui.res.stringResource
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.MenuAnchorType
@@ -30,7 +31,7 @@ fun UnitPickerDropdown(
         modifier = modifier
     ) {
         ConverterSelectorField(
-            value = if (selected != null) "${selected.name}  (${selected.symbol})" else "",
+            value = if (selected != null) "${stringResource(selected.nameRes)}  (${selected.symbol})" else "",
             placeholder = label,
             expanded = expanded,
             modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable)
@@ -41,7 +42,7 @@ fun UnitPickerDropdown(
         ) {
             units.forEach { unit ->
                 DropdownMenuItem(
-                    text = { Text("${unit.name}  (${unit.symbol})") },
+                    text = { Text("${stringResource(unit.nameRes)}  (${unit.symbol})") },
                     onClick = {
                         onSelected(unit)
                         expanded = false

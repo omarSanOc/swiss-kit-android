@@ -13,6 +13,8 @@ import com.epic_engine.swisskit.feature.finance.domain.usecase.FinanceCategorySe
 import com.epic_engine.swisskit.feature.finance.domain.usecase.GetDistinctCategoriesUseCase
 import com.epic_engine.swisskit.feature.finance.domain.usecase.ObserveFinanceUseCase
 import com.epic_engine.swisskit.feature.finance.domain.usecase.RestoreFinanceUseCase
+import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.feature.finance.presentation.utils.FinanceEvent
 import com.epic_engine.swisskit.feature.finance.presentation.utils.FinanceUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -76,7 +78,7 @@ class FinanceViewModel @Inject constructor(
             is FinanceEvent.DeleteSelected -> deleteSelected()
             is FinanceEvent.DeleteItem -> handleDelete(event.item)
             is FinanceEvent.ToggleFilterSheet -> _uiState.update { it.copy(showFilterSheet = !it.showFilterSheet) }
-            is FinanceEvent.ClearFilters -> _uiState.update { it.copy(searchQuery = "", selectedCategories = setOf(FinanceCategorySelectionEngine.LABEL_ALL)) }
+            is FinanceEvent.ClearFilters -> _uiState.update { it.copy(searchQuery = "", selectedCategories = setOf(FinanceCategorySelectionEngine.KEY_ALL)) }
             is FinanceEvent.ClearMessage -> _uiState.update { it.copy(userMessage = null) }
             is FinanceEvent.ExportPdf -> handleExportPdf()
             is FinanceEvent.BackupJson -> handleBackup()
@@ -105,15 +107,15 @@ class FinanceViewModel @Inject constructor(
         if (ids.isEmpty()) return
         viewModelScope.launch {
             deleteBatch(ids)
-                .onSuccess { _uiState.update { it.copy(selectedIds = emptySet(), isSelectionMode = false, userMessage = "${ids.size} transacciones eliminadas") } }
-                .onFailure { _uiState.update { s -> s.copy(userMessage = "Error al eliminar transacciones") } }
+                .onSuccess { _uiState.update { it.copy(selectedIds = emptySet(), isSelectionMode = false, userMessage = UiText.StringRes(R.string.finance_deleted_count, ids.size)) } }
+                .onFailure { _uiState.update { s -> s.copy(userMessage = UiText.StringRes(R.string.finance_error_delete_selected)) } }
         }
     }
 
     private fun handleDelete(item: Finance) {
         viewModelScope.launch {
             deleteItem(item).onFailure {
-                _uiState.update { s -> s.copy(userMessage = "Error al eliminar transacción") }
+                _uiState.update { s -> s.copy(userMessage = UiText.StringRes(R.string.finance_error_delete)) }
             }
         }
     }
@@ -127,7 +129,7 @@ class FinanceViewModel @Inject constructor(
                     _pdfBytes.emit(bytes)
                 }
                 .onFailure {
-                    _uiState.update { s -> s.copy(isLoading = false, userMessage = "Error al generar PDF") }
+                    _uiState.update { s -> s.copy(isLoading = false, userMessage = UiText.StringRes(R.string.finance_error_export_pdf)) }
                 }
         }
     }
@@ -136,15 +138,15 @@ class FinanceViewModel @Inject constructor(
         viewModelScope.launch {
             backup()
                 .onSuccess { json -> _backupJson.emit(json) }
-                .onFailure { _uiState.update { s -> s.copy(userMessage = "Error al generar backup") } }
+                .onFailure { _uiState.update { s -> s.copy(userMessage = UiText.StringRes(R.string.finance_error_backup)) } }
         }
     }
 
     private fun handleRestore(content: String) {
         viewModelScope.launch {
             restore(content)
-                .onSuccess { count -> _uiState.update { it.copy(userMessage = "$count transacciones restauradas") } }
-                .onFailure { _uiState.update { s -> s.copy(userMessage = "Error al restaurar backup: formato inválido") } }
+                .onSuccess { count -> _uiState.update { it.copy(userMessage = UiText.StringRes(R.string.finance_restored_count, count)) } }
+                .onFailure { _uiState.update { s -> s.copy(userMessage = UiText.StringRes(R.string.finance_error_restore)) } }
         }
     }
 }

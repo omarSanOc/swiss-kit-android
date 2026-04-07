@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -104,7 +105,7 @@ fun CategoryRow(
         ) {
             Icon(
                 imageVector = Icons.Default.Delete,
-                contentDescription = "Eliminar",
+                contentDescription = stringResource(R.string.common_delete),
                 tint = Color.White,
                 modifier = Modifier.size(ContactsDesignTokens.deleteIconSize)
             )
@@ -155,7 +156,7 @@ fun CategoryRow(
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        text = "${category.contacts.size} contacto${if (category.contacts.size != 1) "s" else ""}",
+                        text = "${category.contacts.size} ${stringResource(R.string.category_item_contact)}${if (category.contacts.size != 1) "s" else ""}",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -174,7 +175,7 @@ fun CategoryRow(
                         onDismissRequest = { showMenu = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("Renombrar") },
+                            text = { Text(stringResource(R.string.category_item_option_rename)) },
                             leadingIcon = { Icon(Icons.Default.Edit, null) },
                             onClick = {
                                 showMenu = false
@@ -182,7 +183,7 @@ fun CategoryRow(
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("Eliminar", color = DesignTokens.deleteColor) },
+                            text = { Text(stringResource(R.string.common_delete), color = DesignTokens.deleteColor) },
                             leadingIcon = {
                                 Icon(Icons.Default.Delete, null, tint = DesignTokens.deleteColor)
                             },

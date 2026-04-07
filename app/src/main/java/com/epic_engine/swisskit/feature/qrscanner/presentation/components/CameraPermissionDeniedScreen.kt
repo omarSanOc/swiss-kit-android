@@ -16,8 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.feature.qrscanner.presentation.theme.QRScannerDesignTokens
 
 @Composable
@@ -35,7 +37,7 @@ fun CameraPermissionDeniedScreen(onOpenSettings: () -> Unit) {
                 tint = Color.White.copy(alpha = 0.5f)
             )
             Text(
-                text = "Se necesita permiso de cámara para escanear códigos QR",
+                text = stringResource(R.string.qr_camera_permission_text),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.White,
                 textAlign = TextAlign.Center
@@ -44,7 +46,7 @@ fun CameraPermissionDeniedScreen(onOpenSettings: () -> Unit) {
                 onClick = onOpenSettings,
                 colors = ButtonDefaults.buttonColors(containerColor = QRScannerDesignTokens.Primary)
             ) {
-                Text("Ir a Ajustes")
+                Text(stringResource(R.string.qr_open_settings))
             }
         }
     }

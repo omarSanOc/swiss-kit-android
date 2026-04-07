@@ -14,6 +14,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -48,7 +49,7 @@ fun ContactSheet(
         ) {
             Spacer(Modifier.height(ContactsDesignTokens.spacingXSmallPadding))
             Text(
-                text = if (isEditing) "Editar contacto" else "Nuevo contacto",
+                text = if (isEditing) stringResource(R.string.contacts_sheet_edit_title) else stringResource(R.string.contacts_sheet_new_title),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold
             )
@@ -56,26 +57,26 @@ fun ContactSheet(
             ContactsTextField(
                 value = nameDraft,
                 onValueChange = onNameChange,
-                placeholder = "Nombre",
+                placeholder = stringResource(R.string.contacts_sheet_name_placeholder),
                 placeholderColor = ContactsDesignTokens.ContactsFieldPlaceholder,
                 leadingIcon = R.drawable.icon_user,
-                leadingIconDescription = "Persona"
+                leadingIconDescription = stringResource(R.string.contacts_sheet_name_cd)
             )
             Spacer(Modifier.height(ContactsDesignTokens.spacingSmallPadding))
             ContactsTextField(
                 value = phoneDraft,
                 onValueChange = onPhoneChange,
-                placeholder = "Teléfono",
+                placeholder = stringResource(R.string.contacts_sheet_phone_placeholder),
                 placeholderColor = ContactsDesignTokens.ContactsFieldPlaceholder,
                 leadingIcon = R.drawable.icon_phone,
-                leadingIconDescription = "Teléfono",
+                leadingIconDescription = stringResource(R.string.contacts_sheet_phone_cd),
                 isError = phoneError != null,
                 supportingText = phoneError,
                 keyboardType = KeyboardType.Phone
             )
             Spacer(Modifier.height(ContactsDesignTokens.spacingSmallPadding))
             ContactsPrimaryButton(
-                text = "Guardar",
+                text = stringResource(R.string.common_save),
                 onClick = onConfirm,
                 enabled = nameDraft.isNotBlank() && phoneDraft.isNotBlank()
             )

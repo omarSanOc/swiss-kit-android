@@ -18,10 +18,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitTabPicker
@@ -59,7 +61,7 @@ fun ConverterScreen(
                         .padding(horizontal = DesignTokens.dimensMedium)
                 ) {
                     Text(
-                        text = "Conversor",
+                        text = stringResource(R.string.home_converter_name),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
@@ -69,7 +71,7 @@ fun ConverterScreen(
 
                 // Tab picker
                 SwissKitTabPicker(
-                    options = listOf("Unidades", "Divisas"),
+                    options = listOf(stringResource(R.string.converter_tab_units), stringResource(R.string.converter_tab_currencies)),
                     selectedIndex = selectedTab,
                     onTabSelected = { selectedTab = it },
                     modifier = Modifier

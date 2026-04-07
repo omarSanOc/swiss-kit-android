@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,7 +60,7 @@ fun UnitConverterContent(
         verticalArrangement = Arrangement.spacedBy(DesignTokens.dimensXXXMedium)
     ) {
         // Card: Categoría
-        ConverterSectionCard(title = "Categoría") {
+        ConverterSectionCard(title = stringResource(R.string.converter_category_title)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(DesignTokens.dimensSmall)
@@ -79,7 +80,7 @@ fun UnitConverterContent(
                 ) { category ->
                     Icon(
                         painter = painterResource(id = categoryIconRes(category)),
-                        contentDescription = category.displayName,
+                        contentDescription = stringResource(category.displayNameRes),
                         tint = ConverterDesignTokens.accentBlue,
                         modifier = Modifier.size(32.dp)
                     )
@@ -88,7 +89,7 @@ fun UnitConverterContent(
         }
 
         // Card: Unidades
-        ConverterSectionCard(title = "Unidades") {
+        ConverterSectionCard(title = stringResource(R.string.converter_unit_title)) {
             UnitPickerDropdown(
                 label = "De",
                 selected = uiState.fromUnit,
@@ -107,7 +108,7 @@ fun UnitConverterContent(
         }
 
         // Card: Cantidad
-        ConverterSectionCard(title = "Cantidad") {
+        ConverterSectionCard(title = stringResource(R.string.converter_quantity_title)) {
             ConverterOutlinedField(
                 value = uiState.amountInput,
                 onValueChange = { onEvent(UnitConverterEvent.AmountChanged(it)) },
@@ -118,7 +119,7 @@ fun UnitConverterContent(
         }
 
         // Card: Resultado
-        ConverterSectionCard(title = "Resultado") {
+        ConverterSectionCard(title = stringResource(R.string.converter_result_title)) {
             ConverterReadOnlyField(
                 value = uiState.convertedResult,
                 placeholder = "—",
@@ -153,7 +154,7 @@ private fun CategoryDropdown(
         modifier = modifier
     ) {
         ConverterSelectorField(
-            value = selected.displayName,
+            value = stringResource(selected.displayNameRes),
             placeholder = "",
             expanded = expanded,
             modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable)
@@ -164,7 +165,7 @@ private fun CategoryDropdown(
         ) {
             UnitCategory.all.forEach { category ->
                 DropdownMenuItem(
-                    text = { Text(category.displayName) },
+                    text = { Text(stringResource(category.displayNameRes)) },
                     onClick = {
                         onSelected(category)
                         expanded = false

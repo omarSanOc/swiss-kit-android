@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -32,7 +33,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitSearchBar
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitToast
@@ -62,6 +66,7 @@ fun ScannerTab(
     onDismissDialog: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     Box(modifier = modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
             // Camera card
@@ -91,7 +96,7 @@ fun ScannerTab(
                         horizontal = DesignTokens.dimensXXXMedium,
                         vertical = DesignTokens.dimensSmall
                     ),
-                description = "Buscar escaneos"
+                description = stringResource(R.string.qr_search_scans)
             )
 
             // History list
@@ -113,7 +118,7 @@ fun ScannerTab(
 
         // Continuous mode feedback toast
         SwissKitToast(
-            message = cameraUiState.feedbackMessage,
+            message = cameraUiState.feedbackMessage?.asString(context),
             onDismiss = onClearFeedback
         )
 

@@ -7,6 +7,8 @@ import com.epic_engine.swisskit.feature.qrscanner.domain.model.CameraState
 import com.epic_engine.swisskit.feature.qrscanner.domain.model.QRScanSaveResult
 import com.epic_engine.swisskit.feature.qrscanner.domain.model.ScanMode
 import com.epic_engine.swisskit.feature.qrscanner.domain.usecase.SaveQRScanUseCase
+import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.feature.qrscanner.presentation.util.PendingQRResult
 import com.epic_engine.swisskit.feature.qrscanner.presentation.util.QRCameraEvent
 import com.epic_engine.swisskit.feature.qrscanner.presentation.util.QRCameraUiState
@@ -73,16 +75,16 @@ class QRCameraViewModel @Inject constructor(
                 runCatching { saveQRScan(content) }
                     .onSuccess { result ->
                         val msg = when (result) {
-                            is QRScanSaveResult.Created -> "Guardado: ${result.scan.label}"
-                            is QRScanSaveResult.MergedDuplicate -> "Actualizado: ${result.scan.label}"
-                            QRScanSaveResult.Failed -> "Error al guardar"
+                            is QRScanSaveResult.Created -> UiText.StringRes(R.string.qr_feedback_saved, result.scan.label)
+                            is QRScanSaveResult.MergedDuplicate -> UiText.StringRes(R.string.qr_feedback_updated, result.scan.label)
+                            QRScanSaveResult.Failed -> UiText.StringRes(R.string.qr_feedback_error_save)
                         }
                         _uiState.update { it.copy(feedbackMessage = msg) }
                         delay(2_000)
                         _uiState.update { it.copy(feedbackMessage = null) }
                     }
                     .onFailure {
-                        _events.emit(QRCameraEvent.ShowError("Error al guardar el escaneo"))
+                        _events.emit(QRCameraEvent.ShowError(UiText.StringRes(R.string.qr_error_save_scan)))
                     }
             }
         }
@@ -91,7 +93,7 @@ class QRCameraViewModel @Inject constructor(
     fun onSaveResult(content: String, label: String) {
         viewModelScope.launch {
             runCatching { saveQRScan(content, label) }
-                .onFailure { _events.emit(QRCameraEvent.ShowError("Error al guardar el escaneo")) }
+                .onFailure { _events.emit(QRCameraEvent.ShowError(UiText.StringRes(R.string.qr_error_save_scan))) }
             _uiState.update { it.copy(pendingResult = null, isScanning = true) }
         }
     }

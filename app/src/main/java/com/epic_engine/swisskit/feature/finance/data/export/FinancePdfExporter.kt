@@ -1,12 +1,15 @@
 package com.epic_engine.swisskit.feature.finance.data.export
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
+import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.feature.finance.domain.model.Finance
 import com.epic_engine.swisskit.feature.finance.domain.model.FinanceType
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.ByteArrayOutputStream
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -14,7 +17,9 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
-class FinancePdfExporter @Inject constructor() {
+class FinancePdfExporter @Inject constructor(
+    @ApplicationContext private val context: Context
+) {
 
     private val pageWidth = 595
     private val pageHeight = 842
@@ -63,17 +68,23 @@ class FinancePdfExporter @Inject constructor() {
 
         var y = margin + 30f
 
-        canvas.drawText("SwissKit — Reporte de Finanzas", margin, y, titlePaint)
+        canvas.drawText(context.getString(R.string.pdf_report_title), margin, y, titlePaint)
         y += 8f
         canvas.drawText(
-            "Generado el ${dateFormat.format(Date())}",
+            context.getString(R.string.pdf_generated_on, dateFormat.format(Date())),
             margin, y + 14f,
             cellPaint.apply { color = Color.GRAY }
         )
         y += 40f
 
         val colX = floatArrayOf(margin, margin + 65f, margin + 200f, margin + 290f, margin + 420f)
-        val headers = arrayOf("Fecha", "Título", "Tipo", "Categoría", "Monto")
+        val headers = arrayOf(
+            context.getString(R.string.pdf_col_date),
+            context.getString(R.string.pdf_col_title),
+            context.getString(R.string.pdf_col_type),
+            context.getString(R.string.pdf_col_category),
+            context.getString(R.string.pdf_col_amount)
+        )
 
         canvas.drawRect(margin, y, (pageWidth - margin).toFloat(), y + rowHeight, headerBgPaint)
         headers.forEachIndexed { i, h ->
@@ -91,10 +102,14 @@ class FinancePdfExporter @Inject constructor() {
 
             val amountStr = currencyFormat.format(item.amount)
             val amountPaint = if (item.type == FinanceType.INCOME) incomePaint else expensePaint
+            val typeLabel = if (item.type == FinanceType.INCOME)
+                context.getString(R.string.pdf_type_income)
+            else
+                context.getString(R.string.pdf_type_expense)
 
             canvas.drawText(dateFormat.format(Date(item.date)), colX[0] + 4f, y + 18f, cellPaint.apply { color = Color.DKGRAY; textSize = 10f })
             canvas.drawText(item.title.take(20), colX[1] + 4f, y + 18f, cellPaint)
-            canvas.drawText(if (item.type == FinanceType.INCOME) "Ingreso" else "Gasto", colX[2] + 4f, y + 18f, cellPaint)
+            canvas.drawText(typeLabel, colX[2] + 4f, y + 18f, cellPaint)
             canvas.drawText(item.category.take(16), colX[3] + 4f, y + 18f, cellPaint)
             canvas.drawText(amountStr, colX[4] + 4f, y + 18f, amountPaint.apply { textSize = 10f })
 
@@ -110,16 +125,16 @@ class FinancePdfExporter @Inject constructor() {
         val totalExpenses = items.filter { it.type == FinanceType.EXPENSE }.sumOf { it.amount }
         val net = totalIncome - totalExpenses
 
-        canvas.drawText("Resumen", margin, y, summaryLabelPaint)
+        canvas.drawText(context.getString(R.string.pdf_summary), margin, y, summaryLabelPaint)
         y += 20f
-        canvas.drawText("Total ingresos:", margin, y, summaryLabelPaint.apply { textSize = 11f })
+        canvas.drawText(context.getString(R.string.pdf_total_income), margin, y, summaryLabelPaint.apply { textSize = 11f })
         canvas.drawText(currencyFormat.format(totalIncome), margin + 150f, y, incomePaint.apply { textSize = 11f })
         y += 18f
-        canvas.drawText("Total gastos:", margin, y, summaryLabelPaint)
+        canvas.drawText(context.getString(R.string.pdf_total_expenses), margin, y, summaryLabelPaint)
         canvas.drawText(currencyFormat.format(totalExpenses), margin + 150f, y, expensePaint.apply { textSize = 11f })
         y += 18f
         val netColor = if (net >= 0) Color.parseColor("#0FB380") else Color.parseColor("#FB2A2A")
-        canvas.drawText("Balance neto:", margin, y, summaryLabelPaint)
+        canvas.drawText(context.getString(R.string.pdf_net_balance), margin, y, summaryLabelPaint)
         canvas.drawText(
             currencyFormat.format(net),
             margin + 150f, y,

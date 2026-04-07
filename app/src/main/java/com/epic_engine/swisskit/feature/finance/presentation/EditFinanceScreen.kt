@@ -56,6 +56,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitButton
@@ -103,10 +107,10 @@ fun EditFinanceScreen(
                         viewModel.onEvent(EditFinanceEvent.DateChanged(millis))
                     }
                     showDatePicker = false
-                }) { Text("OK") }
+                }) { Text(stringResource(R.string.common_ok)) }
             },
             dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) { Text("Cancelar") }
+                TextButton(onClick = { showDatePicker = false }) { Text(stringResource(R.string.common_cancel)) }
             }
         ) {
             DatePicker(state = datePickerState)
@@ -132,7 +136,7 @@ fun EditFinanceScreen(
                         TopAppBar(
                             title = {
                                 Text(
-                                    text = if (uiState.isEditing) "Editar finanza" else "Nueva finanza",
+                                    text = stringResource(if (uiState.isEditing) R.string.edit_finance_edit_title else R.string.edit_finance_new_title),
                                     color = Color.White,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -153,9 +157,9 @@ fun EditFinanceScreen(
                         verticalArrangement = Arrangement.spacedBy(DesignTokens.dimensMedium)
                     ) {
                         // 1. Tipo
-                        SwissKitCard(contentPadding = PaddingValues(DesignTokens.dimensXXMedium)) {
+                        SwissKitCard(contentPadding = PaddingValues(DesignTokens.dimensXMedium)) {
                             Text(
-                                text = "Tipo",
+                                text = stringResource(R.string.edit_finance_type_section),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color =  MaterialTheme.colorScheme.onSurface
@@ -182,7 +186,7 @@ fun EditFinanceScreen(
                         // 2. Monto
                         SwissKitCard(contentPadding = PaddingValues(DesignTokens.dimensXXMedium)) {
                             Text(
-                                text = "Monto *",
+                                text = stringResource(R.string.edit_finance_amount_section),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color =  MaterialTheme.colorScheme.onSurface
@@ -203,7 +207,7 @@ fun EditFinanceScreen(
                         // 3. Título
                         SwissKitCard(contentPadding = PaddingValues(DesignTokens.dimensXXMedium)) {
                             Text(
-                                text = "Título *",
+                                text = stringResource(R.string.edit_finance_title_section),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color =  MaterialTheme.colorScheme.onSurface
@@ -212,7 +216,7 @@ fun EditFinanceScreen(
                                 value = uiState.title,
                                 onValueChange = { viewModel.onEvent(EditFinanceEvent.TitleChanged(it)) },
                                 label = "",
-                                placeholder = "Escribe tu título",
+                                placeholder = stringResource(R.string.edit_finance_title_placeholder),
                                 accentColor = FinanceDesignTokens.primary,
                                 modifier = Modifier.fillMaxWidth(),
                             )
@@ -221,7 +225,7 @@ fun EditFinanceScreen(
                         // 4. Fecha
                         SwissKitCard(contentPadding = PaddingValues(DesignTokens.dimensXXMedium)) {
                             Text(
-                                text = "Fecha",
+                                text = stringResource(R.string.edit_finance_date_section),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color =  MaterialTheme.colorScheme.onSurface
@@ -237,7 +241,7 @@ fun EditFinanceScreen(
                                 leadingIcon = {
                                     Icon(
                                         imageVector = Icons.Default.CalendarMonth,
-                                        contentDescription = "Seleccionar fecha",
+                                        contentDescription = stringResource(R.string.edit_finance_date_cd),
                                         modifier = Modifier.size(DesignTokens.dimensXMedium)
                                     )
                                 },
@@ -259,7 +263,7 @@ fun EditFinanceScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "Categoría",
+                                    text = stringResource(R.string.edit_finance_category_section),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface
@@ -270,7 +274,7 @@ fun EditFinanceScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Add,
-                                        contentDescription = "Agregar categoría",
+                                        contentDescription = stringResource(R.string.edit_finance_add_category_cd),
                                         tint = FinanceDesignTokens.primary
                                     )
                                 }
@@ -287,7 +291,7 @@ fun EditFinanceScreen(
                                         }
                                     },
                                     label = "",
-                                    placeholder = "Nueva categoría",
+                                    placeholder = stringResource(R.string.edit_finance_new_category_placeholder),
                                     accentColor = FinanceDesignTokens.primary,
                                     modifier = Modifier.fillMaxWidth()
                                 )
@@ -326,7 +330,7 @@ fun EditFinanceScreen(
                         // 6. Notas
                         SwissKitCard(contentPadding = PaddingValues(DesignTokens.dimensXXMedium)) {
                             Text(
-                                text = "Notas",
+                                text = stringResource(R.string.edit_finance_notes_section),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color =  MaterialTheme.colorScheme.onSurface
@@ -335,7 +339,7 @@ fun EditFinanceScreen(
                                 value = uiState.notes,
                                 onValueChange = { viewModel.onEvent(EditFinanceEvent.NotesChanged(it)) },
                                 label = "",
-                                placeholder = "Escribe tus notas",
+                                placeholder = stringResource(R.string.edit_finance_notes_placeholder),
                                 accentColor = FinanceDesignTokens.primary,
                                 maxLines = 4,
                                 modifier = Modifier
@@ -347,7 +351,7 @@ fun EditFinanceScreen(
                         // Validation error
                         uiState.validationError?.let { error ->
                             Text(
-                                text = error,
+                                text = error.asString(LocalContext.current),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.error
                             )
@@ -355,7 +359,7 @@ fun EditFinanceScreen(
 
                         // 7. Save button (outside any card)
                         SwissKitButton(
-                            text = "Guardar",
+                            text = stringResource(R.string.common_save),
                             onClick = { viewModel.onEvent(EditFinanceEvent.Save) },
                             containerColor = FinanceDesignTokens.primary,
                             enabled = uiState.canSave && !uiState.isSaving,

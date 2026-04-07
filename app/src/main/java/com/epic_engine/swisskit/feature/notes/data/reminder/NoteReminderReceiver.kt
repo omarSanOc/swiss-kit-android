@@ -13,15 +13,15 @@ class NoteReminderReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val noteId = intent.getStringExtra(EXTRA_NOTE_ID) ?: return
-        val title = intent.getStringExtra(EXTRA_NOTE_TITLE) ?: "Recordatorio"
+        val title = intent.getStringExtra(EXTRA_NOTE_TITLE) ?: context.getString(R.string.notes_reminder_default_title)
 
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        ensureChannel(manager)
+        ensureChannel(context, manager)
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification_note)
             .setContentTitle(title)
-            .setContentText("Tienes un recordatorio pendiente")
+            .setContentText(context.getString(R.string.notes_reminder_body))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .build()
@@ -29,11 +29,11 @@ class NoteReminderReceiver : BroadcastReceiver() {
         manager.notify(noteId.hashCode(), notification)
     }
 
-    private fun ensureChannel(manager: NotificationManager) {
+    private fun ensureChannel(context: Context, manager: NotificationManager) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
-                "Recordatorios de notas",
+                context.getString(R.string.notes_reminder_channel_name),
                 NotificationManager.IMPORTANCE_HIGH
             )
             manager.createNotificationChannel(channel)

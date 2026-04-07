@@ -46,7 +46,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.res.stringResource
 import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
@@ -57,6 +59,7 @@ import com.epic_engine.swisskit.feature.shopping.presentation.components.Shoppin
 import com.epic_engine.swisskit.feature.shopping.presentation.components.ShoppingItemRow
 import com.epic_engine.swisskit.feature.shopping.presentation.theme.ShoppingDesignTokens
 import com.epic_engine.swisskit.feature.shopping.presentation.utils.ShoppingEvent
+import com.epic_engine.swisskit.feature.shopping.presentation.utils.ShoppingShareFormatter
 import com.epic_engine.swisskit.feature.shopping.presentation.viewmodel.ShoppingViewModel
 import kotlinx.coroutines.delay
 
@@ -72,7 +75,7 @@ fun ShoppingScreen(
 
     LaunchedEffect(uiState.userMessage) {
         uiState.userMessage?.let { message ->
-            snackbarHostState.showSnackbar(message)
+            snackbarHostState.showSnackbar(message.asString(context))
             viewModel.onEvent(ShoppingEvent.ClearMessage)
         }
     }
@@ -95,7 +98,7 @@ fun ShoppingScreen(
                         TopAppBar(
                             title = {
                                 Text(
-                                    text = "Lista de compras",
+                                    text = stringResource(R.string.shopping_title),
                                     style = MaterialTheme.typography.titleMedium,
                                     color = Color.White
                                 )
@@ -108,18 +111,18 @@ fun ShoppingScreen(
                             actions = {
                                 IconButton(
                                     onClick = {
-                                        val text = viewModel.buildShareText()
+                                        val text = ShoppingShareFormatter.buildShareText(uiState, context)
                                         val intent = Intent(Intent.ACTION_SEND).apply {
                                             type = "text/plain"
                                             putExtra(Intent.EXTRA_TEXT, text)
                                         }
-                                        context.startActivity(Intent.createChooser(intent, "Compartir lista"))
+                                        context.startActivity(Intent.createChooser(intent, context.getString(R.string.shopping_share_chooser)))
                                     },
                                     enabled = uiState.hasAnyItems
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Share,
-                                        contentDescription = "Compartir lista"
+                                        contentDescription = stringResource(R.string.shopping_share_cd)
                                     )
                                 }
                             }
@@ -155,8 +158,8 @@ fun ShoppingScreen(
                             item(key = "empty") {
                                 SwissKitEmptyView(
                                     icon = R.drawable.icon_shopping,
-                                    title = "Tu lista está vacía",
-                                    subtitle = "Agrega ítems para empezar",
+                                    title = stringResource(R.string.shopping_empty_title),
+                                    subtitle = stringResource(R.string.shopping_empty_subtitle),
                                     modifier = Modifier.fillParentMaxSize(),
                                     iconTint = Color.White.copy(alpha = 0.7f)
                                 )
@@ -201,7 +204,7 @@ fun ShoppingScreen(
 
                 // Toast de duplicados — posicionado en la parte inferior derecha
                 ShoppingDuplicateToast(
-                    message = uiState.duplicateMessage,
+                    message = uiState.duplicateMessage?.asString(context),
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(DesignTokens.dimensMedium)
@@ -214,8 +217,8 @@ fun ShoppingScreen(
     if (uiState.showDeleteCheckedDialog) {
         AlertDialog(
             onDismissRequest = { viewModel.onEvent(ShoppingEvent.DismissDeleteDialog) },
-            title = { Text("Borrar marcados") },
-            text = { Text("¿Estás seguro de que deseas eliminar todos los ítems marcados?") },
+            title = { Text(stringResource(R.string.shopping_delete_checked_title)) },
+            text = { Text(stringResource(R.string.shopping_delete_checked_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -224,12 +227,12 @@ fun ShoppingScreen(
                     },
                     colors = ButtonDefaults.textButtonColors(contentColor = Color.Red)
                 ) {
-                    Text("Eliminar")
+                    Text(stringResource(R.string.common_delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { viewModel.onEvent(ShoppingEvent.DismissDeleteDialog) }) {
-                    Text("Cancelar")
+                    Text(stringResource(R.string.common_cancel))
                 }
             }
         )
@@ -239,19 +242,19 @@ fun ShoppingScreen(
     if (uiState.itemToDelete != null) {
         AlertDialog(
             onDismissRequest = { viewModel.onEvent(ShoppingEvent.DismissDeleteItemDialog) },
-            title = { Text("¿Eliminar producto?") },
-            text = { Text("Esta acción eliminará ${uiState.itemToDelete!!.name}. No se puede deshacer.") },
+            title = { Text(stringResource(R.string.shopping_delete_item_title)) },
+            text = { Text(stringResource(R.string.shopping_delete_item_message, uiState.itemToDelete!!.name)) },
             confirmButton = {
                 TextButton(
                     onClick = { viewModel.onEvent(ShoppingEvent.ConfirmDeleteItem) },
                     colors = ButtonDefaults.textButtonColors(contentColor = Color.Red)
                 ) {
-                    Text("Eliminar")
+                    Text(stringResource(R.string.common_delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { viewModel.onEvent(ShoppingEvent.DismissDeleteItemDialog) }) {
-                    Text("Cancelar")
+                    Text(stringResource(R.string.common_cancel))
                 }
             }
         )
@@ -261,7 +264,7 @@ fun ShoppingScreen(
     if (uiState.editingItem != null) {
         AlertDialog(
             onDismissRequest = { viewModel.onEvent(ShoppingEvent.CancelEdit) },
-            title = { Text("Editar producto") },
+            title = { Text(stringResource(R.string.shopping_edit_title)) },
             text = {
                 TextField(
                     value = uiState.editText,
@@ -298,12 +301,12 @@ fun ShoppingScreen(
                     onClick = { viewModel.onEvent(ShoppingEvent.ConfirmEdit) },
                     enabled = uiState.editText.isNotBlank()
                 ) {
-                    Text("Guardar")
+                    Text(stringResource(R.string.common_save))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { viewModel.onEvent(ShoppingEvent.CancelEdit) }) {
-                    Text("Cancelar")
+                    Text(stringResource(R.string.common_cancel))
                 }
             }
         )

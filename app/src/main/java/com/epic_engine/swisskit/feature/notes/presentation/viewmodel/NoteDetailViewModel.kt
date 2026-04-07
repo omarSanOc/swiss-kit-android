@@ -8,6 +8,8 @@ import com.epic_engine.swisskit.feature.notes.domain.usecase.DeleteNoteUseCase
 import com.epic_engine.swisskit.feature.notes.domain.usecase.GetNoteByIdUseCase
 import com.epic_engine.swisskit.feature.notes.domain.usecase.SaveNoteUseCase
 import com.epic_engine.swisskit.feature.notes.domain.usecase.SetNoteReminderUseCase
+import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.feature.notes.presentation.utils.NoteDetailEvent
 import com.epic_engine.swisskit.feature.notes.presentation.utils.NoteDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -86,7 +88,7 @@ class NoteDetailViewModel @Inject constructor(
                 _events.emit(NoteDetailEvent.Saved)
             }.onFailure {
                 _uiState.update { s -> s.copy(isSaving = false) }
-                _events.emit(NoteDetailEvent.ShowError(it.message ?: "Error al guardar"))
+                _events.emit(NoteDetailEvent.ShowError(UiText.StringRes(R.string.note_detail_error_save)))
             }
         }
     }
@@ -96,7 +98,7 @@ class NoteDetailViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching { deleteNote(note) }
                 .onSuccess { _events.emit(NoteDetailEvent.Deleted) }
-                .onFailure { _events.emit(NoteDetailEvent.ShowError(it.message ?: "Error")) }
+                .onFailure { _events.emit(NoteDetailEvent.ShowError(UiText.StringRes(R.string.common_error))) }
         }
     }
 
@@ -109,7 +111,7 @@ class NoteDetailViewModel @Inject constructor(
                     _uiState.update { s -> s.copy(reminderAt = epochMillis) }
                     _events.emit(NoteDetailEvent.ReminderSet(epochMillis))
                 }
-                .onFailure { _events.emit(NoteDetailEvent.ShowError(it.message ?: "Error")) }
+                .onFailure { _events.emit(NoteDetailEvent.ShowError(UiText.StringRes(R.string.common_error))) }
         }
     }
 
@@ -137,7 +139,7 @@ class NoteDetailViewModel @Inject constructor(
                 }
             }.onFailure {
                 _uiState.update { s -> s.copy(isSaving = false) }
-                _events.emit(NoteDetailEvent.ShowError(it.message ?: "Error al guardar"))
+                _events.emit(NoteDetailEvent.ShowError(UiText.StringRes(R.string.note_detail_error_save)))
             }
         }
     }
@@ -147,7 +149,7 @@ class NoteDetailViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching { setReminder(note, null) }
                 .onSuccess { _uiState.update { it.copy(reminderAt = null) } }
-                .onFailure { _events.emit(NoteDetailEvent.ShowError(it.message ?: "Error")) }
+                .onFailure { _events.emit(NoteDetailEvent.ShowError(UiText.StringRes(R.string.common_error))) }
         }
     }
 }

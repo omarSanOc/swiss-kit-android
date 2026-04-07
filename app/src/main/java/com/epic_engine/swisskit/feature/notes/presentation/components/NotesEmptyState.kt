@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
 
@@ -30,9 +31,9 @@ fun NotesEmptyState(
         ) {
             SwissKitEmptyView(
                 icon = R.drawable.icon_notes,
-                title = "Notas",
-                subtitle = if (isSearching) "Sin resultados para tu búsqueda"
-                else "Escribe tus notas aqui",
+                title = stringResource(R.string.notes_empty_title),
+                subtitle = if (isSearching) stringResource(R.string.notes_no_results_subtitle)
+                else stringResource(R.string.notes_empty_subtitle),
                 modifier = Modifier.fillMaxSize(),
                 iconTint = Color.White.copy(alpha = 0.7f)
             )

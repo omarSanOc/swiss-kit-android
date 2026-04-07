@@ -1,6 +1,7 @@
 package com.epic_engine.swisskit.feature.qrscanner.presentation.util
 
 import android.graphics.Bitmap
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.feature.qrscanner.domain.model.CameraState
 import com.epic_engine.swisskit.feature.qrscanner.domain.model.QRContentType
 import com.epic_engine.swisskit.feature.qrscanner.domain.model.QRScan
@@ -15,12 +16,12 @@ data class QRCameraUiState(
     val cameraState: CameraState = CameraState.Checking,
     val scanMode: ScanMode = ScanMode.SINGLE,
     val pendingResult: PendingQRResult? = null,
-    val feedbackMessage: String? = null,
+    val feedbackMessage: UiText? = null,
     val isScanning: Boolean = true
 )
 
 sealed interface QRCameraEvent {
-    data class ShowError(val message: String) : QRCameraEvent
+    data class ShowError(val message: UiText) : QRCameraEvent
 }
 
 data class QRScannerUiState(
@@ -38,7 +39,7 @@ data class QRScannerUiState(
 )
 
 sealed interface QRScannerEvent {
-    data class ShowError(val message: String) : QRScannerEvent
+    data class ShowError(val message: UiText) : QRScannerEvent
     data class ShareQR(val bitmap: Bitmap) : QRScannerEvent
     data object QRSavedToGallery : QRScannerEvent
     data object AllScansDeleted : QRScannerEvent

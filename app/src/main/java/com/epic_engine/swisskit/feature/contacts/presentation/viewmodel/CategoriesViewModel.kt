@@ -2,6 +2,8 @@ package com.epic_engine.swisskit.feature.contacts.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.feature.contacts.domain.model.Category
 import com.epic_engine.swisskit.feature.contacts.domain.usecase.AddCategoryUseCase
 import com.epic_engine.swisskit.feature.contacts.domain.usecase.DeleteCategoryUseCase
@@ -66,10 +68,10 @@ class CategoriesViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching { addCategory(title) }
                 .onSuccess {
-                    _uiState.update { it.copy(showAddSheet = false, toastMessage = "Categoría creada") }
+                    _uiState.update { it.copy(showAddSheet = false, toastMessage = UiText.StringRes(R.string.category_toast_saved)) }
                     _events.emit(CategoriesEvent.CategoryAdded)
                 }
-                .onFailure { _events.emit(CategoriesEvent.ShowError(it.message ?: "Error")) }
+                .onFailure { _events.emit(CategoriesEvent.ShowError(UiText.StringRes(R.string.common_error))) }
         }
     }
 
@@ -86,10 +88,10 @@ class CategoriesViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching { renameCategory(cat.id, state.renameTitle) }
                 .onSuccess {
-                    _uiState.update { it.copy(renamingCategory = null, toastMessage = "Categoría renombrada") }
+                    _uiState.update { it.copy(renamingCategory = null, toastMessage = UiText.StringRes(R.string.category_toast_updated)) }
                     _events.emit(CategoriesEvent.CategoryRenamed)
                 }
-                .onFailure { _events.emit(CategoriesEvent.ShowError(it.message ?: "Error")) }
+                .onFailure { _events.emit(CategoriesEvent.ShowError(UiText.StringRes(R.string.common_error))) }
         }
     }
 
@@ -106,10 +108,10 @@ class CategoriesViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching { deleteCategory(category.id) }
                 .onSuccess {
-                    _uiState.update { it.copy(toastMessage = "Categoría eliminada") }
+                    _uiState.update { it.copy(toastMessage = UiText.StringRes(R.string.category_toast_deleted)) }
                     _events.emit(CategoriesEvent.CategoryDeleted)
                 }
-                .onFailure { _events.emit(CategoriesEvent.ShowError(it.message ?: "Error")) }
+                .onFailure { _events.emit(CategoriesEvent.ShowError(UiText.StringRes(R.string.common_error))) }
         }
     }
 

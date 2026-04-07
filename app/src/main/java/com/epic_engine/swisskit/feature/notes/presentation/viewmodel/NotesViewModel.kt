@@ -6,6 +6,8 @@ import com.epic_engine.swisskit.feature.notes.domain.model.Note
 import com.epic_engine.swisskit.feature.notes.domain.usecase.DeleteNotesUseCase
 import com.epic_engine.swisskit.feature.notes.domain.usecase.ObserveNotesUseCase
 import com.epic_engine.swisskit.feature.notes.domain.usecase.SearchNotesUseCase
+import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.feature.notes.presentation.utils.NotesEvent
 import com.epic_engine.swisskit.feature.notes.presentation.utils.NotesUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -87,7 +89,7 @@ class NotesViewModel @Inject constructor(
                     onClearSelection()
                     _events.emit(NotesEvent.SelectionDeleted)
                 }
-                .onFailure { _events.emit(NotesEvent.ShowError(it.message ?: "Error")) }
+                .onFailure { _events.emit(NotesEvent.ShowError(UiText.StringRes(R.string.common_error))) }
         }
     }
 
@@ -113,7 +115,7 @@ class NotesViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching { deleteNotes(listOf(note.id)) }
                 .onSuccess { _events.emit(NotesEvent.NoteDeleted) }
-                .onFailure { _events.emit(NotesEvent.ShowError(it.message ?: "Error al eliminar")) }
+                .onFailure { _events.emit(NotesEvent.ShowError(UiText.StringRes(R.string.notes_error_delete))) }
         }
     }
 }

@@ -13,8 +13,8 @@ object ToolCatalog {
     val all: List<Tool> = listOf(
         Tool(
             id = "finance",
-            name = "Finanzas",
-            description = "Maneja finanzas",
+            name = R.string.home_finance_name,
+            description = R.string.home_finance_description,
             icon = R.drawable.icon_wallet,
             color = HomeDesignTokens.blueFinance,
             backgroundColor = HomeDesignTokens.blueBackground,
@@ -22,8 +22,8 @@ object ToolCatalog {
         ),
         Tool(
             id = "contacts",
-            name = "Contactos",
-            description = "Gestiona contactos",
+            name = R.string.home_contacts_name,
+            description = R.string.home_contacts_description,
             icon = R.drawable.icon_contact,
             color = HomeDesignTokens.greenContact,
             backgroundColor = HomeDesignTokens.greenBackground,
@@ -31,8 +31,8 @@ object ToolCatalog {
         ),
         Tool(
             id = "notes",
-            name = "Notas",
-            description = "Escribe tus notas",
+            name = R.string.home_notes_name,
+            description = R.string.home_notes_description,
             icon = R.drawable.icon_notes,
             color = HomeDesignTokens.purpleNotes,
             backgroundColor = HomeDesignTokens.purpleBackground,
@@ -40,8 +40,8 @@ object ToolCatalog {
         ),
         Tool(
             id = "qr_scanner",
-            name = "Código QR",
-            description = "Escanea / Genera",
+            name = R.string.home_qr_name,
+            description = R.string.home_qr_description,
             icon = R.drawable.icon_qr,
             color = HomeDesignTokens.pinkQrScanner,
             backgroundColor = HomeDesignTokens.pinkBackground,
@@ -49,8 +49,8 @@ object ToolCatalog {
         ),
         Tool(
             id = "converter",
-            name = "Conversor",
-            description = "Unidades / Divisas",
+            name = R.string.home_converter_name,
+            description = R.string.home_converter_description,
             icon = R.drawable.icon_converter,
             color = HomeDesignTokens.grayConverter,
             backgroundColor = HomeDesignTokens.grayBackground,
@@ -58,8 +58,8 @@ object ToolCatalog {
         ),
         Tool(
             id = "shopping",
-            name = "Compras",
-            description = "Lista de compras",
+            name = R.string.home_shopping_name,
+            description = R.string.home_shopping_description,
             icon = R.drawable.icon_shopping,
             color = HomeDesignTokens.yellowShopping,
             backgroundColor = HomeDesignTokens.yellowBackground,

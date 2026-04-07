@@ -1,5 +1,6 @@
 package com.epic_engine.swisskit.feature.contacts.presentation.util
 
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.feature.contacts.domain.model.Category
 
 data class CategoriesUiState(
@@ -15,12 +16,12 @@ data class CategoriesUiState(
     // Delete confirmation
     val confirmDeleteCategory: Category? = null,
     // Toast
-    val toastMessage: String? = null
+    val toastMessage: UiText? = null
 )
 
 sealed interface CategoriesEvent {
     data class NavigateToContacts(val categoryId: String, val categoryTitle: String) : CategoriesEvent
-    data class ShowError(val message: String) : CategoriesEvent
+    data class ShowError(val message: UiText) : CategoriesEvent
     data object CategoryAdded : CategoriesEvent
     data object CategoryRenamed : CategoriesEvent
     data object CategoryDeleted : CategoriesEvent

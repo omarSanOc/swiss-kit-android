@@ -14,6 +14,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.epic_engine.swisskit.R
@@ -44,7 +45,7 @@ fun CategorySheet(
         ) {
             Spacer(Modifier.height(ContactsDesignTokens.spacingXSmallPadding))
             Text(
-                text = if (isRenaming) "Renombrar categoría" else "Nueva categoría",
+                text = if (isRenaming) stringResource(R.string.category_sheet_edit_title) else stringResource(R.string.category_sheet_new_title),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold
             )
@@ -52,14 +53,14 @@ fun CategorySheet(
             ContactsTextField(
                 value = title,
                 onValueChange = onTitleChange,
-                placeholder = "Nombre de la categoría",
+                placeholder = stringResource(R.string.category_sheet_name_placeholder),
                 placeholderColor = ContactsDesignTokens.ContactsFieldPlaceholder,
                 leadingIcon = R.drawable.icon_folder,
                 leadingIconDescription = "Carpeta"
             )
             Spacer(Modifier.height(ContactsDesignTokens.spacingSmallPadding))
             ContactsPrimaryButton(
-                text = "Guardar",
+                text = stringResource(R.string.common_save),
                 onClick = onConfirm,
                 enabled = title.isNotBlank()
             )

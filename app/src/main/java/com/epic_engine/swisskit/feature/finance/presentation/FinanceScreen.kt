@@ -48,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
@@ -55,6 +56,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
@@ -110,7 +112,7 @@ fun FinanceScreen(
                     stream.write(json.toByteArray())
                 }
                 pendingBackupJson = null
-                scope.launch { snackbarHostState.showSnackbar("Archivo guardado") }
+                scope.launch { snackbarHostState.showSnackbar(context.getString(R.string.finance_file_saved)) }
             }
         }
     }
@@ -128,26 +130,24 @@ fun FinanceScreen(
 
     LaunchedEffect(uiState.userMessage) {
         uiState.userMessage?.let {
-            snackbarHostState.showSnackbar(it)
+            snackbarHostState.showSnackbar(it.asString(context))
             viewModel.onEvent(FinanceEvent.ClearMessage)
         }
     }
 
     // Delete confirmation dialog
     itemToDelete?.let { item ->
-        val typeLabel = if (item.type == FinanceType.EXPENSE) "gasto" else "ingreso"
+        val deleteTitle = if (item.type == FinanceType.EXPENSE)
+            stringResource(R.string.finance_delete_expense_title)
+        else
+            stringResource(R.string.finance_delete_income_title)
         AlertDialog(
             onDismissRequest = { itemToDelete = null },
             shape = RoundedCornerShape(DesignTokens.dimensXXMedium),
-            title = {
-                Text(
-                    text = "¿Eliminar $typeLabel?",
-                    fontWeight = FontWeight.Bold
-                )
-            },
+            title = { Text(text = deleteTitle, fontWeight = FontWeight.Bold) },
             text = {
                 Text(
-                    text = "Esta acción eliminará esta transacción. ¿Estás seguro de continuar?",
+                    text = stringResource(R.string.finance_delete_confirm_message),
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
             },
@@ -156,7 +156,7 @@ fun FinanceScreen(
                     viewModel.onEvent(FinanceEvent.DeleteItem(item))
                     itemToDelete = null
                 }) {
-                    Text("Eliminar", color = Color(0xFFFF3833))
+                    Text(stringResource(R.string.common_delete), color = Color(0xFFFF3833))
                 }
             },
             dismissButton = {
@@ -168,7 +168,7 @@ fun FinanceScreen(
                     ),
                     shape = RoundedCornerShape(DesignTokens.dimensSmall)
                 ) {
-                    Text("Cancelar")
+                    Text(stringResource(R.string.common_cancel))
                 }
             }
         )
@@ -178,10 +178,10 @@ fun FinanceScreen(
         AlertDialog(
             onDismissRequest = { showDeleteSelectedAlert = false },
             shape = RoundedCornerShape(DesignTokens.dimensXXMedium),
-            title = { Text("¿Eliminar transacciones?", fontWeight = FontWeight.Bold) },
+            title = { Text(stringResource(R.string.finance_delete_selected_title), fontWeight = FontWeight.Bold) },
             text = {
                 Text(
-                    "Se eliminarán ${uiState.selectedVisibleCount} transacciones seleccionadas. ¿Estás seguro de continuar?",
+                    stringResource(R.string.finance_delete_selected_message, uiState.selectedVisibleCount),
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
             },
@@ -189,7 +189,7 @@ fun FinanceScreen(
                 TextButton(onClick = {
                     viewModel.onEvent(FinanceEvent.DeleteSelected)
                     showDeleteSelectedAlert = false
-                }) { Text("Eliminar", color = Color(0xFFFF3833)) }
+                }) { Text(stringResource(R.string.common_delete), color = Color(0xFFFF3833)) }
             },
             dismissButton = {
                 Button(
@@ -199,7 +199,7 @@ fun FinanceScreen(
                         contentColor = MaterialTheme.colorScheme.onSurface
                     ),
                     shape = RoundedCornerShape(12.dp)
-                ) { Text("Cancelar") }
+                ) { Text(stringResource(R.string.common_cancel)) }
             }
         )
     }
@@ -224,11 +224,11 @@ fun FinanceScreen(
                         title = {
                             if (uiState.isSelectionMode)
                                 Text(
-                                    "${uiState.selectedIds.size} seleccionados",
+                                    stringResource(R.string.finance_selected_count, uiState.selectedIds.size),
                                     color = Color.White
                                 )
                             else
-                                Text("Finanzas", color = Color.White, fontWeight = FontWeight.Bold)
+                                Text(stringResource(R.string.finance_title), color = Color.White, fontWeight = FontWeight.Bold)
                         },
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = Color.Transparent,
@@ -237,13 +237,13 @@ fun FinanceScreen(
                         navigationIcon = {
                             if (uiState.isSelectionMode) {
                                 IconButton(onClick = { viewModel.onEvent(FinanceEvent.ClearSelection) }) {
-                                    Icon(Icons.Default.Close, "Cancelar selección", tint = Color.White)
+                                    Icon(Icons.Default.Close, stringResource(R.string.finance_cancel_selection_cd), tint = Color.White)
                                 }
                             }
                         },
                         actions = {
                             IconButton(onClick = { showMenu = true }) {
-                                Icon(Icons.Default.MoreVert, "Más opciones", tint = Color.White)
+                                Icon(Icons.Default.MoreVert, stringResource(R.string.finance_more_options_cd), tint = Color.White)
                             }
                             DropdownMenu(
                                 expanded = showMenu,
@@ -251,7 +251,7 @@ fun FinanceScreen(
                             ) {
                                 if (uiState.isSelectionMode) {
                                     DropdownMenuItem(
-                                        text = { Text("Salir del modo de selección") },
+                                        text = { Text(stringResource(R.string.finance_exit_selection_mode)) },
                                         onClick = {
                                             viewModel.onEvent(FinanceEvent.ClearSelection)
                                             showMenu = false
@@ -260,7 +260,7 @@ fun FinanceScreen(
                                     DropdownMenuItem(
                                         enabled = uiState.filteredItems.isNotEmpty(),
                                         text = {
-                                            Text(if (uiState.allVisibleSelected) "Deseleccionar todo" else "Seleccionar todo")
+                                            Text(stringResource(if (uiState.allVisibleSelected) R.string.finance_deselect_all else R.string.finance_select_all))
                                         },
                                         onClick = {
                                             viewModel.onEvent(
@@ -274,7 +274,7 @@ fun FinanceScreen(
                                         enabled = uiState.canDeleteSelected,
                                         text = {
                                             Text(
-                                                "Eliminar ${uiState.selectedVisibleCount} transacciones seleccionadas",
+                                                stringResource(R.string.finance_delete_selected_count, uiState.selectedVisibleCount),
                                                 color = if (uiState.canDeleteSelected) Color(0xFFFF3833)
                                                         else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
                                             )
@@ -286,21 +286,21 @@ fun FinanceScreen(
                                     )
                                 } else {
                                     DropdownMenuItem(
-                                        text = { Text("Exportar a archivo") },
+                                        text = { Text(stringResource(R.string.finance_export_to_file)) },
                                         onClick = {
                                             viewModel.onEvent(FinanceEvent.BackupJson)
                                             showMenu = false
                                         }
                                     )
                                     DropdownMenuItem(
-                                        text = { Text("Importar desde archivo") },
+                                        text = { Text(stringResource(R.string.finance_import_from_file)) },
                                         onClick = {
                                             openDocumentLauncher.launch(arrayOf("application/json"))
                                             showMenu = false
                                         }
                                     )
                                     DropdownMenuItem(
-                                        text = { Text("Compartir en PDF") },
+                                        text = { Text(stringResource(R.string.finance_share_pdf)) },
                                         onClick = {
                                             viewModel.onEvent(FinanceEvent.ExportPdf)
                                             showMenu = false
@@ -309,7 +309,7 @@ fun FinanceScreen(
                                     HorizontalDivider()
                                     DropdownMenuItem(
                                         enabled = uiState.hasItems,
-                                        text = { Text("Entrar en modo de selección") },
+                                        text = { Text(stringResource(R.string.finance_enter_selection_mode)) },
                                         onClick = {
                                             viewModel.onEvent(FinanceEvent.EnterSelectionMode)
                                             showMenu = false
@@ -353,7 +353,7 @@ fun FinanceScreen(
                                 query = uiState.searchQuery,
                                 onQueryChange = { viewModel.onEvent(FinanceEvent.SearchChanged(it)) },
                                 modifier = Modifier.weight(1f),
-                                description = "Buscar"
+                                description = stringResource(R.string.finance_search_cd)
                             )
 
                             // Filter toggle button
@@ -362,7 +362,7 @@ fun FinanceScreen(
                                 isActive = isFilterActive,
                                 onClick = { viewModel.onEvent(FinanceEvent.ToggleFilterSheet) },
                                 icon = painterResource(R.drawable.icon_filter),
-                                contentDescription = "Filtros"
+                                contentDescription = stringResource(R.string.finance_filter_cd)
                             )
 
                             // Sort toggle button
@@ -377,7 +377,7 @@ fun FinanceScreen(
                                 icon = if (uiState.sortOrder == FinanceSortOrder.DESCENDING)
                                     painterResource(R.drawable.icon_arrow_down)
                                 else painterResource(R.drawable.icon_arrow_up),
-                                contentDescription = "Ordenar"
+                                contentDescription = stringResource(R.string.finance_sort_cd)
                             )
                         }
                     }
@@ -408,7 +408,7 @@ fun FinanceScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Total",
+                                text = stringResource(R.string.finance_total),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = Color.White.copy(alpha = FinanceDesignTokens.headerTextAlpha)
                             )
@@ -426,8 +426,8 @@ fun FinanceScreen(
                         item(key = "empty_state") {
                             SwissKitEmptyView(
                                 icon = R.drawable.icon_not_money,
-                                title = "Sin transacciones",
-                                subtitle = "Agrega tu primera transacción con el botón +",
+                                title = stringResource(R.string.finance_empty_title),
+                                subtitle = stringResource(R.string.finance_empty_subtitle),
                                 iconTint = Color.White,
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -476,5 +476,5 @@ private fun sharePdfBytes(context: Context, bytes: ByteArray) {
         putExtra(Intent.EXTRA_STREAM, uri)
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
-    context.startActivity(Intent.createChooser(intent, "Compartir PDF"))
+    context.startActivity(Intent.createChooser(intent, context.getString(R.string.finance_share_pdf_chooser)))
 }

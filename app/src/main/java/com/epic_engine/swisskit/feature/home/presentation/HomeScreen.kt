@@ -17,8 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.feature.home.presentation.components.HomeToolCard
 import com.epic_engine.swisskit.feature.home.presentation.model.ToolCatalog
@@ -73,13 +75,13 @@ private fun HomeHeader() {
             .padding(bottom = DesignTokens.dimensMedium)
     ) {
         Text(
-            text = "SwissKit",
+            text = stringResource(R.string.app_name),
             style = MaterialTheme.typography.displayMedium,
             fontWeight = FontWeight.ExtraBold,
             color = Color.White
         )
         Text(
-            text = "Tu navaja suiza digital para el día a día.",
+            text = stringResource(R.string.app_description),
             style = MaterialTheme.typography.bodyLarge,
             color = Color.White.copy(alpha = 0.85f)
         )
@@ -97,7 +99,7 @@ private fun HomeFooter(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "Hecho para simplificar tu vida",
+            text = stringResource(R.string.home_footer),
             style = MaterialTheme.typography.labelMedium,
             color = Color.White.copy(alpha = 0.6f)
         )

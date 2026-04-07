@@ -26,7 +26,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.ui.UiText
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -50,6 +54,7 @@ fun NotesScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     var revealedNoteId by rememberSaveable { mutableStateOf<String?>(null) }
 
@@ -58,9 +63,9 @@ fun NotesScreen(
             when (event) {
                 is NotesEvent.NavigateToCreate -> onNavigateToCreate()
                 is NotesEvent.NavigateToDetail -> onNavigateToDetail(event.noteId)
-                is NotesEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
-                NotesEvent.SelectionDeleted -> snackbarHostState.showSnackbar("Notas eliminadas")
-                NotesEvent.NoteDeleted -> snackbarHostState.showSnackbar("Nota eliminada")
+                is NotesEvent.ShowError -> snackbarHostState.showSnackbar(event.message.asString(context))
+                NotesEvent.SelectionDeleted -> snackbarHostState.showSnackbar(context.getString(R.string.notes_selection_deleted_snackbar))
+                NotesEvent.NoteDeleted -> snackbarHostState.showSnackbar(context.getString(R.string.notes_deleted_snackbar))
             }
         }
     }
@@ -73,7 +78,7 @@ fun NotesScreen(
                 containerColor = Color.Transparent,
                 topBar = {
                     TopAppBar(
-                        title = { Text("Notas", color = Color.White, fontWeight = FontWeight.Bold) },
+                        title = { Text(stringResource(R.string.notes_title), color = Color.White, fontWeight = FontWeight.Bold) },
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = Color.Transparent,
                             scrolledContainerColor = Color.Transparent
@@ -101,7 +106,7 @@ fun NotesScreen(
                             query = uiState.searchQuery,
                             onQueryChange = viewModel::onSearchQueryChange,
                             modifier = Modifier.padding(top = 12.dp),
-                            description = "Buscar notas"
+                            description = stringResource(R.string.notes_search_cd)
                         )
                     }
 
@@ -145,22 +150,22 @@ fun NotesScreen(
     if (uiState.noteToDelete != null) {
         AlertDialog(
             onDismissRequest = { viewModel.onDismissDeleteDialog() },
-            title = { Text("¿Eliminar nota?") },
+            title = { Text(stringResource(R.string.notes_delete_title)) },
             text = {
                 val title = uiState.noteToDelete!!.displayTitle()
-                Text("Esta acción eliminará \"$title\". No se puede deshacer.")
+                Text(stringResource(R.string.notes_delete_message, title))
             },
             confirmButton = {
                 TextButton(
                     onClick = { viewModel.onConfirmDeleteNote() },
                     colors = ButtonDefaults.textButtonColors(contentColor = Color.Red)
                 ) {
-                    Text("Eliminar")
+                    Text(stringResource(R.string.common_delete))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { viewModel.onDismissDeleteDialog() }) {
-                    Text("Cancelar")
+                    Text(stringResource(R.string.common_cancel))
                 }
             }
         )

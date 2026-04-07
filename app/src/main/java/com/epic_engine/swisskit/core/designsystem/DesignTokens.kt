@@ -6,6 +6,8 @@ import androidx.compose.ui.unit.dp
 object DesignTokens {
 
     val deleteColor = Color(0xFFFF3B30)
+    val editColor = Color(0xFFFF9800)
+    val actionColor = Color(0xFF009688)
     val dimensXXXLarge = 88.dp
     val dimensXXLarge = 56.dp
     val dimensXLarge = 48.dp

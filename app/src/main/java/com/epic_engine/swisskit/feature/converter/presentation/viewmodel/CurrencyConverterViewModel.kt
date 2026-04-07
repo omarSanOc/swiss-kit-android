@@ -7,6 +7,8 @@ import com.epic_engine.swisskit.feature.converter.domain.model.CurrencyCatalog
 import com.epic_engine.swisskit.feature.converter.domain.model.Currency
 import com.epic_engine.swisskit.feature.converter.domain.usecase.GetLatestRatesUseCase
 import com.epic_engine.swisskit.feature.converter.domain.repository.RatesRepository
+import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.feature.converter.presentation.utils.CurrencyConverterEvent
 import com.epic_engine.swisskit.feature.converter.presentation.utils.CurrencyConverterUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -122,7 +124,7 @@ class CurrencyConverterViewModel @Inject constructor(
                         it.copy(
                             isLoading = false,
                             isRefreshing = false,
-                            errorMessage = "Sin conexión y sin caché disponible"
+                            errorMessage = UiText.StringRes(R.string.converter_error_no_cache)
                         )
                     }
                 }

@@ -7,6 +7,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.R.drawable
 import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDesignTokens
 
@@ -14,7 +16,7 @@ import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDesi
 fun ContactsCancelButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    label: String = "Cancelar"
+    label: String = stringResource(R.string.common_cancel)
 ) {
     TextButton(
         onClick = onClick,

@@ -26,11 +26,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
@@ -101,8 +103,8 @@ fun ContactsScreen(
                             item(key = "empty") {
                                 SwissKitEmptyView(
                                     icon = R.drawable.icon_contact_plus,
-                                    title = "Sin contactos",
-                                    subtitle = "Crea tu primer contacto con el botón +",
+                                    title = stringResource(R.string.contacts_empty_title),
+                                    subtitle = stringResource(R.string.contacts_empty_subtitle),
                                     modifier = Modifier.fillParentMaxSize(),
                                     iconTint = Color.White
                                 )
@@ -113,7 +115,7 @@ fun ContactsScreen(
                                     tint = ContactsDesignTokens.Primary,
                                     query = uiState.searchQuery,
                                     onQueryChange = viewModel::onSearchQueryChange,
-                                    description = "Buscar contacto…",
+                                    description = stringResource(R.string.contacts_search_cd),
                                     modifier = Modifier.padding(horizontal = ContactsDesignTokens.spacingXXXMediumPadding)
                                 )
                             }
@@ -122,8 +124,8 @@ fun ContactsScreen(
                                 item(key = "empty_filtered") {
                                     SwissKitEmptyView(
                                         icon = R.drawable.icon_contact_plus,
-                                        title = "Sin resultados",
-                                        subtitle = "Ningún contacto coincide con tu búsqueda",
+                                        title = stringResource(R.string.contacts_no_results_title),
+                                        subtitle = stringResource(R.string.contacts_no_results_subtitle),
                                         modifier = Modifier.fillParentMaxSize(),
                                         iconTint = Color.White
                                     )
@@ -155,7 +157,7 @@ fun ContactsScreen(
 
                 // Toast
                 SwissKitToast(
-                    message = uiState.toastMessage,
+                    message = uiState.toastMessage?.asString(context),
                     onDismiss = viewModel::onDismissToast
                 )
             }
@@ -169,7 +171,7 @@ fun ContactsScreen(
         ContactSheet(
             nameDraft = uiState.nameDraft,
             phoneDraft = uiState.phoneDraft,
-            phoneError = uiState.phoneError,
+            phoneError = uiState.phoneError?.asString(context),
             isEditing = uiState.editingContact != null,
             onNameChange = viewModel::onNameChange,
             onPhoneChange = viewModel::onPhoneChange,
@@ -191,18 +193,18 @@ fun ContactsScreen(
     uiState.confirmDeleteContact?.let { contact ->
         AlertDialog(
             onDismissRequest = viewModel::onDismissDeleteConfirm,
-            title = { Text("¿Eliminar contacto?") },
+            title = { Text(stringResource(R.string.contacts_delete_title)) },
             text = {
-                Text("Se eliminará \"${contact.name}\" de tu lista de contactos.")
+                Text(stringResource(R.string.contacts_delete_message, contact.name))
             },
             confirmButton = {
                 TextButton(onClick = viewModel::onConfirmDeleteContact) {
-                    Text("Eliminar", color = DesignTokens.deleteColor, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.common_delete), color = DesignTokens.deleteColor, fontWeight = FontWeight.SemiBold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = viewModel::onDismissDeleteConfirm) {
-                    Text("Cancelar")
+                    Text(stringResource(R.string.common_cancel))
                 }
             }
         )

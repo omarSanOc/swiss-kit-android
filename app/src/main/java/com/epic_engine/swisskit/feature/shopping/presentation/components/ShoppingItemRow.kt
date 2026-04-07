@@ -99,7 +99,7 @@ fun ShoppingItemRow(
                 modifier = Modifier
                     .size(ShoppingDesignTokens.dimensLarge)
                     .clip(CircleShape)
-                    .background(ShoppingDesignTokens.editColor)
+                    .background(DesignTokens.editColor)
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,

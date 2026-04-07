@@ -13,6 +13,8 @@ import com.epic_engine.swisskit.feature.qrscanner.domain.usecase.DeleteQRScanUse
 import com.epic_engine.swisskit.feature.qrscanner.domain.usecase.GenerateQRBitmapUseCase
 import com.epic_engine.swisskit.feature.qrscanner.domain.usecase.ObserveQRScansUseCase
 import com.epic_engine.swisskit.feature.qrscanner.domain.usecase.UpdateQRScanLabelUseCase
+import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.feature.qrscanner.presentation.util.QRScannerEvent
 import com.epic_engine.swisskit.feature.qrscanner.presentation.util.QRScannerUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -86,7 +88,7 @@ class QRScannerViewModel @Inject constructor(
             }.onSuccess {
                 _events.emit(QRScannerEvent.QRSavedToGallery)
             }.onFailure {
-                _events.emit(QRScannerEvent.ShowError("Error al guardar imagen"))
+                _events.emit(QRScannerEvent.ShowError(UiText.StringRes(R.string.qr_error_save_image)))
             }
         }
     }
@@ -104,7 +106,7 @@ class QRScannerViewModel @Inject constructor(
         val draft = _uiState.value.editLabelDraft
         viewModelScope.launch {
             runCatching { updateLabel(scan.id, draft) }
-                .onFailure { _events.emit(QRScannerEvent.ShowError("Error al actualizar etiqueta")) }
+                .onFailure { _events.emit(QRScannerEvent.ShowError(UiText.StringRes(R.string.qr_error_update_label))) }
             _uiState.update { it.copy(editingLabelScan = null, editLabelDraft = "") }
         }
     }
@@ -121,7 +123,7 @@ class QRScannerViewModel @Inject constructor(
         val scan = _uiState.value.showDeleteScanConfirm ?: return
         viewModelScope.launch {
             runCatching { deleteScan(scan) }
-                .onFailure { _events.emit(QRScannerEvent.ShowError(it.message ?: "Error")) }
+                .onFailure { _events.emit(QRScannerEvent.ShowError(UiText.StringRes(R.string.common_error))) }
             _uiState.update { it.copy(showDeleteScanConfirm = null) }
         }
     }
@@ -134,7 +136,7 @@ class QRScannerViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching { deleteAllScans() }
                 .onSuccess { _events.emit(QRScannerEvent.AllScansDeleted) }
-                .onFailure { _events.emit(QRScannerEvent.ShowError(it.message ?: "Error")) }
+                .onFailure { _events.emit(QRScannerEvent.ShowError(UiText.StringRes(R.string.common_error))) }
             _uiState.update { it.copy(showDeleteAllConfirm = false) }
         }
     }

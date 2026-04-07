@@ -20,7 +20,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitCard
 import com.epic_engine.swisskit.feature.finance.domain.usecase.FinanceCategorySelectionEngine
@@ -52,19 +54,19 @@ fun FinanceInlineFilterPanel(
                 verticalArrangement = Arrangement.spacedBy(DesignTokens.dimensXSmall)
             ) {
                 val allChips = listOf(
-                    FinanceCategorySelectionEngine.LABEL_ALL,
-                    FinanceCategorySelectionEngine.LABEL_INCOME,
-                    FinanceCategorySelectionEngine.LABEL_EXPENSE
+                    FinanceCategorySelectionEngine.KEY_ALL,
+                    FinanceCategorySelectionEngine.KEY_INCOME,
+                    FinanceCategorySelectionEngine.KEY_EXPENSE
                 ) + availableCategories
 
-                allChips.forEach { label ->
-                    val isSelected = engine.isSelected(label, selectedCategories)
+                allChips.forEach { category ->
+                    val isSelected = engine.isSelected(category, selectedCategories)
                     FilterChip(
                         selected = isSelected,
-                        onClick = { onToggleCategoryFilter(label) },
+                        onClick = { onToggleCategoryFilter(category) },
                         label = {
                             Text(
-                                text = label,
+                                text = category.toDisplayLabel(),
                                 color = if (isSelected) Color.White else Color.DarkGray
                             )
                         },
@@ -86,4 +88,12 @@ fun FinanceInlineFilterPanel(
             }
         }
     }
+}
+
+@Composable
+private fun String.toDisplayLabel(): String = when (this) {
+    FinanceCategorySelectionEngine.KEY_ALL -> stringResource(R.string.finance_filter_all)
+    FinanceCategorySelectionEngine.KEY_INCOME -> stringResource(R.string.finance_filter_income)
+    FinanceCategorySelectionEngine.KEY_EXPENSE -> stringResource(R.string.finance_filter_expense)
+    else -> this
 }

@@ -3,6 +3,8 @@ package com.epic_engine.swisskit.feature.converter.presentation.currency
 import com.epic_engine.swisskit.feature.converter.domain.model.Rates
 import com.epic_engine.swisskit.feature.converter.domain.repository.RatesRepository
 import com.epic_engine.swisskit.feature.converter.domain.usecase.GetLatestRatesUseCase
+import com.epic_engine.swisskit.feature.converter.presentation.utils.CurrencyConverterEvent
+import com.epic_engine.swisskit.feature.converter.presentation.viewmodel.CurrencyConverterViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers

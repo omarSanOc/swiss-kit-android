@@ -31,8 +31,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.R
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitToast
 import com.epic_engine.swisskit.feature.converter.domain.model.CurrencyCatalog
@@ -74,7 +77,7 @@ fun CurrencyConverterContent(
             verticalArrangement = Arrangement.spacedBy(DesignTokens.dimensXXXMedium)
         ) {
             // Card: Divisas
-            ConverterSectionCard(title = "Divisas") {
+            ConverterSectionCard(title = stringResource(R.string.converter_currencies_title)) {
                 // Picker "De"
                 CurrencyPickerDropdown(
                     label = "De",
@@ -132,7 +135,7 @@ fun CurrencyConverterContent(
                 if (uiState.errorMessage != null) {
                     Spacer(modifier = Modifier.height(DesignTokens.dimensXSmall))
                     Text(
-                        text = uiState.errorMessage,
+                        text = uiState.errorMessage.asString(context),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error
                     )
@@ -142,7 +145,7 @@ fun CurrencyConverterContent(
                 if (uiState.isOffline) {
                     Spacer(modifier = Modifier.height(DesignTokens.dimensXXSmall))
                     Text(
-                        text = "Usando datos en caché",
+                        text = stringResource(R.string.converter_data_cache),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -150,7 +153,7 @@ fun CurrencyConverterContent(
             }
 
             // Card: Monto
-            ConverterSectionCard(title = "Monto") {
+            ConverterSectionCard(title = stringResource(R.string.converter_amount_title)) {
                 ConverterOutlinedField(
                     value = uiState.amountInput,
                     onValueChange = { onEvent(CurrencyConverterEvent.AmountChanged(it)) },
@@ -161,7 +164,7 @@ fun CurrencyConverterContent(
             }
 
             // Card: Resultado
-            ConverterSectionCard(title = "Resultado") {
+            ConverterSectionCard(title = stringResource(R.string.converter_result_title)) {
                 ConverterReadOnlyField(
                     value = uiState.convertedResult,
                     placeholder = "—",
@@ -193,7 +196,7 @@ fun CurrencyConverterContent(
 
         // Toast de confirmación (solo en Android 12L o menor)
         SwissKitToast(
-            message = if (uiState.showCopiedToast) "Copiado al portapapeles" else null,
+            message = if (uiState.showCopiedToast) stringResource(R.string.converter_copy_clipboard) else null,
             onDismiss = { onEvent(CurrencyConverterEvent.DismissCopiedToast) }
         )
     }

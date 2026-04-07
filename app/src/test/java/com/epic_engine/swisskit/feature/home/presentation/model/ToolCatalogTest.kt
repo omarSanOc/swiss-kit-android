@@ -18,10 +18,10 @@ class ToolCatalogTest {
     }
 
     @Test
-    fun all_tools_have_non_blank_name_and_description() {
+    fun all_tools_have_valid_name_and_description_resource_ids() {
         ToolCatalog.all.forEach { tool ->
-            assertTrue(tool.name.isNotEmpty())
-            assertTrue(tool.description.isNotEmpty())
+            assertTrue("name resource id must be > 0", tool.name > 0)
+            assertTrue("description resource id must be > 0", tool.description > 0)
         }
     }
 

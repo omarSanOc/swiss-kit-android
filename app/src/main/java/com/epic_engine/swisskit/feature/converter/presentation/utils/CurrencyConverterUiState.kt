@@ -1,5 +1,6 @@
 package com.epic_engine.swisskit.feature.converter.presentation.utils
 
+import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.feature.converter.domain.model.Currency
 import com.epic_engine.swisskit.feature.converter.domain.model.Rates
 
@@ -12,7 +13,7 @@ data class CurrencyConverterUiState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val isOffline: Boolean = false,      // true cuando se usa cache stale
-    val errorMessage: String? = null,
+    val errorMessage: UiText? = null,
     val showCopiedToast: Boolean = false
 ) {
     val isResultAvailable: Boolean get() = convertedResult.isNotBlank() && rates != null

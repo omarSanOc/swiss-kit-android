@@ -23,8 +23,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.epic_engine.swisskit.R
@@ -39,7 +40,6 @@ import com.epic_engine.swisskit.feature.contacts.presentation.components.Categor
 import com.epic_engine.swisskit.feature.contacts.presentation.theme.ContactsDesignTokens
 import com.epic_engine.swisskit.feature.contacts.presentation.util.CategoriesEvent
 import com.epic_engine.swisskit.feature.contacts.presentation.viewmodel.CategoriesViewModel
-import com.epic_engine.swisskit.feature.home.presentation.theme.HomeDesignTokens.greenContact
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,6 +48,7 @@ fun CategoriesScreen(
     viewModel: CategoriesViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     var revealedCategoryId by rememberSaveable { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
@@ -70,7 +71,7 @@ fun CategoriesScreen(
                     topBar = {
                         TopAppBar(
                             title = {
-                                Text("Categorías", color = Color.White, fontWeight = FontWeight.Bold)
+                                Text(stringResource(R.string.category_title), color = Color.White, fontWeight = FontWeight.Bold)
                             },
                             colors = TopAppBarDefaults.topAppBarColors(
                                 containerColor = Color.Transparent,
@@ -102,8 +103,8 @@ fun CategoriesScreen(
                             item(key = "empty") {
                                 SwissKitEmptyView(
                                     icon = R.drawable.icon_folder_plus,
-                                    title = "Sin categorías",
-                                    subtitle = "Crea tu primera categoría con el botón +",
+                                    title = stringResource(R.string.category_empty_title),
+                                    subtitle = stringResource(R.string.category_empty_subtitle),
                                     modifier = Modifier.fillParentMaxSize(),
                                     iconTint = Color.White
                                 )
@@ -114,7 +115,7 @@ fun CategoriesScreen(
                                     tint = ContactsDesignTokens.Primary,
                                     query = uiState.searchQuery,
                                     onQueryChange = viewModel::onSearchQueryChange,
-                                    description = "Buscar categoría…",
+                                    description = stringResource(R.string.category_search_cd),
                                     modifier = Modifier.padding(horizontal = ContactsDesignTokens.spacingXXXMediumPadding)
                                 )
                             }
@@ -123,8 +124,8 @@ fun CategoriesScreen(
                                 item(key = "empty_filtered") {
                                     SwissKitEmptyView(
                                         icon = R.drawable.icon_folder_plus,
-                                        title = "Sin resultados",
-                                        subtitle = "Ninguna categoría coincide con tu búsqueda",
+                                        title = stringResource(R.string.category_no_results_title),
+                                        subtitle = stringResource(R.string.category_no_results_subtitle),
                                         modifier = Modifier.fillParentMaxSize(),
                                         iconTint = Color.White
                                     )
@@ -156,7 +157,7 @@ fun CategoriesScreen(
 
                 // Toast
                 SwissKitToast(
-                    message = uiState.toastMessage,
+                    message = uiState.toastMessage?.asString(context),
                     onDismiss = viewModel::onDismissToast
                 )
             }
@@ -188,18 +189,18 @@ fun CategoriesScreen(
     uiState.confirmDeleteCategory?.let { category ->
         AlertDialog(
             onDismissRequest = viewModel::onDismissDeleteConfirm,
-            title = { Text("¿Eliminar categoría?") },
+            title = { Text(stringResource(R.string.category_delete_title)) },
             text = {
-                Text("Se eliminará \"${category.title}\" y todos sus contactos. Esta acción no se puede deshacer.")
+                Text(stringResource(R.string.category_delete_message, category.title))
             },
             confirmButton = {
                 TextButton(onClick = viewModel::onConfirmDeleteCategory) {
-                    Text("Eliminar", color = DesignTokens.deleteColor, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.common_delete), color = DesignTokens.deleteColor, fontWeight = FontWeight.SemiBold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = viewModel::onDismissDeleteConfirm) {
-                    Text("Cancelar")
+                    Text(stringResource(R.string.common_cancel))
                 }
             }
         )
