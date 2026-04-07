@@ -1,6 +1,7 @@
 package com.epic_engine.swisskit.core.common
 
 import androidx.compose.ui.graphics.Color
+import androidx.core.graphics.toColorInt
 
 /**
  * Crea un Color desde una cadena hexadecimal.
@@ -13,5 +14,5 @@ fun Color(hex: String): Color {
         8 -> sanitized
         else -> throw IllegalArgumentException("Color hex invalido: $hex")
     }
-    return Color(android.graphics.Color.parseColor("#$value"))
+    return Color("#$value".toColorInt())
 }
