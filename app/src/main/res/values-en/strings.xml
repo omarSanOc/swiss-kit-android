@@ -130,6 +130,10 @@
     <string name="notes_reminder_channel_name">Note reminders</string>
     <string name="notes_reminder_body">You have a pending reminder</string>
     <string name="notes_reminder_default_title">Reminder</string>
+    <string name="note_reminder_daily_label">Remind me every day at the same time</string>
+    <string name="note_reminder_exact_alarm_required">Exact alarm access is required to schedule this reminder</string>
+    <string name="note_reminder_notification_required">Notification permission is required to show this reminder</string>
+    <string name="note_reminder_permission_denied">Permission denied — reminder was not configured</string>
 
     <!-- Shopping -->
     <string name="shopping_title">Shopping list</string>

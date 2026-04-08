@@ -130,6 +130,10 @@
     <string name="notes_reminder_channel_name">Recordatorios de notas</string>
     <string name="notes_reminder_body">Tienes un recordatorio pendiente</string>
     <string name="notes_reminder_default_title">Recordatorio</string>
+    <string name="note_reminder_daily_label">Recordarlo todos los días a la misma hora</string>
+    <string name="note_reminder_exact_alarm_required">Se necesita acceso a alarmas exactas para programar el recordatorio</string>
+    <string name="note_reminder_notification_required">Se necesita permiso de notificaciones para mostrar el recordatorio</string>
+    <string name="note_reminder_permission_denied">Permiso denegado — el recordatorio no fue configurado</string>
 
     <!-- Shopping -->
     <string name="shopping_title">Lista de compras</string>

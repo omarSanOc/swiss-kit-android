@@ -10,5 +10,6 @@ data class NoteEntity(
     val content: String,
     val createdAt: Long,
     val updatedAt: Long,
-    val reminderAt: Long? = null
+    val reminderAt: Long? = null,
+    val reminderRecurrence: String? = null
 )

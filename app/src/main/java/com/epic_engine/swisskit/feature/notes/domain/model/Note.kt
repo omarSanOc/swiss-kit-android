@@ -6,5 +6,6 @@ data class Note(
     val content: String,
     val createdAt: Long,
     val updatedAt: Long,
-    val reminderAt: Long? = null
+    val reminderAt: Long? = null,
+    val reminderRecurrence: NoteReminderRecurrence? = null
 )

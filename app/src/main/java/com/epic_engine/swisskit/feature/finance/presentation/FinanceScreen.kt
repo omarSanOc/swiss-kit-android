@@ -6,11 +6,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,8 +28,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -41,7 +37,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,14 +49,13 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.launch
 import com.epic_engine.swisskit.R
-import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.core.designsystem.DesignTokens
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitEmptyView
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitFAB
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitSearchBar
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitToast
 import com.epic_engine.swisskit.feature.finance.domain.model.Finance
 import com.epic_engine.swisskit.feature.finance.domain.model.FinanceSortOrder
 import com.epic_engine.swisskit.feature.finance.domain.model.FinanceType
@@ -84,14 +78,13 @@ fun FinanceScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val snackbarHostState = remember { SnackbarHostState() }
+    var toastMessage by remember { mutableStateOf<String?>(null) }
     var showMenu by remember { mutableStateOf(false) }
     var itemToDelete by remember { mutableStateOf<Finance?>(null) }
     var showDeleteSelectedAlert by remember { mutableStateOf(false) }
     var revealedItemId by remember { mutableStateOf<String?>(null) }
 
     val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale("es", "MX")) }
-    val scope = rememberCoroutineScope()
     var pendingBackupJson by remember { mutableStateOf<String?>(null) }
 
     val openDocumentLauncher = rememberLauncherForActivityResult(
@@ -112,7 +105,7 @@ fun FinanceScreen(
                     stream.write(json.toByteArray())
                 }
                 pendingBackupJson = null
-                scope.launch { snackbarHostState.showSnackbar(context.getString(R.string.finance_file_saved)) }
+                toastMessage = context.getString(R.string.finance_file_saved)
             }
         }
     }
@@ -130,7 +123,7 @@ fun FinanceScreen(
 
     LaunchedEffect(uiState.userMessage) {
         uiState.userMessage?.let {
-            snackbarHostState.showSnackbar(it.asString(context))
+            toastMessage = it.asString(context)
             viewModel.onEvent(FinanceEvent.ClearMessage)
         }
     }
@@ -331,7 +324,6 @@ fun FinanceScreen(
                         )
                     }
                 },
-                snackbarHost = { SnackbarHost(snackbarHostState) }
             ) { padding ->
                 LazyColumn(
                     modifier = Modifier
@@ -463,6 +455,7 @@ fun FinanceScreen(
                     }
                 }
             }
+            SwissKitToast(message = toastMessage, onDismiss = { toastMessage = null })
         }
     })
 }

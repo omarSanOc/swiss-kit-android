@@ -7,9 +7,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitAnimatedBackgroundView
+import com.epic_engine.swisskit.core.ui.theme.SwissKitTheme
 import com.epic_engine.swisskit.navigation.SwissKitNavGraph
-import com.epic_engine.swisskit.ui.components.AnimatedBackgroundView
-import com.epic_engine.swisskit.ui.theme.SwissKitTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             SwissKitTheme {
                 Box(modifier = Modifier.fillMaxSize()) {
-                    AnimatedBackgroundView()
+                    SwissKitAnimatedBackgroundView()
                     SwissKitNavGraph()
                 }
             }

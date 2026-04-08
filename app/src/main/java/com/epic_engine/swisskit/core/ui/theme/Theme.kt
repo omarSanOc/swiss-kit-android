@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.ui.theme
+package com.epic_engine.swisskit.core.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

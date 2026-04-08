@@ -19,8 +19,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -68,7 +66,6 @@ fun QRScannerScreen(
 ) {
     val cameraUiState by qrCameraViewModel.uiState.collectAsStateWithLifecycle()
     val scannerUiState by qrScannerViewModel.uiState.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
 
@@ -95,7 +92,7 @@ fun QRScannerScreen(
     LaunchedEffect(Unit) {
         qrCameraViewModel.events.collect { event ->
             when (event) {
-                is QRCameraEvent.ShowError -> snackbarHostState.showSnackbar(event.message.asString(context))
+                is QRCameraEvent.ShowError -> screenToastMessage = event.message.asString(context)
             }
         }
     }
@@ -103,7 +100,7 @@ fun QRScannerScreen(
     LaunchedEffect(Unit) {
         qrScannerViewModel.events.collect { event ->
             when (event) {
-                is QRScannerEvent.ShowError -> snackbarHostState.showSnackbar(event.message.asString(context))
+                is QRScannerEvent.ShowError -> screenToastMessage = event.message.asString(context)
                 QRScannerEvent.QRSavedToGallery -> screenToastMessage = context.getString(R.string.qr_saved_to_gallery)
                 QRScannerEvent.AllScansDeleted -> { /* handled via state */ }
                 is QRScannerEvent.ShareQR -> shareQRBitmap(context, event.bitmap)
@@ -153,7 +150,6 @@ fun QRScannerScreen(
                         )
                     }
                 },
-                snackbarHost = { SnackbarHost(snackbarHostState) }
             ) { padding ->
                 if (selectedIndex == 1) {
                     // Generador: Column scrollable dentro del área de Scaffold

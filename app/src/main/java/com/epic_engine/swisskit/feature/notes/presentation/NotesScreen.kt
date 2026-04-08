@@ -11,8 +11,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -29,14 +27,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import com.epic_engine.swisskit.R
-import com.epic_engine.swisskit.core.ui.UiText
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitFAB
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitSearchBar
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitToast
 import com.epic_engine.swisskit.feature.home.presentation.theme.HomeDesignTokens
 import com.epic_engine.swisskit.feature.notes.presentation.components.NoteRowCard
 import com.epic_engine.swisskit.feature.notes.presentation.components.NotesEmptyState
@@ -53,7 +51,7 @@ fun NotesScreen(
     viewModel: NotesViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
+    var toastMessage by remember { mutableStateOf<String?>(null) }
     val context = LocalContext.current
 
     var revealedNoteId by rememberSaveable { mutableStateOf<String?>(null) }
@@ -63,9 +61,9 @@ fun NotesScreen(
             when (event) {
                 is NotesEvent.NavigateToCreate -> onNavigateToCreate()
                 is NotesEvent.NavigateToDetail -> onNavigateToDetail(event.noteId)
-                is NotesEvent.ShowError -> snackbarHostState.showSnackbar(event.message.asString(context))
-                NotesEvent.SelectionDeleted -> snackbarHostState.showSnackbar(context.getString(R.string.notes_selection_deleted_snackbar))
-                NotesEvent.NoteDeleted -> snackbarHostState.showSnackbar(context.getString(R.string.notes_deleted_snackbar))
+                is NotesEvent.ShowError -> toastMessage = event.message.asString(context)
+                NotesEvent.SelectionDeleted -> toastMessage = context.getString(R.string.notes_selection_deleted_snackbar)
+                NotesEvent.NoteDeleted -> toastMessage = context.getString(R.string.notes_deleted_snackbar)
             }
         }
     }
@@ -91,7 +89,6 @@ fun NotesScreen(
                         colors = listOf(NotesDesignTokens.FABGradientTop, NotesDesignTokens.FABGradientBottom)
                     )
                 },
-                snackbarHost = { SnackbarHost(snackbarHostState) }
             ) { padding ->
                 LazyColumn(
                     modifier = Modifier
@@ -144,6 +141,11 @@ fun NotesScreen(
                 }
             }
         }
+    )
+
+    SwissKitToast(
+        message = toastMessage,
+        onDismiss = { toastMessage = null }
     )
 
     // Diálogo de confirmación: eliminar nota individual

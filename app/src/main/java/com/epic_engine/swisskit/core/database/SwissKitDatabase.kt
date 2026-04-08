@@ -24,7 +24,7 @@ import com.epic_engine.swisskit.feature.shopping.data.local.ShoppingItemEntity
         ContactEntity::class,
         QRScanEntity::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = true
 )
 abstract class SwissKitDatabase : RoomDatabase() {

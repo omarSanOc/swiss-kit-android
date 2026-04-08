@@ -1,6 +1,12 @@
 package com.epic_engine.swisskit.feature.notes.presentation
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -20,8 +26,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -44,10 +48,14 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.designsystem.components.SwissKitBackground
+import com.epic_engine.swisskit.core.designsystem.components.SwissKitToast
+import com.epic_engine.swisskit.feature.notes.domain.model.NoteReminderRequest
 import com.epic_engine.swisskit.feature.notes.presentation.components.NoteFormattingToolbar
 import com.epic_engine.swisskit.feature.notes.presentation.components.ReminderBottomSheet
 import com.epic_engine.swisskit.feature.notes.presentation.theme.NotesDesignTokens
@@ -63,11 +71,35 @@ fun NoteDetailScreen(
     viewModel: NoteDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
+    var toastMessage by remember { mutableStateOf<String?>(null) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showOverflowMenu by remember { mutableStateOf(false) }
     val isDark = isSystemInDarkTheme()
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    // Pending reminder request to confirm after permission is granted
+    var pendingReminderAfterNotifPermission by remember { mutableStateOf<NoteReminderRequest?>(null) }
+
+    // POST_NOTIFICATIONS launcher (Android 13+)
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        val request = pendingReminderAfterNotifPermission
+        pendingReminderAfterNotifPermission = null
+        if (granted && request != null) {
+            viewModel.onSetReminder(request)
+        } else if (!granted) {
+            toastMessage = context.getString(R.string.note_reminder_permission_denied)
+        }
+    }
+
+    // Exact alarm settings launcher
+    val exactAlarmSettingsLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        // Result is unreliable — check is done in ON_RESUME
+    }
 
     // Local TextFieldValue keeps cursor position for markdown formatting
     var contentFieldValue by remember { mutableStateOf(TextFieldValue(uiState.contentDraft)) }
@@ -77,14 +109,47 @@ fun NoteDetailScreen(
         }
     }
 
+    // Re-check exact alarm permission on resume (user may have granted it in system settings)
+    LaunchedEffect(lifecycleOwner) {
+        lifecycleOwner.lifecycle.addObserver(
+            object : androidx.lifecycle.DefaultLifecycleObserver {
+                override fun onResume(owner: androidx.lifecycle.LifecycleOwner) {
+                    viewModel.onResumeCheckPendingReminder()
+                }
+            }
+        )
+    }
+
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
                 NoteDetailEvent.Saved, NoteDetailEvent.Deleted -> onNavigateBack()
-                is NoteDetailEvent.ShowError -> snackbarHostState.showSnackbar(event.message.asString(context))
-                is NoteDetailEvent.ReminderSet ->
-                    snackbarHostState.showSnackbar(context.getString(R.string.note_detail_reminder_set))
+                is NoteDetailEvent.ShowError -> toastMessage = event.message.asString(context)
+                is NoteDetailEvent.ReminderSet -> onNavigateBack()
+                NoteDetailEvent.RequestExactAlarmPermission -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                        exactAlarmSettingsLauncher.launch(intent)
+                    }
+                    toastMessage = context.getString(R.string.note_reminder_exact_alarm_required)
+                }
             }
+        }
+    }
+
+    // Helper: request reminder after ensuring POST_NOTIFICATIONS permission
+    fun requestReminderWithPermissionCheck(request: NoteReminderRequest) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val permission = Manifest.permission.POST_NOTIFICATIONS
+            when (ContextCompat.checkSelfPermission(context, permission)) {
+                PackageManager.PERMISSION_GRANTED -> viewModel.onSetReminder(request)
+                else -> {
+                    pendingReminderAfterNotifPermission = request
+                    notificationPermissionLauncher.launch(permission)
+                }
+            }
+        } else {
+            viewModel.onSetReminder(request)
         }
     }
 
@@ -127,7 +192,6 @@ fun NoteDetailScreen(
             Scaffold(
                 containerColor = Color.Transparent,
                 contentColor = MaterialTheme.colorScheme.onSurface,
-                snackbarHost = { SnackbarHost(snackbarHostState) },
                 topBar = {
                     TopAppBar(
                         title = { Text(
@@ -278,10 +342,9 @@ fun NoteDetailScreen(
                     )
                 }
             }
+            SwissKitToast(message = toastMessage, onDismiss = { toastMessage = null })
         }
     )
-
-
 
     // ── Delete confirmation dialog ─────────────────────────────────────────────
     if (showDeleteDialog) {
@@ -308,7 +371,7 @@ fun NoteDetailScreen(
     if (uiState.showReminderPicker) {
         ReminderBottomSheet(
             isDark = isDark,
-            onConfirm = viewModel::onSetReminder,
+            onConfirm = { request -> requestReminderWithPermissionCheck(request) },
             onDismiss = viewModel::onDismissReminderPicker
         )
     }

@@ -14,6 +14,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
@@ -28,9 +30,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.designsystem.DesignTokens
+import com.epic_engine.swisskit.feature.notes.domain.model.NoteReminderRecurrence
+import com.epic_engine.swisskit.feature.notes.domain.model.NoteReminderRequest
 import com.epic_engine.swisskit.feature.notes.presentation.theme.NotesDesignTokens
 import java.util.Calendar
 
@@ -38,21 +44,20 @@ import java.util.Calendar
 @Composable
 fun ReminderBottomSheet(
     isDark: Boolean,
-    onConfirm: (Long) -> Unit,
+    onConfirm: (NoteReminderRequest) -> Unit,
     onDismiss: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val accentColor = if (isDark) NotesDesignTokens.accent else NotesDesignTokens.Primary
     val sheetBg = if (isDark) NotesDesignTokens.ReminderSheetDark else NotesDesignTokens.ReminderSheetLight
 
-    // Internal navigation: date → time
     var showTimePicker by remember { mutableStateOf(false) }
     var selectedDateMillis by remember { mutableStateOf<Long?>(null) }
+    var isDaily by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
     val timePickerState = rememberTimePickerState()
 
     if (!showTimePicker) {
-        // ── Date picker ───────────────────────────────────────────────────────
         DatePickerDialog(
             onDismissRequest = onDismiss,
             confirmButton = {
@@ -70,7 +75,6 @@ fun ReminderBottomSheet(
             DatePicker(state = datePickerState)
         }
     } else {
-        // ── Time picker in a ModalBottomSheet ─────────────────────────────────
         ModalBottomSheet(
             onDismissRequest = onDismiss,
             sheetState = sheetState,
@@ -105,6 +109,26 @@ fun ReminderBottomSheet(
 
                 TimePicker(state = timePickerState)
 
+                // Daily recurrence toggle
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = DesignTokens.dimensXSmall),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.note_reminder_daily_label),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Switch(
+                        checked = isDaily,
+                        onCheckedChange = { isDaily = it },
+                        colors = SwitchDefaults.colors(checkedThumbColor = Color.White, checkedTrackColor = accentColor)
+                    )
+                }
+
                 // Action buttons
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -126,7 +150,8 @@ fun ReminderBottomSheet(
                                 set(Calendar.SECOND, 0)
                                 set(Calendar.MILLISECOND, 0)
                             }
-                            onConfirm(cal.timeInMillis)
+                            val recurrence = if (isDaily) NoteReminderRecurrence.DAILY else NoteReminderRecurrence.ONE_TIME
+                            onConfirm(NoteReminderRequest(cal.timeInMillis, recurrence))
                         },
                         modifier = Modifier.weight(1f),
                         colors = androidx.compose.material3.ButtonDefaults.buttonColors(

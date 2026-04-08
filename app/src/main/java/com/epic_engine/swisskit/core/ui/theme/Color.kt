@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.ui.theme
+package com.epic_engine.swisskit.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

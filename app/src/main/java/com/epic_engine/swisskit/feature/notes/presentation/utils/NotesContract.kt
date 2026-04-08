@@ -2,6 +2,8 @@ package com.epic_engine.swisskit.feature.notes.presentation.utils
 
 import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.feature.notes.domain.model.Note
+import com.epic_engine.swisskit.feature.notes.domain.model.NoteReminderRecurrence
+import com.epic_engine.swisskit.feature.notes.domain.model.NoteReminderRequest
 
 // ── Lista ────────────────────────────────────────────────────────────
 data class NotesUiState(
@@ -29,12 +31,15 @@ data class NoteDetailUiState(
     val contentDraft: String = "",
     val isSaving: Boolean = false,
     val showReminderPicker: Boolean = false,
-    val reminderAt: Long? = null
+    val reminderAt: Long? = null,
+    val reminderRecurrence: NoteReminderRecurrence? = null,
+    val pendingReminderRequest: NoteReminderRequest? = null
 )
 
 sealed interface NoteDetailEvent {
     data object Saved : NoteDetailEvent
     data object Deleted : NoteDetailEvent
     data class ShowError(val message: UiText) : NoteDetailEvent
-    data class ReminderSet(val at: Long) : NoteDetailEvent
+    data class ReminderSet(val at: Long, val recurrence: NoteReminderRecurrence) : NoteDetailEvent
+    data object RequestExactAlarmPermission : NoteDetailEvent
 }

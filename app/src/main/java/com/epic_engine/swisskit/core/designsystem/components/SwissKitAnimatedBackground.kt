@@ -1,4 +1,4 @@
-package com.epic_engine.swisskit.ui.components
+package com.epic_engine.swisskit.core.designsystem.components
 
 import android.graphics.RenderEffect
 import android.graphics.Shader
@@ -22,17 +22,18 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.epic_engine.swisskit.ui.theme.blueAnimation
-import com.epic_engine.swisskit.ui.theme.greenAnimation
-import com.epic_engine.swisskit.ui.theme.orangeAnimation
-import com.epic_engine.swisskit.ui.theme.purpleAnimation
-import com.epic_engine.swisskit.ui.theme.redAnimation
-import com.epic_engine.swisskit.ui.theme.redBackground
-import com.epic_engine.swisskit.ui.theme.redHome
-import com.epic_engine.swisskit.ui.theme.yellowAnimation
+import com.epic_engine.swisskit.core.ui.theme.blueAnimation
+import com.epic_engine.swisskit.core.ui.theme.greenAnimation
+import com.epic_engine.swisskit.core.ui.theme.orangeAnimation
+import com.epic_engine.swisskit.core.ui.theme.purpleAnimation
+import com.epic_engine.swisskit.core.ui.theme.redAnimation
+import com.epic_engine.swisskit.core.ui.theme.redBackground
+import com.epic_engine.swisskit.core.ui.theme.redHome
+import com.epic_engine.swisskit.core.ui.theme.yellowAnimation
+
 
 @Composable
-fun AnimatedBackgroundView(
+fun SwissKitAnimatedBackgroundView(
     animateBackground: Boolean = true,
     modifier: Modifier = Modifier
 ) {
