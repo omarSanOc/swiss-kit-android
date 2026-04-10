@@ -49,7 +49,7 @@ fun SwissKitAnimatedBackgroundView(
     }
 
     Box(modifier = modifier.fillMaxSize()) {
-        // Frame 0: gradiente estático — mismo rojo que el splash (#FB2A2A arriba)
+        // Frame 0: static gradient — same red as the splash screen (#FB2A2A at top)
         Canvas(modifier = Modifier.fillMaxSize()) {
             drawRect(
                 brush = Brush.verticalGradient(
@@ -58,7 +58,7 @@ fun SwissKitAnimatedBackgroundView(
             )
         }
 
-        // Frame 1+: overlay con blur y rotación, entra después del primer paint
+        // Frame 1+: blurred rotating overlay, fades in after the first paint
         if (animateBackground) {
             AnimatedOverlay()
         }

@@ -1,8 +1,9 @@
 package com.epic_engine.swisskit.feature.converter.presentation.currency
 
 import com.epic_engine.swisskit.feature.converter.domain.model.Rates
-import com.epic_engine.swisskit.feature.converter.domain.repository.RatesRepository
 import com.epic_engine.swisskit.feature.converter.domain.usecase.GetLatestRatesUseCase
+import com.epic_engine.swisskit.feature.converter.domain.usecase.GetSelectedCurrenciesUseCase
+import com.epic_engine.swisskit.feature.converter.domain.usecase.SaveSelectedCurrenciesUseCase
 import com.epic_engine.swisskit.feature.converter.presentation.utils.CurrencyConverterEvent
 import com.epic_engine.swisskit.feature.converter.presentation.viewmodel.CurrencyConverterViewModel
 import io.mockk.coEvery
@@ -30,7 +31,8 @@ class CurrencyConverterViewModelTest {
     private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
 
     private lateinit var getLatestRates: GetLatestRatesUseCase
-    private lateinit var ratesRepository: RatesRepository
+    private lateinit var getSelectedCurrencies: GetSelectedCurrenciesUseCase
+    private lateinit var saveSelectedCurrencies: SaveSelectedCurrenciesUseCase
 
     private val fakeRates = Rates(
         base = "USD",
@@ -42,9 +44,10 @@ class CurrencyConverterViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         getLatestRates = mockk()
-        ratesRepository = mockk()
+        getSelectedCurrencies = mockk()
+        saveSelectedCurrencies = mockk()
         // loadSavedPreferences() always called in init
-        coEvery { ratesRepository.getSelectedCurrencies() } returns null
+        coEvery { getSelectedCurrencies() } returns null
     }
 
     @After
@@ -57,7 +60,7 @@ class CurrencyConverterViewModelTest {
         val deferred = CompletableDeferred<Result<Rates>>()
         coEvery { getLatestRates(false) } coAnswers { deferred.await() }
 
-        val viewModel = CurrencyConverterViewModel(getLatestRates, ratesRepository)
+        val viewModel = CurrencyConverterViewModel(getLatestRates, getSelectedCurrencies, saveSelectedCurrencies)
 
         // With UnconfinedTestDispatcher, the coroutine runs until getLatestRates suspends
         assertTrue(viewModel.uiState.value.isLoading)
@@ -73,7 +76,7 @@ class CurrencyConverterViewModelTest {
     fun `Refresh event sets isRefreshing true and not isLoading when rates already loaded`() = runTest {
         // First: let initial load complete
         coEvery { getLatestRates(false) } returns Result.success(fakeRates)
-        val viewModel = CurrencyConverterViewModel(getLatestRates, ratesRepository)
+        val viewModel = CurrencyConverterViewModel(getLatestRates, getSelectedCurrencies, saveSelectedCurrencies)
         advanceUntilIdle()
         assertNotNull(viewModel.uiState.value.rates)
 
@@ -93,7 +96,7 @@ class CurrencyConverterViewModelTest {
     @Test
     fun `isRefreshing returns to false after successful refresh`() = runTest {
         coEvery { getLatestRates(false) } returns Result.success(fakeRates)
-        val viewModel = CurrencyConverterViewModel(getLatestRates, ratesRepository)
+        val viewModel = CurrencyConverterViewModel(getLatestRates, getSelectedCurrencies, saveSelectedCurrencies)
         advanceUntilIdle()
 
         val updatedRates = fakeRates.copy(values = mapOf("EUR" to 0.92))
@@ -109,7 +112,7 @@ class CurrencyConverterViewModelTest {
     @Test
     fun `isRefreshing returns to false after failed refresh`() = runTest {
         coEvery { getLatestRates(false) } returns Result.success(fakeRates)
-        val viewModel = CurrencyConverterViewModel(getLatestRates, ratesRepository)
+        val viewModel = CurrencyConverterViewModel(getLatestRates, getSelectedCurrencies, saveSelectedCurrencies)
         advanceUntilIdle()
 
         coEvery { getLatestRates(true) } returns Result.failure(Exception("Sin conexión"))
@@ -125,7 +128,7 @@ class CurrencyConverterViewModelTest {
     @Test
     fun `failed refresh preserves previously loaded rates`() = runTest {
         coEvery { getLatestRates(false) } returns Result.success(fakeRates)
-        val viewModel = CurrencyConverterViewModel(getLatestRates, ratesRepository)
+        val viewModel = CurrencyConverterViewModel(getLatestRates, getSelectedCurrencies, saveSelectedCurrencies)
         advanceUntilIdle()
         assertNotNull(viewModel.uiState.value.rates)
 
@@ -142,7 +145,7 @@ class CurrencyConverterViewModelTest {
     fun `initial load failure leaves isLoading false with error message`() = runTest {
         coEvery { getLatestRates(false) } returns Result.failure(Exception("Sin conexión"))
 
-        val viewModel = CurrencyConverterViewModel(getLatestRates, ratesRepository)
+        val viewModel = CurrencyConverterViewModel(getLatestRates, getSelectedCurrencies, saveSelectedCurrencies)
         advanceUntilIdle()
 
         assertFalse(viewModel.uiState.value.isLoading)

@@ -98,17 +98,17 @@ class NotesViewModel @Inject constructor(
     fun onOpenNote(noteId: String) =
         viewModelScope.launch { _events.emit(NotesEvent.NavigateToDetail(noteId)) }
 
-    /** Muestra el diálogo de confirmación guardando la nota a eliminar. */
+    /** Shows the delete confirmation dialog for the given note. */
     fun onShowDeleteDialog(note: Note) {
         _uiState.update { it.copy(noteToDelete = note) }
     }
 
-    /** Descarta el diálogo sin eliminar nada. */
+    /** Dismisses the confirmation dialog without deleting. */
     fun onDismissDeleteDialog() {
         _uiState.update { it.copy(noteToDelete = null) }
     }
 
-    /** Confirma la eliminación de la nota almacenada en noteToDelete. */
+    /** Confirms deletion of the note stored in noteToDelete. */
     fun onConfirmDeleteNote() {
         val note = _uiState.value.noteToDelete ?: return
         _uiState.update { it.copy(noteToDelete = null) }

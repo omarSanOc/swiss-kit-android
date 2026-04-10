@@ -194,7 +194,7 @@ fun CurrencyConverterContent(
             }
         }
 
-        // Toast de confirmación (solo en Android 12L o menor)
+        // Copy confirmation toast (Android 12L and below only)
         SwissKitToast(
             message = if (uiState.showCopiedToast) stringResource(R.string.converter_copy_clipboard) else null,
             onDismiss = { onEvent(CurrencyConverterEvent.DismissCopiedToast) }

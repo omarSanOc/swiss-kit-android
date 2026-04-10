@@ -1,9 +1,6 @@
 package com.epic_engine.swisskit.feature.converter.domain.model
 
-/**
- * Catálogo de 15 monedas soportadas.
- * Equivalente exacto al CurrencyCatalog del módulo iOS.
- */
+/** Catalog of the 15 supported currencies. */
 object CurrencyCatalog {
 
     val supported: List<Currency> = listOf(

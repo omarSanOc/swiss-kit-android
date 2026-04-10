@@ -59,7 +59,7 @@ fun UnitConverterContent(
             .padding(bottom = DesignTokens.dimensXXXMedium),
         verticalArrangement = Arrangement.spacedBy(DesignTokens.dimensXXXMedium)
     ) {
-        // Card: Categoría
+        // Card: Category
         ConverterSectionCard(title = stringResource(R.string.converter_category_title)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -80,7 +80,7 @@ fun UnitConverterContent(
                 ) { category ->
                     Icon(
                         painter = painterResource(id = categoryIconRes(category)),
-                        contentDescription = stringResource(category.displayNameRes),
+                        contentDescription = category.displayName,
                         tint = ConverterDesignTokens.accentBlue,
                         modifier = Modifier.size(32.dp)
                     )
@@ -88,7 +88,7 @@ fun UnitConverterContent(
             }
         }
 
-        // Card: Unidades
+        // Card: Units
         ConverterSectionCard(title = stringResource(R.string.converter_unit_title)) {
             UnitPickerDropdown(
                 label = "De",
@@ -107,7 +107,7 @@ fun UnitConverterContent(
             )
         }
 
-        // Card: Cantidad
+        // Card: Amount
         ConverterSectionCard(title = stringResource(R.string.converter_quantity_title)) {
             ConverterOutlinedField(
                 value = uiState.amountInput,
@@ -118,7 +118,7 @@ fun UnitConverterContent(
             )
         }
 
-        // Card: Resultado
+        // Card: Result
         ConverterSectionCard(title = stringResource(R.string.converter_result_title)) {
             ConverterReadOnlyField(
                 value = uiState.convertedResult,
@@ -154,7 +154,7 @@ private fun CategoryDropdown(
         modifier = modifier
     ) {
         ConverterSelectorField(
-            value = stringResource(selected.displayNameRes),
+            value = selected.displayName,
             placeholder = "",
             expanded = expanded,
             modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable)
@@ -165,7 +165,7 @@ private fun CategoryDropdown(
         ) {
             UnitCategory.all.forEach { category ->
                 DropdownMenuItem(
-                    text = { Text(stringResource(category.displayNameRes)) },
+                    text = { Text(category.displayName) },
                     onClick = {
                         onSelected(category)
                         expanded = false

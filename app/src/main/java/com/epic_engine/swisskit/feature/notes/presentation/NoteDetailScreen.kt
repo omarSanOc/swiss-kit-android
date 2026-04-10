@@ -153,37 +153,6 @@ fun NoteDetailScreen(
         }
     }
 
-    // ── Markdown formatting helpers ───────────────────────────────────────────
-    fun applyBold() {
-        val sel = contentFieldValue.selection
-        val text = contentFieldValue.text
-        val selected = text.substring(sel.min, sel.max)
-        val newText = text.substring(0, sel.min) + "**" + selected + "**" + text.substring(sel.max)
-        val newCursor = if (sel.collapsed) sel.min + 2 else sel.max + 4
-        contentFieldValue = TextFieldValue(newText, TextRange(newCursor))
-        viewModel.onContentChange(newText)
-    }
-
-    fun applyItalic() {
-        val sel = contentFieldValue.selection
-        val text = contentFieldValue.text
-        val selected = text.substring(sel.min, sel.max)
-        val newText = text.substring(0, sel.min) + "*" + selected + "*" + text.substring(sel.max)
-        val newCursor = if (sel.collapsed) sel.min + 1 else sel.max + 2
-        contentFieldValue = TextFieldValue(newText, TextRange(newCursor))
-        viewModel.onContentChange(newText)
-    }
-
-    fun applyBullet() {
-        val sel = contentFieldValue.selection
-        val text = contentFieldValue.text
-        val lineStart = text.lastIndexOf('\n', sel.min - 1) + 1
-        val newText = text.substring(0, lineStart) + "- " + text.substring(lineStart)
-        val newCursor = sel.min + 2
-        contentFieldValue = TextFieldValue(newText, TextRange(newCursor))
-        viewModel.onContentChange(newText)
-    }
-
     // ── Layout ────────────────────────────────────────────────────────────────
     SwissKitBackground(
         colors = listOf(NotesDesignTokens.Primary, NotesDesignTokens.background),
@@ -304,9 +273,21 @@ fun NoteDetailScreen(
                     )
 
                     NoteFormattingToolbar(
-                        onBold = ::applyBold,
-                        onItalic = ::applyItalic,
-                        onBullet = ::applyBullet
+                        onBold = {
+                            val updated = applyMarkdownWrap(contentFieldValue, "**", 2)
+                            contentFieldValue = updated
+                            viewModel.onContentChange(updated.text)
+                        },
+                        onItalic = {
+                            val updated = applyMarkdownWrap(contentFieldValue, "*", 1)
+                            contentFieldValue = updated
+                            viewModel.onContentChange(updated.text)
+                        },
+                        onBullet = {
+                            val updated = applyMarkdownBullet(contentFieldValue)
+                            contentFieldValue = updated
+                            viewModel.onContentChange(updated.text)
+                        }
                     )
 
                     // Content field
@@ -375,4 +356,23 @@ fun NoteDetailScreen(
             onDismiss = viewModel::onDismissReminderPicker
         )
     }
+}
+
+// Wraps the selected text (or inserts at cursor) with [marker] on each side.
+private fun applyMarkdownWrap(value: TextFieldValue, marker: String, markerLen: Int): TextFieldValue {
+    val sel = value.selection
+    val text = value.text
+    val selected = text.substring(sel.min, sel.max)
+    val newText = text.substring(0, sel.min) + marker + selected + marker + text.substring(sel.max)
+    val newCursor = if (sel.collapsed) sel.min + markerLen else sel.max + markerLen * 2
+    return TextFieldValue(newText, TextRange(newCursor))
+}
+
+// Inserts a bullet point ("- ") at the beginning of the line containing the cursor.
+private fun applyMarkdownBullet(value: TextFieldValue): TextFieldValue {
+    val sel = value.selection
+    val text = value.text
+    val lineStart = text.lastIndexOf('\n', sel.min - 1) + 1
+    val newText = text.substring(0, lineStart) + "- " + text.substring(lineStart)
+    return TextFieldValue(newText, TextRange(sel.min + 2))
 }

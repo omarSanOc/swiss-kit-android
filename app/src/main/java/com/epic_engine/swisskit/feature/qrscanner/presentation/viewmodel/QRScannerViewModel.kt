@@ -36,7 +36,7 @@ class QRScannerViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(QRScannerUiState())
     val uiState: StateFlow<QRScannerUiState> = _uiState.asStateFlow()
 
-    private val _events = MutableSharedFlow<QRScannerEvent>()
+    private val _events = MutableSharedFlow<QRScannerEvent>(replay = 1, extraBufferCapacity = 1)
     val events: SharedFlow<QRScannerEvent> = _events.asSharedFlow()
 
     init {
@@ -70,7 +70,7 @@ class QRScannerViewModel @Inject constructor(
         if (input.isBlank()) return
         viewModelScope.launch {
             _uiState.update { it.copy(isGenerating = true) }
-            val bitmap = withContext(Dispatchers.Default) { generateQRBitmap(input) }
+            val bitmap = generateQRBitmap(input)
             _uiState.update { it.copy(generatedBitmap = bitmap, isGenerating = false) }
         }
     }

@@ -8,10 +8,11 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
+import androidx.test.espresso.action.ViewActions.longClick
+import com.epic_engine.swisskit.core.ui.theme.SwissKitTheme
 import com.epic_engine.swisskit.feature.qrscanner.domain.model.QRContentType
 import com.epic_engine.swisskit.feature.qrscanner.domain.model.QRScan
 import com.epic_engine.swisskit.feature.qrscanner.presentation.components.QRScanItem
-import com.epic_engine.swisskit.ui.theme.SwissKitTheme
 import org.junit.Rule
 import org.junit.Test
 

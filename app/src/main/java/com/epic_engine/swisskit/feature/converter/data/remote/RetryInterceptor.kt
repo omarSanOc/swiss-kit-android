@@ -5,7 +5,7 @@ import okhttp3.Interceptor
 import okhttp3.Response
 
 /**
- * Retry con backoff exponencial. Máximo 2 reintentos, delays de 1s y 2s.
+ * Retry interceptor with exponential backoff. Maximum 2 retries with 1s and 2s delays.
  */
 class RetryInterceptor(
     private val maxRetries: Int = 2

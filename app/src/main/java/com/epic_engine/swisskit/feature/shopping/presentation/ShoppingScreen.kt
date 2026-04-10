@@ -57,8 +57,6 @@ import com.epic_engine.swisskit.feature.shopping.presentation.theme.ShoppingDesi
 import com.epic_engine.swisskit.feature.shopping.presentation.utils.ShoppingEvent
 import com.epic_engine.swisskit.feature.shopping.presentation.utils.ShoppingShareFormatter
 import com.epic_engine.swisskit.feature.shopping.presentation.viewmodel.ShoppingViewModel
-import kotlinx.coroutines.delay
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingScreen(
@@ -73,13 +71,6 @@ fun ShoppingScreen(
         uiState.userMessage?.let { message ->
             toastMessage = message.asString(context)
             viewModel.onEvent(ShoppingEvent.ClearMessage)
-        }
-    }
-
-    LaunchedEffect(uiState.duplicateMessage) {
-        if (uiState.duplicateMessage != null) {
-            delay(2500)
-            viewModel.onEvent(ShoppingEvent.ClearDuplicateMessage)
         }
     }
 
@@ -209,7 +200,7 @@ fun ShoppingScreen(
         }
     )
 
-    // Diálogo de confirmación: borrar marcados
+    // Confirmation dialog: delete checked items
     if (uiState.showDeleteCheckedDialog) {
         AlertDialog(
             onDismissRequest = { viewModel.onEvent(ShoppingEvent.DismissDeleteDialog) },
@@ -234,7 +225,7 @@ fun ShoppingScreen(
         )
     }
 
-    // Diálogo de confirmación: eliminar ítem individual
+    // Confirmation dialog: delete individual item
     if (uiState.itemToDelete != null) {
         AlertDialog(
             onDismissRequest = { viewModel.onEvent(ShoppingEvent.DismissDeleteItemDialog) },
@@ -256,7 +247,7 @@ fun ShoppingScreen(
         )
     }
 
-    // Diálogo de edición de ítem
+    // Item edit dialog
     if (uiState.editingItem != null) {
         AlertDialog(
             onDismissRequest = { viewModel.onEvent(ShoppingEvent.CancelEdit) },

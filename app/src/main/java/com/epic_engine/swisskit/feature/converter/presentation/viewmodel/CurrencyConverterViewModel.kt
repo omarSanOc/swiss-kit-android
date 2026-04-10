@@ -6,7 +6,8 @@ import com.epic_engine.swisskit.core.common.SwissKitLogger
 import com.epic_engine.swisskit.feature.converter.domain.model.CurrencyCatalog
 import com.epic_engine.swisskit.feature.converter.domain.model.Currency
 import com.epic_engine.swisskit.feature.converter.domain.usecase.GetLatestRatesUseCase
-import com.epic_engine.swisskit.feature.converter.domain.repository.RatesRepository
+import com.epic_engine.swisskit.feature.converter.domain.usecase.GetSelectedCurrenciesUseCase
+import com.epic_engine.swisskit.feature.converter.domain.usecase.SaveSelectedCurrenciesUseCase
 import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.core.ui.UiText
 import com.epic_engine.swisskit.feature.converter.presentation.utils.CurrencyConverterEvent
@@ -31,13 +32,14 @@ import javax.inject.Inject
 @HiltViewModel
 class CurrencyConverterViewModel @Inject constructor(
     private val getLatestRates: GetLatestRatesUseCase,
-    private val ratesRepository: RatesRepository
+    private val getSelectedCurrencies: GetSelectedCurrenciesUseCase,
+    private val saveSelectedCurrencies: SaveSelectedCurrenciesUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CurrencyConverterUiState())
     val uiState: StateFlow<CurrencyConverterUiState> = _uiState.asStateFlow()
 
-    // Flow interno del input para debounce 400ms (equivalente iOS)
+    // Internal input flow used for 400ms debounce
     private val _amountFlow = MutableStateFlow("")
 
     init {
@@ -81,13 +83,13 @@ class CurrencyConverterViewModel @Inject constructor(
 
     private fun loadSavedPreferences() {
         viewModelScope.launch {
-            val saved = ratesRepository.getSelectedCurrencies()
+            val saved = getSelectedCurrencies()
             if (saved != null) {
                 val from = CurrencyCatalog.findByCode(saved.first)
                 val to = CurrencyCatalog.findByCode(saved.second)
                 _uiState.update { it.copy(fromCurrency = from, toCurrency = to) }
             } else {
-                // Defaults: USD → EUR
+                // Default selection: USD → EUR
                 _uiState.update {
                     it.copy(
                         fromCurrency = CurrencyCatalog.findByCode("USD"),
@@ -119,7 +121,7 @@ class CurrencyConverterViewModel @Inject constructor(
                     recalculate()
                 }
                 .onFailure { error ->
-                    SwissKitLogger.e("Converter", "Error cargando rates", error)
+                    SwissKitLogger.e("Converter", "Error loading rates", error)
                     _uiState.update {
                         it.copy(
                             isLoading = false,
@@ -149,7 +151,7 @@ class CurrencyConverterViewModel @Inject constructor(
             return
         }
 
-        // Conversión mediante base USD:
+        // Convert via USD as the intermediate base:
         // amount (in "from") → USD → "to"
         val fromRate = rates.values[from.code] ?: 1.0
         val toRate = rates.values[to.code] ?: 1.0
@@ -158,10 +160,7 @@ class CurrencyConverterViewModel @Inject constructor(
         _uiState.update { it.copy(convertedResult = formatResult(result, to)) }
     }
 
-    /**
-     * Formatea el resultado con el símbolo de la moneda destino y máximo 4 decimales.
-     * Equivalente al CurrencyFormatter del iOS.
-     */
+    /** Formats the result with the target currency symbol, up to 4 decimal places. */
     private fun formatResult(value: Double, currency: Currency): String {
         val symbols = DecimalFormatSymbols(Locale.getDefault())
         val df = DecimalFormat("#,##0.####", symbols)
@@ -173,7 +172,7 @@ class CurrencyConverterViewModel @Inject constructor(
         val from = state.fromCurrency?.code ?: return
         val to = state.toCurrency?.code ?: return
         viewModelScope.launch {
-            ratesRepository.saveSelectedCurrencies(from, to)
+            saveSelectedCurrencies(from, to)
         }
     }
 }

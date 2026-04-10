@@ -4,10 +4,7 @@ import com.epic_engine.swisskit.R
 import com.epic_engine.swisskit.feature.home.presentation.theme.HomeDesignTokens
 import com.epic_engine.swisskit.navigation.SwissKitDestination
 
-/**
- * Equivalente al enum ToolRoute de iOS + lista de herramientas de HomeView.
- * Catálogo estático de los 6 módulos de la app.
- */
+/** Static catalog of the 6 app modules shown on the Home screen. */
 object ToolCatalog {
 
     val all: List<Tool> = listOf(

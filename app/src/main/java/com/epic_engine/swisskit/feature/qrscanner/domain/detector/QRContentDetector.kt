@@ -1,6 +1,5 @@
 package com.epic_engine.swisskit.feature.qrscanner.domain.detector
 
-import android.util.Patterns
 import com.epic_engine.swisskit.feature.qrscanner.domain.model.QRContentType
 
 object QRContentDetector {
@@ -29,8 +28,12 @@ object QRContentDetector {
         QRContentType.TEXT     -> if (content.length > 40) "${content.take(37)}..." else content
     }
 
-    private fun isUrl(c: String) =
-        Patterns.WEB_URL.matcher(c.trim()).matches()
+    private val urlRegex = Regex(
+        """^(https?://|www\.)[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]""",
+        RegexOption.IGNORE_CASE
+    )
+
+    private fun isUrl(c: String) = urlRegex.containsMatchIn(c.trim())
 
     private fun isWifi(c: String) =
         c.trimStart().startsWith("WIFI:", ignoreCase = true)
@@ -39,10 +42,12 @@ object QRContentDetector {
         c.contains("BEGIN:VCARD", ignoreCase = true) ||
         c.trimStart().startsWith("MECARD:", ignoreCase = true)
 
+    private val emailRegex = Regex("""^[^\s@]+@[^\s@]+\.[^\s@]+$""")
+
     private fun isEmail(c: String) =
         c.trimStart().startsWith("mailto:", ignoreCase = true) ||
         c.trimStart().startsWith("MATMSG:", ignoreCase = true) ||
-        Patterns.EMAIL_ADDRESS.matcher(c.trim()).matches()
+        emailRegex.matches(c.trim())
 
     private fun isPhone(c: String) =
         c.trimStart().startsWith("tel:", ignoreCase = true) ||
@@ -69,7 +74,7 @@ object QRContentDetector {
 
     private fun extractEmail(email: String): String? = when {
         email.startsWith("mailto:", ignoreCase = true) -> email.removePrefix("mailto:").split("?").first()
-        Patterns.EMAIL_ADDRESS.matcher(email).matches() -> email
+        emailRegex.matches(email) -> email
         else -> null
     }
 

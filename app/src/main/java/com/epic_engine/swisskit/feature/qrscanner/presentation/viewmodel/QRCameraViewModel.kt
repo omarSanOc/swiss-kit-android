@@ -13,7 +13,6 @@ import com.epic_engine.swisskit.feature.qrscanner.presentation.util.PendingQRRes
 import com.epic_engine.swisskit.feature.qrscanner.presentation.util.QRCameraEvent
 import com.epic_engine.swisskit.feature.qrscanner.presentation.util.QRCameraUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -80,8 +79,6 @@ class QRCameraViewModel @Inject constructor(
                             QRScanSaveResult.Failed -> UiText.StringRes(R.string.qr_feedback_error_save)
                         }
                         _uiState.update { it.copy(feedbackMessage = msg) }
-                        delay(2_000)
-                        _uiState.update { it.copy(feedbackMessage = null) }
                     }
                     .onFailure {
                         _events.emit(QRCameraEvent.ShowError(UiText.StringRes(R.string.qr_error_save_scan)))

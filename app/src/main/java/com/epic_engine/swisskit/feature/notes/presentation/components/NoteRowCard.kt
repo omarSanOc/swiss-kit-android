@@ -105,7 +105,7 @@ fun NoteRowCard(
             .fillMaxWidth()
             .clip(RoundedCornerShape(DesignTokens.dimensXXMedium))
     ) {
-        // Capa trasera: botón de eliminar
+        // Background layer: delete button
         IconButton(
             onClick = {
                 onDelete()
@@ -126,7 +126,7 @@ fun NoteRowCard(
             )
         }
 
-        // Capa frontal: card de la nota
+        // Foreground layer: note card
         SwissKitCard(
             modifier = Modifier
                 .fillMaxWidth()

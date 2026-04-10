@@ -3,9 +3,9 @@ package com.epic_engine.swisskit.feature.finance.domain.usecase
 class FinanceCategorySelectionEngine {
 
     companion object {
-        const val KEY_ALL = "__finance_filter_all__"
-        const val KEY_INCOME = "__finance_filter_income__"
-        const val KEY_EXPENSE = "__finance_filter_expense__"
+        const val KEY_ALL = "Todas"
+        const val KEY_INCOME = "Ingreso"
+        const val KEY_EXPENSE = "Gasto"
 
         private val SPECIAL = setOf(KEY_ALL, KEY_INCOME, KEY_EXPENSE)
     }

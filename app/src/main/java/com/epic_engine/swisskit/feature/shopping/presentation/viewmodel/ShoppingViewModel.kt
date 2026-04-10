@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -97,8 +98,12 @@ class ShoppingViewModel @Inject constructor(
                 .onSuccess { /* Item observable via Flow */ }
                 .onFailure { error ->
                     when (error) {
-                        is DuplicateItemException -> _uiState.update {
-                            it.copy(duplicateMessage = UiText.StringRes(R.string.shopping_duplicate_message, error.itemName))
+                        is DuplicateItemException -> {
+                            _uiState.update { it.copy(duplicateMessage = UiText.StringRes(R.string.shopping_duplicate_message, error.itemName)) }
+                            viewModelScope.launch {
+                                delay(2_500)
+                                _uiState.update { it.copy(duplicateMessage = null) }
+                            }
                         }
                         is IllegalArgumentException -> _uiState.update {
                             it.copy(userMessage = UiText.StringRes(R.string.shopping_invalid_name))

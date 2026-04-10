@@ -148,7 +148,7 @@ fun NotesScreen(
         onDismiss = { toastMessage = null }
     )
 
-    // Diálogo de confirmación: eliminar nota individual
+    // Confirmation dialog: delete individual note
     if (uiState.noteToDelete != null) {
         AlertDialog(
             onDismissRequest = { viewModel.onDismissDeleteDialog() },

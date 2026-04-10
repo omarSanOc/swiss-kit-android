@@ -108,6 +108,13 @@ fun QRScannerScreen(
         }
     }
 
+    LaunchedEffect(cameraUiState.feedbackMessage) {
+        if (cameraUiState.feedbackMessage != null) {
+            kotlinx.coroutines.delay(2_000)
+            qrCameraViewModel.onClearFeedback()
+        }
+    }
+
     SwissKitBackground(
         colors = listOf(QRScannerDesignTokens.Primary, QRScannerDesignTokens.background),
         darkColors = listOf(QRScannerDesignTokens.Primary, QRScannerDesignTokens.darkBackground),
@@ -152,7 +159,7 @@ fun QRScannerScreen(
                 },
             ) { padding ->
                 if (selectedIndex == 1) {
-                    // Generador: Column scrollable dentro del área de Scaffold
+                    // Generator: scrollable Column within the Scaffold content area
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -170,7 +177,7 @@ fun QRScannerScreen(
                         )
                     }
                 } else {
-                    // Escáner: Box que llena el espacio restante bajo el header fijo
+                    // Scanner: Box filling the remaining space below the fixed header
                     Box(
                         modifier = Modifier
                             .fillMaxSize()

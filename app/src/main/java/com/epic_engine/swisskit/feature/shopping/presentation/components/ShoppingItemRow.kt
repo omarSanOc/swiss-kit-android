@@ -83,7 +83,7 @@ fun ShoppingItemRow(
             .fillMaxWidth()
             .clip(RoundedCornerShape(DesignTokens.dimensXXMedium))
     ) {
-        // Capa trasera: botones de acción
+        // Background layer: action buttons
         Row(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
@@ -128,7 +128,7 @@ fun ShoppingItemRow(
             }
         }
 
-        // Capa frontal: card del ítem
+        // Foreground layer: item card
         SwissKitCard(
             modifier = Modifier
                 .fillMaxWidth()

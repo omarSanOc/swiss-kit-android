@@ -3,9 +3,9 @@ package com.epic_engine.swisskit.feature.converter.domain.repository
 import com.epic_engine.swisskit.feature.converter.domain.model.Rates
 
 interface RatesRepository {
-    /** Verifica cache (TTL 30 min) → si expirado, llama API → fallback a cache stale si hay error de red */
+    /** Checks cache (30-min TTL); refreshes from API if stale; falls back to stale cache on network error. */
     suspend fun getLatest(forceRefresh: Boolean = false): Result<Rates>
-    /** Devuelve los últimos rates guardados sin verificar TTL (para uso offline) */
+    /** Returns the last cached rates without checking TTL (for offline use). */
     suspend fun getCached(): Rates?
     suspend fun saveSelectedCurrencies(from: String, to: String)
     suspend fun getSelectedCurrencies(): Pair<String, String>?

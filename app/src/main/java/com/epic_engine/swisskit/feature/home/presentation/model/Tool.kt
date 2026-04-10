@@ -6,8 +6,8 @@ import androidx.compose.ui.graphics.Color
 import com.epic_engine.swisskit.navigation.SwissKitDestination
 
 /**
- * Equivalente al Tool.swift de iOS.
- * Contiene tipos de UI (DrawableRes, Color) por lo que vive en la capa de presentación.
+ * Represents a single app module entry shown on the Home screen.
+ * Contains UI types (DrawableRes, Color) and therefore lives in the presentation layer.
  */
 data class Tool(
     val id: String,

@@ -72,7 +72,7 @@ class RatesLocalDataSource @Inject constructor(
         }
     }
 
-    /** Persiste la selección de monedas del usuario */
+    /** Persists the user's selected currencies. */
     suspend fun saveSelectedCurrencies(from: String, to: String) {
         context.ratesDataStore.edit { prefs ->
             prefs[KEY_CURRENCY_FROM] = from
@@ -80,7 +80,7 @@ class RatesLocalDataSource @Inject constructor(
         }
     }
 
-    /** Lee la selección de monedas guardada */
+    /** Reads the previously saved currency selection. */
     suspend fun getSelectedCurrencies(): Pair<String, String>? {
         val prefs = context.ratesDataStore.data.firstOrNull() ?: return null
         val from = prefs[KEY_CURRENCY_FROM] ?: return null

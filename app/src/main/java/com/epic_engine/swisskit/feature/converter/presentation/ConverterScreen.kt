@@ -40,7 +40,7 @@ fun ConverterScreen(
     val currencyUiState by currencyViewModel.uiState.collectAsStateWithLifecycle()
     val unitUiState by unitViewModel.uiState.collectAsStateWithLifecycle()
 
-    // Índice 0 = Unidades, índice 1 = Divisas (alineado con iOS)
+    // Tab index 0 = Units, 1 = Currency
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
 
     SwissKitBackground(
@@ -80,7 +80,7 @@ fun ConverterScreen(
 
                 Spacer(modifier = Modifier.height(DesignTokens.dimensXSmall))
 
-                // Contenido según tab
+                // Content for the selected tab
                 when (selectedTab) {
                     0 -> UnitConverterContent(
                         uiState = unitUiState,

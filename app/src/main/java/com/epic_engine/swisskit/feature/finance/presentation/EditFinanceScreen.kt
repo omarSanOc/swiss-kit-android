@@ -199,7 +199,7 @@ fun EditFinanceScreen(
                             )
                         }
 
-                        // 3. Título
+                        // 3. Title
                         SwissKitCard(contentPadding = PaddingValues(DesignTokens.dimensXXMedium)) {
                             Text(
                                 text = stringResource(R.string.edit_finance_title_section),
@@ -250,7 +250,7 @@ fun EditFinanceScreen(
                             )
                         }
 
-                        // 5. Categoría
+                        // 5. Category
                         SwissKitCard(contentPadding = PaddingValues(DesignTokens.dimensXXMedium)) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
