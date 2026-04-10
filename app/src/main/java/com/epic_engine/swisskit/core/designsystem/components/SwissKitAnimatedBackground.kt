@@ -13,7 +13,12 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -34,9 +39,34 @@ import com.epic_engine.swisskit.core.ui.theme.yellowAnimation
 
 @Composable
 fun SwissKitAnimatedBackgroundView(
-    animateBackground: Boolean = true,
     modifier: Modifier = Modifier
 ) {
+    var animateBackground by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        withFrameMillis { }
+        animateBackground = true
+    }
+
+    Box(modifier = modifier.fillMaxSize()) {
+        // Frame 0: gradiente estático — mismo rojo que el splash (#FB2A2A arriba)
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            drawRect(
+                brush = Brush.verticalGradient(
+                    colors = listOf(redHome, redBackground)
+                )
+            )
+        }
+
+        // Frame 1+: overlay con blur y rotación, entra después del primer paint
+        if (animateBackground) {
+            AnimatedOverlay()
+        }
+    }
+}
+
+@Composable
+private fun AnimatedOverlay(modifier: Modifier = Modifier) {
     val infiniteTransition = rememberInfiniteTransition(label = "background_animation")
     val angle by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -47,59 +77,35 @@ fun SwissKitAnimatedBackgroundView(
         ),
         label = "angle_animation"
     )
+    val blurRadius = with(LocalDensity.current) { 60.dp.toPx() }
 
-    val density = LocalDensity.current
-    val blurRadius = with(density) { 60.dp.toPx() }
-
-    Box(modifier = modifier.fillMaxSize()) {
-        // Primer gradiente: Linear de redHome a redBackground
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            drawRect(
-                brush = Brush.verticalGradient(
-                    colors = listOf(redHome, redBackground)
-                )
-            )
-        }
-
-        // Segundo gradiente: Angular animado con opacidad y blur
-        if (animateBackground) {
-            Canvas(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer {
-                        alpha = 0.25f
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            renderEffect = RenderEffect
-                                .createBlurEffect(
-                                    blurRadius,
-                                    blurRadius,
-                                    Shader.TileMode.CLAMP
-                                )
-                                .asComposeRenderEffect()
-                        }
-                    }
-            ) {
-                val center = Offset(size.width / 2, size.height / 2)
-                val sweepGradient = Brush.sweepGradient(
-                    colors = listOf(
-                        redAnimation,
-                        orangeAnimation,
-                        yellowAnimation,
-                        greenAnimation,
-                        blueAnimation,
-                        purpleAnimation,
-                        redAnimation
-                    ),
-                    center = center
-                )
-
-                rotate(
-                    degrees = angle,
-                    pivot = center
-                ) {
-                    drawRect(brush = sweepGradient)
+    Canvas(
+        modifier = modifier
+            .fillMaxSize()
+            .graphicsLayer {
+                alpha = 0.25f
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    renderEffect = RenderEffect
+                        .createBlurEffect(blurRadius, blurRadius, Shader.TileMode.CLAMP)
+                        .asComposeRenderEffect()
                 }
             }
+    ) {
+        val center = Offset(size.width / 2, size.height / 2)
+        val sweepGradient = Brush.sweepGradient(
+            colors = listOf(
+                redAnimation,
+                orangeAnimation,
+                yellowAnimation,
+                greenAnimation,
+                blueAnimation,
+                purpleAnimation,
+                redAnimation
+            ),
+            center = center
+        )
+        rotate(degrees = angle, pivot = center) {
+            drawRect(brush = sweepGradient)
         }
     }
 }

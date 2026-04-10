@@ -2,4 +2,10 @@
 <resources>
 
     <style name="Theme.SwissKit" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.SwissKit.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground_splash</item>
+        <item name="postSplashScreenTheme">@style/Theme.SwissKit</item>
+    </style>
 </resources>
