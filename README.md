@@ -91,7 +91,6 @@ flowchart LR
 ### Architectural Notes
 - Every feature follows the same layer structure: `presentation/`, `domain/`, `data/`, `di/`.
 - ViewModels are `@HiltViewModel` classes that expose `StateFlow<UiState>` and handle one-shot events.
-- Use cases each encapsulate a single business operation and return `SwissKitResult<T>` (`Success`/`Error`).
 - Repository interfaces live in `domain/`; implementations live in `data/` and are bound via Hilt modules.
 - Entity-to-domain mapping is handled by dedicated mapper files inside `data/mapper/`.
 - `SwissKitLogger` wraps Timber with module-tagged logging methods (`d`, `i`, `w`, `e`).
@@ -234,7 +233,7 @@ app/
 │           ├── core/
 │           │   ├── database/             # SwissKitDatabase, DAOs
 │           │   ├── designsystem/         # SwissKitCard, SwissKitButton, SwissKitTextField, etc.
-│           │   └── util/                 # SwissKitLogger, SwissKitResult, etc.
+│           │   └── util/                 # SwissKitLogger, etc.
 │           ├── di/                       # DatabaseModule, NetworkModule
 │           ├── navigation/               # SwissKitDestination, SwissKitNavGraph
 │           └── feature/
