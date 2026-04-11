@@ -182,11 +182,27 @@ Expected screenshot paths (placeholders):
 # Build a debug APK
 ./gradlew assembleDebug
 
+# Build a signed release APK for local testing
+# If keystore.properties does not exist, release falls back to the debug keystore
+./gradlew assembleRelease
+
 # Build and install on a connected device or running emulator
 ./gradlew installDebug
 
 # Clean and rebuild
 ./gradlew clean assembleDebug
+```
+
+### Release signing
+- `release` must be signed before Android can install it on a device.
+- For local development, the project falls back to the default debug keystore when `keystore.properties` is not present, so running the `release` variant from Android Studio works.
+- For production or Play Store builds, create `keystore.properties` in the project root with your real signing credentials:
+
+```properties
+storeFile=/absolute/path/to/your-release-key.jks
+storePassword=yourStorePassword
+keyAlias=yourKeyAlias
+keyPassword=yourKeyPassword
 ```
 
 ## Testing

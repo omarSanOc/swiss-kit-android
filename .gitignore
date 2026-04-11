@@ -5,6 +5,7 @@
 *.hprof
 *.jks
 *.keystore
+keystore.properties
 .DS_Store
 .gradle/
 /build
